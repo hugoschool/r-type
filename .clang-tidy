@@ -1,0 +1,14 @@
+Checks: >
+  -*,
+  cppcoreguidelines-use-enum-class,
+  clang-analyser-*,
+  clang-diagnostic-*,
+  modernize-use-auto,
+  modernize-make-shared,
+  modernize-make-unique,
+  modernize-use-nullptr,
+  modernize-use-using,
+  modernize-use-override,
+  misc-unused-parameters,
+  misc-include-cleaner,
+  misc-explicit-constructor
