@@ -12,6 +12,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 endif()
 
+include(cmake/CPM.cmake)
+
 add_subdirectory(engine)
 add_subdirectory(client)
 add_subdirectory(server)
