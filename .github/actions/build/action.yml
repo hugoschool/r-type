@@ -25,7 +25,10 @@ runs:
     - name: Build project
       id: build-project
       shell: bash
-      run: cmake --build build
+      # Have to use --config on build step due to MSVC
+      run: cmake --build build --config ${INPUTS_BUILD_TYPE}
+      env:
+        INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
 
       # Lowercase the runner OS var
       # This is mostly for the styling of the artifacts
