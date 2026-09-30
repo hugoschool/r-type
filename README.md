@@ -33,6 +33,10 @@ The documentation is created with Markdown files compiled into a static website 
 
 Documentation is hosted at https://hugoschool.github.io/r-type
 
+## Contributing
+
+Wish to contribute? See more in the [CONTRIBUTING.md](./CONTRIBUTING.md) file or on the Contributing section in our docs site.
+
 ## Authors
 
 This project is brought to you by:
