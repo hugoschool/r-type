@@ -1,0 +1,63 @@
+name: Build
+description: Build using CMake
+
+inputs:
+  build-type:
+    description: Build type
+    required: false
+    default: Release
+
+  upload-artifact:
+    description: Whether to upload artifacts or not
+    required: false
+    default: false
+
+runs:
+  using: composite
+  steps:
+    - name: Generate build folder
+      id: generate-build-folder
+      shell: bash
+      run: "cmake -B build . -DCMAKE_BUILD_TYPE=${INPUTS_BUILD_TYPE}"
+      env:
+        INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
+
+    - name: Build project
+      id: build-project
+      shell: bash
+      run: cmake --build build
+
+      # Lowercase the runner OS var
+      # This is mostly for the styling of the artifacts
+    - name: Get runner OS var
+      id: runner-os-var
+      if: "${{ inputs.upload-artifact == 'true' }}"
+      shell: bash
+      run: echo "runner_os=${RUNNER_OS,,}" >> $GITHUB_OUTPUT
+
+    - name: Prepare artifact
+      id: prepare-artifact
+      if: "${{ inputs.upload-artifact == 'true' }}"
+      shell: bash
+      run: |
+        FOLDER_NAME="r-type-${RUNNER_OS_LOWER}"
+        mkdir $FOLDER_NAME
+
+        if [ "$RUNNER_OS" = "Windows" ]; then
+          cp build/server/${INPUTS_BUILD_TYPE}/r-type_server.exe $FOLDER_NAME
+          cp build/client/${INPUTS_BUILD_TYPE}/r-type_client.exe $FOLDER_NAME
+        else
+          cp build/server/r-type_server $FOLDER_NAME
+          cp build/client/r-type_client $FOLDER_NAME
+        fi
+      env:
+        INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
+        RUNNER_OS_LOWER: ${{ steps.runner-os-var.outputs.runner_os }}
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      if: "${{ inputs.upload-artifact == 'true' }}"
+      with:
+        name: r-type-${{ steps.runner-os-var.outputs.runner_os }}
+        path: ./r-type-${{ steps.runner-os-var.outputs.runner_os }}
+        retention-days: 3
