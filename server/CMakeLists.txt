@@ -5,7 +5,12 @@ set(BINARY r-type_server)
 file(GLOB_RECURSE src "src/*.cpp")
 add_executable(${BINARY} ${src})
 
-target_compile_options(${BINARY} PRIVATE -Wall -Wextra)
+if (WIN32)
+    target_compile_options(${BINARY} PRIVATE /W4)
+else()
+    target_compile_options(${BINARY} PRIVATE -Wall -Wextra)
+endif()
+
 target_include_directories(
     ${BINARY} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
