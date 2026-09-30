@@ -1,0 +1,11 @@
+# Binaries
+build/
+*.a
+*.o
+*.so
+*.out
+r-type_client
+r-type_server
+
+# Cache
+compile_commands.json
