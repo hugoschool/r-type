@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["**"]
+    types: [opened, reopened, synchronize, ready_for_review]
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  build:
+    name: Build
+    if: ${{ github.repository_owner == 'hugoschool' }}
+    strategy:
+      matrix:
+        os: [ubuntu-26.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7 # zizmor: ignore[unpinned-uses]
+        with:
+          persist-credentials: false
+
+      - name: Build
+        uses: ./.github/actions/build
+        with:
+          build-type: Debug
