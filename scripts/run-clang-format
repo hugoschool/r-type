@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+source $(realpath $(dirname "$0"))/common-clang.sh
+
+if ! command -v clang-format >/dev/null 2>&1; then
+    echo "clang-format could not be found"
+    exit 1
+fi
+
+set +e
+clang-format -i ${FILES[@]} --dry-run --Werror >/dev/null 2>&1
+EXIT_CODE="$?"
+set -e
+
+if [ $EXIT_CODE -eq 0 ]; then
+    echo "No file left to format"
+    exit 0
+fi
+
+clang-format -i ${FILES[@]} --verbose
+
+exit $EXIT_CODE
