@@ -18,6 +18,12 @@ export default defineConfig({
                     { text: "Introduction", link: "/introduction" },
                     { text: "Contributing", link: "/contributing" },
                 ]
+            },
+            {
+                text: "Engine",
+                items: [
+                    { text: "ECS", link: "/engine/ecs" },
+                ]
             }
         ],
 
