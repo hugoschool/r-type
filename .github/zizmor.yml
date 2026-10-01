@@ -2,3 +2,9 @@ rules:
   dependabot-cooldown:
     config:
       days: 3
+
+  # New syntax + not available on older versions of zizmor
+  self-repository:
+    ignore:
+      - build.yml
+      - release.yml

@@ -1,0 +1,53 @@
+name: C++ Tooling
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["**"]
+    types: [opened, reopened, synchronize, ready_for_review]
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  clang-format:
+    name: clang-format
+    if: ${{ github.repository_owner == 'hugoschool' }}
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7 # zizmor: ignore[unpinned-uses]
+        with:
+          persist-credentials: false
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt-get install clang-format
+
+      - name: Execute clang-format script
+        run: ./scripts/run-clang-format
+
+  clang-tidy:
+    name: clang-tidy
+    if: ${{ github.repository_owner == 'hugoschool' }}
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7 # zizmor: ignore[unpinned-uses]
+        with:
+          persist-credentials: false
+
+      - name: Install clang-tidy
+        run: |
+          sudo apt-get update
+          sudo apt-get install clang-tidy
+
+      - name: Generate build folder and copy compile_commands.json
+        run: |
+          cmake -B build . -DCMAKE_EXPORT_COMPILE_COMMANDS=true
+          cp build/compile_commands.json ./
+
+      - name: Execute clang-tidy script
+        run: ./scripts/run-clang-tidy
