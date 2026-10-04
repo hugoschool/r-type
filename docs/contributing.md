@@ -9,23 +9,10 @@ Here are a couple of rules to follow to contribute correctly to the project.
 
 ## Coding conventions
 
-### Linting
+We have strict formatting and linting rules to assure everyone has the same coding conventions.
+CI is also used to verify that these coding conventions are respected before entering the main branch.
 
-Linting your code has become quite the norm now.
-
-On our project, we're using `clang-tidy`.
-
-A complete configuration is given in the `.clang-tidy` file.
-
-To run it on the project, you can run the script `./scripts/run-clang-tidy`.
-
-### Formatting
-
-Formatting is done via `clang-format`.
-
-A complete configuration is given in the `.clang-format` file.
-
-To run it on the project, you can run the script `./scripts/run-clang-format`.
+Check the [Building](./building.md) guide for tools for development.
 
 ## Git
 
