@@ -16,6 +16,7 @@ export default defineConfig({
                 text: "General",
                 items: [
                     { text: "Introduction", link: "/introduction" },
+                    { text: "Building", link: "/building" },
                     { text: "Contributing", link: "/contributing" },
                 ]
             }
