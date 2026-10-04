@@ -8,4 +8,6 @@ r-type_client
 r-type_server
 
 # Cache
+/.cache/
+/.*-cache/
 compile_commands.json
