@@ -42,10 +42,16 @@ namespace fengine {
                 };
 
                 reference_type operator[](size_t idx) {
+                    if (idx >= _data.capacity()) {
+                        _data.resize((_data.capacity() + 1 + idx) * 2, std::nullopt);
+                    }
                     return _data[idx];
                 };
 
                 const_reference_type operator[](size_t idx) const {
+                    if (idx >= _data.capacity()) {
+                        _data.resize((_data.capacity() + 1 + idx) * 2, std::nullopt);
+                    }
                     return _data[idx];
                 };
 
