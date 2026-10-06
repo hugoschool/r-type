@@ -13,7 +13,7 @@ A mediator design pattern forces objects to communicate through a single central
 - Flexibility: How adaptable the system is to different types of entities, behaviors, or requirements.
 - Project suitability: How appropriate the pattern is for this project.
 
-|                     | ECS                                       | Mediator                                  |
+| Name                | ECS                                       | Mediator                                  |
 | ------------------- | ----------------------------------------- | ----------------------------------------- |
 | Performance         | 🟢 Very high                               | 🟢 Good                                    |
 | Memory              | 🟢 Good                                    | 🟢 Good                                    |

@@ -4,11 +4,11 @@ We were searching for a graphical library that works well with C++, that doesn't
 
 ## Comparative table
 
-| Graphic library | C++ compatibility                 | Windows compatibility | Simplicity of usage | Controller support | Shaders support       | Developer documentation                                      |
-| --------------- | --------------------------------- | --------------------- | ------------------- | ------------------ | --------------------- | ------------------------------------------------------------ |
-| Raylib          | 🟡 A binding for cpp already exist | 🟢 Yes                 | 🟢 Simple to use     | 🟢 Good support     | 🟡 No built in shaders | 🟢 Awesome documentation, lots of examples                    |
-| SFML            | 🟢 No encapsulation required       | 🟢 Yes                 | 🟢 Simple to use     | 🟢 Good support     | 🟡 No built in shaders | 🟡 Good but not enough examples directly in the documentation |
-| SDL             | 🔴 Encapsulation required          | 🟢 Yes                 | 🟢 Simple to use     | 🟢 Good support     | 🟡 No built in shaders | 🟢 Great documentation, has a good amount of examples         |
+| Name   | C++ compatibility                 | Windows compatibility | Simplicity of usage | Controller support | Shaders support       | Developer documentation                                      |
+| ------ | --------------------------------- | --------------------- | ------------------- | ------------------ | --------------------- | ------------------------------------------------------------ |
+| Raylib | 🟡 A binding for cpp already exist | 🟢 Yes                 | 🟢 Simple to use     | 🟢 Good support     | 🟡 No built in shaders | 🟢 Awesome documentation, lots of examples                    |
+| SFML   | 🟢 No encapsulation required       | 🟢 Yes                 | 🟢 Simple to use     | 🟢 Good support     | 🟡 No built in shaders | 🟡 Good but not enough examples directly in the documentation |
+| SDL    | 🔴 Encapsulation required          | 🟢 Yes                 | 🟢 Simple to use     | 🟢 Good support     | 🟡 No built in shaders | 🟢 Great documentation, has a good amount of examples         |
 
 ## Conclusion
 
