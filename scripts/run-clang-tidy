@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+source $(realpath $(dirname "$0"))/common-clang.sh
+
 if ! command -v clang-tidy >/dev/null 2>&1; then
     echo "clang-tidy could not be found"
     exit 1
@@ -12,4 +14,4 @@ if ! command -v run-clang-tidy >/dev/null 2>&1; then
     exit 1
 fi
 
-run-clang-tidy -warnings-as-errors "*"
+clang-tidy ${FILES[@]} -p $BASE_DIR/../build --exclude-header-filter=".*build.*" --warnings-as-errors="*"
