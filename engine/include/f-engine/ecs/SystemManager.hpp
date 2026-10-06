@@ -20,14 +20,14 @@ namespace fengine {
                     : _systems(), _deltaTime(customTime), _clock(std::chrono::steady_clock::now()) {};
                 ~SystemManager() {};
 
-                template <is_system T>
-                void addSystem() {
+                template <is_system T, typename... Args>
+                void addSystem(Args&&... args) {
                     for (auto &system : _systems) {
                         if (dynamic_cast<T *>(system.get())) {
                             return;
                         }
                     }
-                    std::unique_ptr<T> system = std::make_unique<T>();
+                    std::unique_ptr<T> system = std::make_unique<T>(std::forward<Args>(args)...);
 
                     _systems.push_back(std::move(system));
                 };
