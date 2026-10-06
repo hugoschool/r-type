@@ -4,7 +4,6 @@
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
-#include <iostream>
 
 namespace fengine {
     namespace ecs {
@@ -22,9 +21,6 @@ namespace fengine {
                         auto &vel = velocities[i];
 
                         if (pos.has_value() && vel.has_value()) {
-                            std::cout << i << " has both components ";
-                            std::cout << pos.value().pos_x << " " << pos.value().pos_y << "     " << vel.value().vel_x
-                                      << " " << vel.value().vel_y << std::endl;
                             pos.value().pos_x += vel.value().vel_x;
                             pos.value().pos_y += vel.value().vel_y;
                         }
