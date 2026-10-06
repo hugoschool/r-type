@@ -3,8 +3,8 @@
 namespace fengine {
     namespace ecs {
         struct PositionComponent {
-                int pos_x;
-                int pos_y;
+                float pos_x;
+                float pos_y;
         };
     }
 }
