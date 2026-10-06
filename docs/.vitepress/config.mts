@@ -18,6 +18,7 @@ export default defineConfig({
                     { text: "Introduction", link: "/introduction" },
                     { text: "Building", link: "/building" },
                     { text: "Contributing", link: "/contributing" },
+                    { text: "Protocol", link: "/protocol" },
                 ]
             },
             {
