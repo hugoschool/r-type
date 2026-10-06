@@ -19,6 +19,17 @@ export default defineConfig({
                     { text: "Building", link: "/building" },
                     { text: "Contributing", link: "/contributing" },
                 ]
+            },
+            {
+                text: "Comparative Study",
+                items: [
+                    { text: "Introduction", link: "/comparative/introduction" },
+                    { text: "Packaging & Build Systems", link: "/comparative/package" },
+                    { text: "ECS vs Mediator", link: "/comparative/ecs-mediator" },
+                    { text: "Network library", link: "/comparative/network" },
+                    { text: "Graphical library", link: "/comparative/graphical" },
+                    { text: "Conclusion", link: "/comparative/conclusion" },
+                ]
             }
         ],
 
