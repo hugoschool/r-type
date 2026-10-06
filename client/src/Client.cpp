@@ -99,3 +99,6 @@ void rtype::client::Client::loop() {
         // get server response compare server response with the predition
     }
 }
+
+rtype::client::Client::~Client() {
+}
