@@ -1,5 +1,4 @@
 #include "Client.hpp"
-#include <boost/asio.hpp>
 #include <iostream>
 
 int main(void) {
@@ -11,6 +10,4 @@ int main(void) {
         std::cerr << e.what() << std::endl;
         return 1;
     }
-
-    return 0;
 }

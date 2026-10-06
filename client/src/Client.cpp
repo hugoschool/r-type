@@ -37,3 +37,6 @@ void rtype::client::Client::connect() {
         std::cout.write(recv_buf.data(), len);
     }
 }
+
+rtype::client::Client::~Client() {
+}
