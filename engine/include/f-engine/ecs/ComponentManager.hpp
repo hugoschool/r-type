@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.hpp"
 #include "SparseArray.hpp"
+#include "f-engine/Exceptions.hpp"
 #include <any>
 #include <typeindex>
 #include <unordered_map>
@@ -29,7 +30,7 @@ namespace fengine {
 
                     if (_componentsArrays.contains(type))
                         return std::any_cast<SparseArray<Component> &>(_componentsArrays.at(type));
-                    throw("Exception");
+                    throw(ECSException("No component with this type"));
                 };
 
                 template <class Component>
@@ -38,7 +39,7 @@ namespace fengine {
 
                     if (_componentsArrays.contains(type))
                         return std::any_cast<SparseArray<Component> const &>(_componentsArrays.at(type));
-                    throw("Exception");
+                    throw(ECSException("No component with this type"));
                 };
 
                 template <typename Component>
@@ -53,7 +54,7 @@ namespace fengine {
                     auto type = std::type_index(typeid(Component));
 
                     if (_componentsArrays.find(type) == _componentsArrays.end()) {
-                        throw("Exception");
+                        throw(ECSException("No component with this type"));
                     }
 
                     SparseArray<Component> &arr = std::any_cast<SparseArray<Component>>(_componentsArrays.at(type));
