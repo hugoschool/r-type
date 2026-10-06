@@ -12,6 +12,9 @@ namespace rtype {
                 udp::resolver _resolver;
                 udp::endpoint _endpoint;
                 udp::socket _socket;
+                int connect(char *av[]);
+                int loop();
+
             public:
                 using udp = boost::asio::ip::udp;
 
@@ -19,8 +22,6 @@ namespace rtype {
                 ~Client();
 
                 ClientHelper helper;
-
-                void connect();
         };
     }
 }
