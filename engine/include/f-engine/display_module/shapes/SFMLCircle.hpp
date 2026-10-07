@@ -27,6 +27,9 @@ namespace fengine {
                         sf::Color col = sf::Color(r, g, b, a);
                         shape.setFillColor(col);
                     };
+                    void setTexture(std::any texture) override {
+                        shape.setTexture(std::any_cast<sf::Texture *>(texture));
+                    };
 
                     sf::CircleShape shape;
             };
