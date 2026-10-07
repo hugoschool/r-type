@@ -11,7 +11,7 @@
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 
-fengine::modules::display::SFMLDisplayModule::SFMLDisplayModule(): _window(), _textureMap(), _spriteMap()
+fengine::modules::display::SFMLDisplayModule::SFMLDisplayModule(): _window(), _textureMap()
 {}
 
 fengine::modules::display::SFMLDisplayModule::~SFMLDisplayModule()
@@ -108,6 +108,9 @@ fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule
 
 void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::PositionComponent &pos, fengine::ecs::DrawableComponent &drawable)
 {
+    if (!drawable.shape)
+        return;
+
     std::optional<sf::Color> color = std::nullopt;
 
     if (drawable.color.has_value()) {
@@ -119,34 +122,20 @@ void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::Posi
     }
 
     if (drawable.texture_filepath.has_value()) {
-        if (_textureMap.contains(drawable.texture_filepath.value()) == false && _spriteMap.contains(drawable.texture_filepath.value()) == false) {
+        if (_textureMap.contains(drawable.texture_filepath.value()) == false) {
             sf::Texture texture;
 
             if (texture.loadFromFile(drawable.texture_filepath.value())) {
-                _textureMap.insert({drawable.texture_filepath.value(), std::make_unique<sf::Texture>(texture)});
-                sf::Sprite sprite(texture);
-                if (color.has_value())
-                    sprite.setColor(color.value());
-                sprite.setPosition(sf::Vector2f({pos.pos_x, pos.pos_y}));
-                _spriteMap.insert({drawable.texture_filepath.value(), std::make_unique<sf::Sprite>(sprite)});
-                _window.draw(sprite);
+                _textureMap.insert({drawable.texture_filepath.value(), std::move(texture)});
             } else {
                 _textureMap.insert({drawable.texture_filepath.value(), std::nullopt});
-                _spriteMap.insert({drawable.texture_filepath.value(), std::nullopt});
             }
-        } else {
-            std::optional<std::unique_ptr<sf::Sprite>> sprite = std::move(_spriteMap.at(drawable.texture_filepath.value()));
-            if (sprite.has_value())
-                _window.draw(*sprite.value().get());
         }
-        return;
+        drawable.shape->setTexture(&_textureMap.at(drawable.texture_filepath.value()).value());
     }
-
-    if (drawable.shape.has_value()) {
-        if (drawable.color.has_value()) {
-            drawable.shape.value()->setColor(drawable.color.value());
-        }
-        drawable.shape.value()->setPosition(pos);
-        _window.drawShape(drawable.shape.value());
+    if (drawable.color.has_value()) {
+        drawable.shape->setColor(drawable.color.value());
     }
+    drawable.shape->setPosition(pos);
+    _window.drawShape(drawable.shape);
 }

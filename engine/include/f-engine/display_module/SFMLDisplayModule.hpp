@@ -30,8 +30,7 @@ namespace fengine {
 
                     SFMLWindow _window;
 
-                    std::map<std::string, std::optional<std::unique_ptr<sf::Texture>>> _textureMap;
-                    std::map<std::string, std::optional<std::unique_ptr<sf::Sprite>>> _spriteMap;
+                    std::map<std::string, std::optional<sf::Texture>> _textureMap;
             };
         }
     }
