@@ -4,6 +4,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <memory>
 #include <optional>
+#include "f-engine/display_module/events/KeyReleasedEvent.hpp"
 #include "f-engine/display_module/events/QuitEvent.hpp"
 #include "f-engine/display_module/events/ClickEvent.hpp"
 #include "f-engine/display_module/events/KeyPressedEvent.hpp"
@@ -36,6 +37,13 @@ std::optional<std::unique_ptr<fengine::modules::display::IEvent>> fengine::modul
                 return std::make_unique<KeyPressedEvent>(static_cast<EventKey>(static_cast<int>(key->code) + 1));
             } else {
                 return std::make_unique<KeyPressedEvent>(interpretKeyCode(key->code));
+            }
+        }
+        if (const sf::Event::KeyReleased *key = event->getIf<sf::Event::KeyReleased>()) {
+            if (key->code >= sf::Keyboard::Key::A && key->code <= sf::Keyboard::Key::Z) {
+                return std::make_unique<KeyReleasedEvent>(static_cast<EventKey>(static_cast<int>(key->code) + 1));
+            } else {
+                return std::make_unique<KeyReleasedEvent>(interpretKeyCode(key->code));
             }
         }
         if (const sf::Event::MouseButtonPressed *mouse = event->getIf<sf::Event::MouseButtonPressed>()) {
