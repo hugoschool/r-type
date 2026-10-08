@@ -1,12 +1,8 @@
 #pragma once
 
-namespace fengine {
-    namespace modules {
-        namespace display {
-            enum class EventMouseButton {
-                Left,
-                Right
-            };
-        }
-    }
+namespace fengine::modules::display {
+    enum class EventMouseButton {
+        Left,
+        Right
+    };
 }

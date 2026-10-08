@@ -1,18 +1,14 @@
 #pragma once
 
-namespace fengine {
-    namespace modules {
-        namespace display {
-            enum class EventType {
-                KeyPressed,
-                KeyReleased,
-                Click,
+namespace fengine::modules::display {
+    enum class EventType {
+        KeyPressed,
+        KeyReleased,
+        Click,
 
-                // a part le quit peut etre inutile mais on sait jamais
-                Reset,
-                Quit,
-                Menu
-            };
-        }
-    }
+        // a part le quit peut etre inutile mais on sait jamais
+        Reset,
+        Quit,
+        Menu
+    };
 }
