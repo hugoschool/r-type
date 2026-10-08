@@ -12,26 +12,22 @@
 #include <SFML/Window/Window.hpp>
 #include <map>
 
-namespace fengine {
-    namespace modules {
-        namespace display {
-            class SFMLDisplayModule: public IDisplayModule {
-                public:
-                    SFMLDisplayModule();
-                    ~SFMLDisplayModule();
+namespace fengine::modules::display {
+    class SFMLDisplayModule: public IDisplayModule {
+        public:
+            SFMLDisplayModule();
+            ~SFMLDisplayModule();
 
-                    void clear() override;
-                    void drawEntity(ecs::PositionComponent &, ecs::DrawableComponent &) override;
+            void clear() override;
+            void drawEntity(ecs::PositionComponent &, ecs::DrawableComponent &) override;
 
-                    std::optional<std::unique_ptr<IEvent>> pollEvent() override;
+            std::optional<std::unique_ptr<IEvent>> pollEvent() override;
 
-                private:
-                    EventKey interpretKeyCode(sf::Keyboard::Key code) const;
+        private:
+            EventKey interpretKeyCode(sf::Keyboard::Key code) const;
 
-                    SFMLWindow _window;
+            SFMLWindow _window;
 
-                    std::map<std::string, std::optional<sf::Texture>> _textureMap;
-            };
-        }
-    }
+            std::map<std::string, std::optional<sf::Texture>> _textureMap;
+    };
 }
