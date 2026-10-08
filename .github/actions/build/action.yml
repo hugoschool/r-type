@@ -22,11 +22,21 @@ runs:
         path: ./.cpm-cache
         key: ${{ runner.os }}-cpm-cache-${{ inputs.build-type }}
 
+    - name: Setup sccache
+      uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
+      with:
+        key: ${{ runner.os }}-sccache-${{ inputs.build-type }}
+        variant: sccache
+
     - name: Generate build folder
       id: generate-build-folder
       shell: bash
       run: |
-        cmake -B build . -DCMAKE_BUILD_TYPE=${INPUTS_BUILD_TYPE} -DCPM_SOURCE_CACHE=./.cpm-cache
+        cmake -B build . \
+        -DCMAKE_BUILD_TYPE=${INPUTS_BUILD_TYPE} \
+        -DCPM_SOURCE_CACHE=./.cpm-cache \
+        -DCMAKE_C_COMPILER_LAUNCHER=sccache \
+        -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
       env:
         INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
 
