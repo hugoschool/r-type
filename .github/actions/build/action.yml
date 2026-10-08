@@ -22,22 +22,43 @@ runs:
         path: ./.cpm-cache
         key: ${{ runner.os }}-cpm-cache-${{ inputs.build-type }}
 
+    - name: Setup sccache
+      uses: hendrikmuhs/ccache-action@f09c25b45002a07be2955cbe52e8cee55643f89d # v1.2.24
+      with:
+        key: ${{ runner.os }}-sccache-${{ inputs.build-type }}
+        variant: sccache
+
     - name: Generate build folder
       id: generate-build-folder
       shell: bash
       run: |
-        cmake -B build . -DCMAKE_BUILD_TYPE=${INPUTS_BUILD_TYPE} -DCPM_SOURCE_CACHE=./.cpm-cache
+        cmake -B build . \
+        -DCMAKE_BUILD_TYPE=${INPUTS_BUILD_TYPE} \
+        -DCPM_SOURCE_CACHE=./.cpm-cache \
+        -DCMAKE_C_COMPILER_LAUNCHER=sccache \
+        -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
       env:
         INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
+
+    - name: Get CPU cores
+      id: cpu-cores
+      shell: bash
+      run: |
+        if [ "$RUNNER_OS" = "Windows" ]; then
+          echo "cpu_cores=$NUMBER_OF_PROCESSORS" >> $GITHUB_OUTPUT
+        else
+          echo "cpu_cores=$(nproc --all)" >> $GITHUB_OUTPUT
+        fi
 
     - name: Build project
       id: build-project
       shell: bash
       # Have to use --config on build step due to MSVC
       run: |
-        cmake --build build --config ${INPUTS_BUILD_TYPE}
+        cmake --build build --config ${INPUTS_BUILD_TYPE} -j${CPU_CORES}
       env:
         INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
+        CPU_CORES: ${{ steps.cpu-cores.outputs.cpu_cores }}
 
     - name: Save CPM cache
       id: save-cpm-cache
