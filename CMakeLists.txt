@@ -14,6 +14,12 @@ endif()
 
 include(cmake/CPM.cmake)
 
+set(BOOST_VERSION 1.92.0)
+CPMAddPackage(
+    NAME Boost
+    URL https://github.com/boostorg/boost/releases/download/boost-${BOOST_VERSION}/boost-${BOOST_VERSION}-cmake.tar.xz
+)
+
 add_subdirectory(engine)
 add_subdirectory(client)
 add_subdirectory(server)

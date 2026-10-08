@@ -15,10 +15,18 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Get CPM cache
+      id: get-cpm-cache
+      uses: actions/cache/restore@v6 # zizmor: ignore[unpinned-uses]
+      with:
+        path: ./.cpm-cache
+        key: ${{ runner.os }}-cpm-cache-${{ inputs.build-type }}
+
     - name: Generate build folder
       id: generate-build-folder
       shell: bash
-      run: "cmake -B build . -DCMAKE_BUILD_TYPE=${INPUTS_BUILD_TYPE}"
+      run: |
+        cmake -B build . -DCMAKE_BUILD_TYPE=${INPUTS_BUILD_TYPE} -DCPM_SOURCE_CACHE=./.cpm-cache
       env:
         INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
 
@@ -26,9 +34,17 @@ runs:
       id: build-project
       shell: bash
       # Have to use --config on build step due to MSVC
-      run: cmake --build build --config ${INPUTS_BUILD_TYPE}
+      run: |
+        cmake --build build --config ${INPUTS_BUILD_TYPE}
       env:
         INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
+
+    - name: Save CPM cache
+      id: save-cpm-cache
+      uses: actions/cache/save@v6 # zizmor: ignore[unpinned-uses]
+      with:
+        path: ./.cpm-cache
+        key: ${{ runner.os }}-cpm-cache-${{ inputs.build-type }}
 
       # Lowercase the runner OS var
       # This is mostly for the styling of the artifacts
