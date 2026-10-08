@@ -21,7 +21,7 @@ namespace fengine::modules::display {
                     _window = sf::RenderWindow(_videoMode, "SFML window");
                     _window.setMaximumSize(_window.getSize());
                     _window.setMinimumSize(_window.getSize());
-                } catch (std::exception) {
+                } catch (std::exception &) {
                     throw SfmlException("render window creation");
                 }
                 _window.setFramerateLimit(60);
