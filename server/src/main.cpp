@@ -2,7 +2,7 @@
 #include <f-engine/HelloWorld.hpp>
 
 int main(void) {
-    rtype::engine::HelloWorld();
+    fengine::HelloWorld();
     rtype::server::HelloWorld();
     return 0;
 }

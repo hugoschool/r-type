@@ -2,13 +2,11 @@
 
 #include <iostream>
 
-namespace rtype {
-    namespace engine {
-        class HelloWorld {
-            public:
-                HelloWorld() {
-                    std::cout << "Hello world from Engine!" << std::endl;
-                }
-        };
-    }
+namespace fengine {
+    class HelloWorld {
+        public:
+            HelloWorld() {
+                std::cout << "Hello world from Engine!" << std::endl;
+            }
+    };
 }

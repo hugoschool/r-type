@@ -31,6 +31,12 @@ export default defineConfig({
                     { text: "Graphical library", link: "/comparative/graphical" },
                     { text: "Conclusion", link: "/comparative/conclusion" },
                 ]
+            },
+            {
+                text: "Engine",
+                items: [
+                    { text: "ECS", link: "/engine/ecs" },
+                ]
             }
         ],
 
