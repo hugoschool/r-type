@@ -7,6 +7,6 @@ namespace fengine::modules::display {
     class KeyPressedEvent : public AEvent {
         public:
             KeyPressedEvent(EventKey key);
-            ~KeyPressedEvent();
+            ~KeyPressedEvent() override;
     };
 }

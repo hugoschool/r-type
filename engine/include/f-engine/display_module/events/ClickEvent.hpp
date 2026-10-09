@@ -7,6 +7,6 @@ namespace fengine::modules::display {
     class ClickEvent : public AEvent {
         public:
             ClickEvent(EventMouseButton mouseButton);
-            ~ClickEvent();
+            ~ClickEvent() override;
     };
 }

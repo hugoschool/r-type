@@ -10,7 +10,7 @@ namespace fengine {
 
         public:
             Exception(std::string msg) noexcept : _msg(msg) {};
-            ~Exception() noexcept {};
+            ~Exception() noexcept override {};
 
             const char *what() const noexcept override {
                 return _msg.c_str();
@@ -20,18 +20,18 @@ namespace fengine {
     class ECSException : public Exception {
         public:
             ECSException(std::string msg) noexcept : Exception(msg) {};
-            ~ECSException() noexcept {};
+            ~ECSException() noexcept override {};
     };
 
     class DisplayException : public Exception {
         public:
             DisplayException(std::string msg) noexcept : Exception(msg) {};
-            ~DisplayException() noexcept {};
+            ~DisplayException() noexcept override {};
     };
 
     class SfmlException : public DisplayException {
         public:
             SfmlException(std::string msg) noexcept : DisplayException(msg) {};
-            ~SfmlException() noexcept {};
+            ~SfmlException() noexcept override {};
     };
 }

@@ -6,6 +6,6 @@ namespace fengine::modules::display {
     class QuitEvent : public AEvent {
         public:
             QuitEvent();
-            ~QuitEvent();
+            ~QuitEvent() override;
     };
 }

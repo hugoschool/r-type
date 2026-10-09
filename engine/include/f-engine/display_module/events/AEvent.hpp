@@ -14,7 +14,7 @@ namespace fengine::modules::display {
 
         public:
             AEvent(EventType type) : _type(type) {};
-            ~AEvent() {};
+            ~AEvent() override {};
 
             EventMouseButton getMouseButton() override {
                 return _mouseButton;

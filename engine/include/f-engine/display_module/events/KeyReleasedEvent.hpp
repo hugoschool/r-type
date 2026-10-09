@@ -7,6 +7,6 @@ namespace fengine::modules::display {
     class KeyReleasedEvent : public AEvent {
         public:
             KeyReleasedEvent(EventKey key);
-            ~KeyReleasedEvent();
+            ~KeyReleasedEvent() override;
     };
 }

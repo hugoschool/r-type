@@ -16,7 +16,7 @@ namespace fengine::modules::display {
     class SFMLDisplayModule : public IDisplayModule {
         public:
             SFMLDisplayModule();
-            ~SFMLDisplayModule();
+            ~SFMLDisplayModule() override;
 
             void clear() override;
             void drawEntity(ecs::PositionComponent &, ecs::DrawableComponent &) override;

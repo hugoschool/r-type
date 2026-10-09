@@ -27,7 +27,7 @@ namespace fengine::modules::display {
                 // }
             }
 
-            ~SFMLWindow() {
+            ~SFMLWindow() override {
                 _window.close();
             };
 

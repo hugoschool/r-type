@@ -12,7 +12,7 @@ namespace fengine::modules::display {
 
                 shape.setRadius(radius);
             };
-            ~SFMLCircle() {};
+            ~SFMLCircle() override {};
 
             void setPosition(ecs::PositionComponent &pos) override {
                 shape.setPosition(sf::Vector2f(pos.pos_x, pos.pos_y));

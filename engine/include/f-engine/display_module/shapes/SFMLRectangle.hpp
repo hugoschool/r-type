@@ -13,7 +13,7 @@ namespace fengine::modules::display {
                 shape.setSize(sf::Vector2f(width, height));
             };
 
-            ~SFMLRectangle() {};
+            ~SFMLRectangle() override {};
 
             void setPosition(ecs::PositionComponent &pos) override {
                 shape.setPosition(sf::Vector2f(pos.pos_x, pos.pos_y));
