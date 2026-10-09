@@ -3,8 +3,7 @@
 #include <cstddef>
 
 namespace fengine::ecs {
-
-    enum team {
+    enum class team {
         ALLIES,
         MONSTERS,
     };
