@@ -1,12 +1,12 @@
 #pragma once
 
-#include "protocols/IProtocol.hpp"
+#include "protocols/AProtocol.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
 #include <cstdint>
 
 namespace rtype::server {
-    class UDPProtocol : public IProtocol {
+    class UDPProtocol : public AProtocol {
         public:
             using udp = boost::asio::ip::udp;
 
@@ -19,9 +19,6 @@ namespace rtype::server {
             void run() final;
 
         private:
-            boost::asio::io_context &_io_context;
-
-            std::uint16_t _port;
             udp::socket _socket;
             udp::endpoint _endpoint;
 

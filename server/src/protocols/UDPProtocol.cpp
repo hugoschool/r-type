@@ -1,11 +1,11 @@
 #include "protocols/UDPProtocol.hpp"
+#include "protocols/AProtocol.hpp"
 #include <boost/asio/placeholders.hpp>
 #include <string>
 #include <unistd.h>
 
 rtype::server::UDPProtocol::UDPProtocol(boost::asio::io_context &io_context, std::uint16_t port)
-    : _io_context(io_context), _port(port), _socket(_io_context, udp::endpoint(udp::v4(), _port)), _endpoint(),
-      _buffer() {
+    : AProtocol(io_context, port), _socket(_io_context, udp::endpoint(udp::v4(), _port)), _endpoint(), _buffer() {
     startReceive();
 }
 
