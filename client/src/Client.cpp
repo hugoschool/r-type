@@ -1,7 +1,6 @@
 #include "Client.hpp"
+#include "Exception.hpp"
 #include "f-engine/display_module/IDisplayModule.hpp"
-#include "f-engine/display_module/SFMLDisplayModule.hpp"
-#include <memory>
 #include "f-engine/display_module/SFMLDisplayModule.hpp"
 #include "f-engine/display_module/events/EventKey.hpp"
 #include "f-engine/display_module/events/EventType.hpp"
@@ -23,9 +22,9 @@
 #include <optional>
 #include <queue>
 #include <tuple>
-#include "Exception.hpp"
 
-rtype::client::Client::Client(): _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery() {
+rtype::client::Client::Client()
+    : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery() {
 }
 
 rtype::client::Client::~Client() {

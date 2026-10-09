@@ -2,7 +2,6 @@
 #include "Exception.hpp"
 #include <iostream>
 
-
 int main(int ac, char *av[]) {
     try {
         rtype::client::Client client;
@@ -14,7 +13,7 @@ int main(int ac, char *av[]) {
         client.helper.verifyArgumentCount(ac);
 
         client.run(av);
-    } catch (rtype::client::ClientException & exception) {
+    } catch (rtype::client::ClientException &exception) {
         std::cerr << exception.what() << std::endl;
         return 1;
     }

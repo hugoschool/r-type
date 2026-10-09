@@ -2,9 +2,8 @@
 
 #include "ClientHelper.hpp"
 #include "f-engine/display_module/IDisplayModule.hpp"
-#include <memory>
 #include "f-engine/ecs/Registry.hpp"
-
+#include <memory>
 
 namespace rtype::client {
     class Client {
@@ -14,6 +13,7 @@ namespace rtype::client {
 
             void connect(char *av[]);
             void loop();
+
         public:
             Client();
             ~Client();
