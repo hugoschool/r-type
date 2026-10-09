@@ -1,13 +1,15 @@
 #pragma once
 
+#include "Exception.hpp"
 #include <iostream>
+#include <string>
 
 namespace rtype {
     namespace client {
         class ClientHelper {
             private:
-                static void invalidArguments(int argumentNumber) {
-                    std::cout << "Invalid arguments: given " << argumentNumber - 1 << ", expected 2." << std::endl;
+                static std::string invalidArguments(int argumentNumber) {
+                    return "Invalid arguments: given " + std::to_string(argumentNumber - 1) + ", expected 2.";
                 }
 
                 static void help() {
@@ -16,27 +18,24 @@ namespace rtype {
                 }
 
             public:
-                static int verifyArgumentCount(int ac) {
+                static void verifyArgumentCount(int ac) {
                     if (ac != 3) {
-                        invalidArguments(ac);
-                        return 84;
-                    } else {
-                        return 0;
+                        throw ClientException(invalidArguments(ac));
                     }
                 }
 
-                static int checkHelp(int ac, char *av[]) {
+                static bool checkHelp(int ac, char *av[]) {
                     if (ac != 2) {
-                        return 0;
+                        return false;
                     }
 
                     std::string flag(av[1]);
 
                     if (flag.compare("-h") == 0 || flag.compare("--help") == 0) {
                         help();
-                        return 1;
+                        return true;
                     } else {
-                        return 0;
+                        return false;
                     }
                 }
         };

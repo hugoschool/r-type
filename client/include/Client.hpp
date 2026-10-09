@@ -6,23 +6,20 @@
 #include "f-engine/ecs/Registry.hpp"
 
 
-namespace rtype {
-    namespace client {
-        class Client {
-            private:
-                std::unique_ptr<fengine::modules::display::IDisplayModule> _displayModule;
-                fengine::ecs::Registry _registery;
+namespace rtype::client {
+    class Client {
+        private:
+            std::unique_ptr<fengine::modules::display::IDisplayModule> _displayModule;
+            fengine::ecs::Registry _registery;
 
-                int connect(char *av[]);
-                int loop();
+            void connect(char *av[]);
+            void loop();
+        public:
+            Client();
+            ~Client();
 
-            public:
-                Client();
-                ~Client();
+            ClientHelper helper;
 
-                ClientHelper helper;
-
-                int run(char *av[]);
-        };
-    }
+            void run(char *av[]);
+    };
 }

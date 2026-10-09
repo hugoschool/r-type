@@ -23,6 +23,7 @@
 #include <optional>
 #include <queue>
 #include <tuple>
+#include "Exception.hpp"
 
 rtype::client::Client::Client(): _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery() {
 }
@@ -30,21 +31,22 @@ rtype::client::Client::Client(): _displayModule(std::make_unique<fengine::module
 rtype::client::Client::~Client() {
 }
 
-int rtype::client::Client::run(char *av[]) {
-    if (this->connect(av) == 84) {
-        return 84;
-    }
-
-    this->loop();
-    return 0;
+void rtype::client::Client::run(char *av[]) {
+    connect(av);
+    loop();
 }
 
-int rtype::client::Client::connect(char *av[]) {
     // TODO
-    return 0;
+void rtype::client::Client::connect(char *av[]) {
+    // Connect to the server and send connection information to it.
+
+    // the cient spams send the henshake to the server
+    // when the client recieve the server response it stops
+    // the server now sends all his ecs informations
+    // the client now feed all these information into his ecs to match the server's one
 }
 
-int rtype::client::Client::loop() {
+void rtype::client::Client::loop() {
     _registery.componentManager.registerComponent<fengine::ecs::PositionComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::DrawableComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
@@ -96,5 +98,4 @@ int rtype::client::Client::loop() {
             }
         }
     }
-    return 0;
 }

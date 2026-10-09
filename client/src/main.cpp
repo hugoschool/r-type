@@ -1,17 +1,22 @@
 #include "Client.hpp"
+#include "Exception.hpp"
+#include <iostream>
 
 
 int main(int ac, char *av[]) {
-    rtype::client::Client client;
+    try {
+        rtype::client::Client client;
 
-    if (client.helper.checkHelp(ac, av) == 1) {
-        return 0;
-    }
-    if (client.helper.verifyArgumentCount(ac) == 84) {
-        return 84;
-    }
-    if (client.run(av) == 84) {
-        return 84;
+        if (client.helper.checkHelp(ac, av) == true) {
+            return 0;
+        }
+
+        client.helper.verifyArgumentCount(ac);
+
+        client.run(av);
+    } catch (rtype::client::ClientException & exception) {
+        std::cerr << exception.what() << std::endl;
+        return 1;
     }
     return 0;
 }
