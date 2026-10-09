@@ -3,6 +3,9 @@
 #include "ClientHelper.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
+#include "f-engine/display_module/IDisplayModule.hpp"
+#include <memory>
+#include "f-engine/ecs/Registry.hpp"
 
 namespace rtype {
     namespace client {
@@ -12,6 +15,9 @@ namespace rtype {
                 udp::resolver _resolver;
                 udp::endpoint _endpoint;
                 udp::socket _socket;
+                std::unique_ptr<fengine::modules::display::IDisplayModule> _displayModule;
+                fengine::ecs::Registry _registery;
+
                 int connect(char *av[]);
                 int loop();
 
