@@ -24,12 +24,10 @@
 #include <queue>
 #include <tuple>
 
-
-rtype::client::Client::Client(): _displayModule(new fengine::modules::display::SFMLDisplayModule), _registery() {
+rtype::client::Client::Client(): _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery() {
 }
 
 rtype::client::Client::~Client() {
-    // maybe delete what was created
 }
 
 int rtype::client::Client::run(char *av[]) {
