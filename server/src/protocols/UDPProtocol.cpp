@@ -4,8 +4,10 @@
 #include <string>
 #include <unistd.h>
 
-rtype::server::UDPProtocol::UDPProtocol(boost::asio::io_context &io_context, std::uint16_t port)
-    : AProtocol(io_context, port), _socket(_io_context, udp::endpoint(udp::v4(), _port)), _endpoint(), _buffer() {
+rtype::server::UDPProtocol::UDPProtocol(boost::asio::io_context &io_context, std::uint16_t port,
+    TickHandler::MessageQueue &messageQueue)
+    : AProtocol(io_context, port, messageQueue), _socket(_io_context, udp::endpoint(udp::v4(), _port)), _endpoint(),
+      _buffer() {
     startReceive();
 }
 
@@ -21,6 +23,8 @@ void rtype::server::UDPProtocol::handleReceive(const boost::system::error_code &
     if (!error) {
         std::string str(std::begin(_buffer), std::end(_buffer));
         std::shared_ptr<std::string> message = std::make_shared<std::string>(str);
+
+        _messageQueue.push(str);
 
         _socket.async_send_to(boost::asio::buffer(*message), _endpoint,
             std::bind(&UDPProtocol::handleSend, this, message, boost::asio::placeholders::error,
