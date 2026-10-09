@@ -27,6 +27,7 @@
 #include <optional>
 #include <queue>
 #include <tuple>
+#include "Exception.hpp"
 
 rtype::client::Client::Client() : _io_context(), _resolver(_io_context), _endpoint(), _socket(_io_context), _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery() {
     const std::string host = "127.0.0.1";
@@ -40,13 +41,9 @@ rtype::client::Client::Client() : _io_context(), _resolver(_io_context), _endpoi
 rtype::client::Client::~Client() {
 }
 
-int rtype::client::Client::run(char *av[]) {
-    if (this->connect(av) == 84) {
-        return 84;
-    }
-
-    this->loop();
-    return 0;
+void rtype::client::Client::run(char *av[]) {
+    connect(av);
+    loop();
 }
 
 int rtype::client::Client::connect(char *av[]) {
@@ -74,8 +71,7 @@ int rtype::client::Client::connect(char *av[]) {
     }
 }
 
-
-int rtype::client::Client::loop() {
+void rtype::client::Client::loop() {
     _registery.componentManager.registerComponent<fengine::ecs::PositionComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::DrawableComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
@@ -127,5 +123,4 @@ int rtype::client::Client::loop() {
             }
         }
     }
-    return 0;
 }
