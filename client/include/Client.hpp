@@ -23,8 +23,9 @@ namespace rtype::client {
 
             void connect(char *av[]);
             void loop();
-
         public:
+            using udp = boost::asio::ip::udp;
+
             Client();
             ~Client();
 

@@ -1,6 +1,7 @@
 #include "Client.hpp"
 #include "Exception.hpp"
 #include <f-engine/HelloWorld.hpp>
+#include "Exception.hpp"
 #include <iostream>
 
 int main(int ac, char *av[]) {

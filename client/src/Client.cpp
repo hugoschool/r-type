@@ -49,6 +49,7 @@
 #include <optional>
 #include <queue>
 #include <tuple>
+#include "Exception.hpp"
 
 rtype::client::Client::Client()
     : _io_context(), _resolver(_io_context), _endpoint(), _socket(_io_context),
@@ -80,13 +81,9 @@ rtype::client::Client::~Client() {
     // maybe delete what was created
 }
 
-int rtype::client::Client::run(char *av[]) {
-    if (this->connect(av) == 84) {
-        return 84;
-    }
-
-    this->loop();
-    return 0;
+void rtype::client::Client::run(char *av[]) {
+    connect(av);
+    loop();
 }
 
 int rtype::client::Client::connect(char *av[]) {
@@ -123,6 +120,44 @@ int rtype::client::Client::connect(char *av[]) {
 }
 
 void rtype::client::Client::loop() {
+    std::cout.write(recv_buf.data(), len);
+    return 0;
+
+void rtype::client::Client::loop() {
+    _registery.componentManager.registerComponent<fengine::ecs::PositionComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::DrawableComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::ControllableComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::BoundaryComponent>();
+
+    float posx = 0;
+    float posy = 0;
+    float vel_x = 8;
+    float vel_y = 7;
+    for (int i = 0; i < 1; i++) {
+        fengine::ecs::Entity entity = _registery.entityManager.spawnEntity();
+        fengine::ecs::PositionComponent pos = {posx, posy};
+        fengine::ecs::VelocityComponent vel = {vel_x, vel_y};
+        fengine::ecs::BoundaryComponent bound = {40, 40, false, false};
+        fengine::ecs::DrawableComponent draw = {std::nullopt, std::make_shared<fengine::modules::display::SFMLCircle>(bound.size_x), std::tuple<int, int, int>(rand()%255, rand()%255, rand()%255)};
+
+        _registery.componentManager.addComponent(entity, std::move(pos));
+        _registery.componentManager.addComponent(entity, std::move(vel));
+        _registery.componentManager.addComponent(entity, std::move(draw));
+        _registery.componentManager.addComponent(entity, std::move(bound));
+        posx += 0.01;
+        posy += 0.01;
+        if (vel_x > 0)
+            vel_x += 0.01;
+        vel_x *= -1;
+        if (vel_y > 0)
+            vel_y += 0.01;
+        vel_y *= -1;
+    }
+
+    _registery.systemManager.addSystem<fengine::ecs::MovementSystem>();
+    _registery.systemManager.addSystem<fengine::ecs::BoundarySystem>();
+    _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule);
 
     while (true) {
         _displayModule->clear();
