@@ -1,5 +1,6 @@
 #pragma once
 
+#include "TickHandler.hpp"
 #include "protocols/UDPProtocol.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/thread_pool.hpp>
@@ -12,14 +13,18 @@ namespace rtype::server {
             ~Server();
 
             void run();
+            void tickThreadRun();
 
         private:
             std::uint32_t _port;
 
             boost::asio::io_context _io_context;
 
-            unsigned int _threadAmount;
+            unsigned int _totalThreadAmount;
+            unsigned int _protocolThreadAmount;
             boost::asio::thread_pool _threadPool;
+
+            TickHandler _tickHandler;
 
             UDPProtocol _udp;
     };
