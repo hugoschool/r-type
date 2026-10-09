@@ -1,15 +1,15 @@
 #pragma once
 
 #include "ISystem.hpp"
+#include "f-engine/display_module/IDisplayModule.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
-#include "f-engine/display_module/IDisplayModule.hpp"
 
 namespace fengine::ecs {
     class DisplaySystem : public ISystem {
         public:
-            DisplaySystem(modules::display::IDisplayModule &displayModule): _displayModule(displayModule) {};
+            DisplaySystem(modules::display::IDisplayModule &displayModule) : _displayModule(displayModule) {};
             ~DisplaySystem() override {};
 
             void update(Registry &manager) override {

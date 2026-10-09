@@ -6,14 +6,14 @@
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
 #include <map>
 
 namespace fengine::modules::display {
-    class SFMLDisplayModule: public IDisplayModule {
+    class SFMLDisplayModule : public IDisplayModule {
         public:
             SFMLDisplayModule();
             ~SFMLDisplayModule();

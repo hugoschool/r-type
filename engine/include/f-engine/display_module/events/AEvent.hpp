@@ -1,9 +1,9 @@
 #pragma once
 
-#include "IEvent.hpp"
-#include "EventType.hpp"
 #include "EventKey.hpp"
 #include "EventMouseButton.hpp"
+#include "EventType.hpp"
+#include "IEvent.hpp"
 
 namespace fengine::modules::display {
     class AEvent : public IEvent {
@@ -11,6 +11,7 @@ namespace fengine::modules::display {
             EventKey _key;
             EventType _type;
             EventMouseButton _mouseButton;
+
         public:
             AEvent(EventType type) : _type(type) {};
             ~AEvent() {};

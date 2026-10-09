@@ -20,7 +20,7 @@ namespace fengine::ecs {
             ~SystemManager() {};
 
             template <is_system T, typename... Args>
-            void addSystem(Args&&... args) {
+            void addSystem(Args &&...args) {
                 for (auto &system : _systems) {
                     if (dynamic_cast<T *>(system.get())) {
                         return;

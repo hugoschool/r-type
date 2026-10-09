@@ -10,7 +10,9 @@
 namespace fengine::ecs {
     class ControlSystem : public ISystem {
         public:
-            ControlSystem(std::queue<modules::display::EventKey> &pqueue, std::queue<modules::display::EventKey> &rqueue): _pressedQueue(pqueue), _releasedQueue(rqueue) {};
+            ControlSystem(std::queue<modules::display::EventKey> &pqueue,
+                std::queue<modules::display::EventKey> &rqueue)
+                : _pressedQueue(pqueue), _releasedQueue(rqueue) {};
             ~ControlSystem() override {};
 
             void update(Registry &manager) override {

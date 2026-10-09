@@ -1,30 +1,29 @@
 #include "f-engine/display_module/SFMLDisplayModule.hpp"
+#include "f-engine/display_module/events/ClickEvent.hpp"
 #include "f-engine/display_module/events/IEvent.hpp"
+#include "f-engine/display_module/events/KeyPressedEvent.hpp"
+#include "f-engine/display_module/events/KeyReleasedEvent.hpp"
+#include "f-engine/display_module/events/QuitEvent.hpp"
+#include "f-engine/ecs/components/DrawableComponent.hpp"
+#include "f-engine/ecs/components/PositionComponent.hpp"
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <memory>
 #include <optional>
-#include "f-engine/display_module/events/KeyReleasedEvent.hpp"
-#include "f-engine/display_module/events/QuitEvent.hpp"
-#include "f-engine/display_module/events/ClickEvent.hpp"
-#include "f-engine/display_module/events/KeyPressedEvent.hpp"
-#include "f-engine/ecs/components/DrawableComponent.hpp"
-#include "f-engine/ecs/components/PositionComponent.hpp"
 
-fengine::modules::display::SFMLDisplayModule::SFMLDisplayModule(): _window(), _textureMap()
-{}
+fengine::modules::display::SFMLDisplayModule::SFMLDisplayModule() : _window(), _textureMap() {
+}
 
-fengine::modules::display::SFMLDisplayModule::~SFMLDisplayModule()
-{}
+fengine::modules::display::SFMLDisplayModule::~SFMLDisplayModule() {
+}
 
-void fengine::modules::display::SFMLDisplayModule::clear()
-{
+void fengine::modules::display::SFMLDisplayModule::clear() {
     _window.display();
     _window.clear();
 }
 
-std::optional<std::unique_ptr<fengine::modules::display::IEvent>> fengine::modules::display::SFMLDisplayModule::pollEvent()
-{
+std::optional<std::unique_ptr<fengine::modules::display::IEvent>>
+fengine::modules::display::SFMLDisplayModule::pollEvent() {
     while (std::optional event = _window.pollEvent()) {
         if (event.has_value() == false) {
             continue;
@@ -64,8 +63,8 @@ std::optional<std::unique_ptr<fengine::modules::display::IEvent>> fengine::modul
     return std::nullopt;
 }
 
-fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule::interpretKeyCode(sf::Keyboard::Key code) const
-{
+fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule::interpretKeyCode(
+    sf::Keyboard::Key code) const {
     switch (code) {
         case sf::Keyboard::Key::Num0:
             return EventKey::_0;
@@ -106,8 +105,8 @@ fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule
     }
 }
 
-void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::PositionComponent &pos, fengine::ecs::DrawableComponent &drawable)
-{
+void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::PositionComponent &pos,
+    fengine::ecs::DrawableComponent &drawable) {
     if (!drawable.shape)
         return;
 

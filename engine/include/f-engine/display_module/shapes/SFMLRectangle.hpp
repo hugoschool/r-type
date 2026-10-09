@@ -1,11 +1,11 @@
 #pragma once
 
 #include "f-engine/display_module/shapes/IShape.hpp"
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/System/Vector2.hpp>
 
 namespace fengine::modules::display {
-    class SFMLRectangle: public IShape {
+    class SFMLRectangle : public IShape {
         public:
             SFMLRectangle(float width, float height) {
                 shape = sf::RectangleShape();

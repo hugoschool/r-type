@@ -1,11 +1,11 @@
 #pragma once
 
 #include "f-engine/display_module/shapes/IShape.hpp"
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/System/Vector2.hpp>
 
 namespace fengine::modules::display {
-    class SFMLCircle: public IShape {
+    class SFMLCircle : public IShape {
         public:
             SFMLCircle(float radius) {
                 shape = sf::CircleShape();

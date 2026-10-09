@@ -10,12 +10,12 @@ namespace fengine::ecs {
     };
 
     union relation {
-        std::size_t related_id;
-        enum team team;
+            std::size_t related_id;
+            enum team team;
     };
 
     struct AttackComponent {
-        union relation relation;
-        float damage;
+            union relation relation;
+            float damage;
     };
 }

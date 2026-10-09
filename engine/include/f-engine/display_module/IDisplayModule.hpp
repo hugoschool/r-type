@@ -1,10 +1,10 @@
 #pragma once
 
-#include <memory>
-#include <optional>
 #include "events/IEvent.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
+#include <memory>
+#include <optional>
 
 namespace fengine::modules::display {
     class IDisplayModule {
