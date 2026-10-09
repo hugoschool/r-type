@@ -3,9 +3,8 @@
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include <iostream>
+#include "Exception.hpp"
 #include "f-engine/display_module/IDisplayModule.hpp"
-#include "f-engine/display_module/SFMLDisplayModule.hpp"
-#include <memory>
 #include "f-engine/display_module/SFMLDisplayModule.hpp"
 #include "f-engine/display_module/events/EventKey.hpp"
 #include "f-engine/display_module/events/EventType.hpp"
@@ -27,7 +26,6 @@
 #include <optional>
 #include <queue>
 #include <tuple>
-#include "Exception.hpp"
 
 rtype::client::Client::Client() : _io_context(), _resolver(_io_context), _endpoint(), _socket(_io_context), _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery() {
     const std::string host = "127.0.0.1";

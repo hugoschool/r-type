@@ -4,10 +4,9 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
 #include "f-engine/display_module/IDisplayModule.hpp"
-#include <memory>
 #include "f-engine/ecs/Registry.hpp"
+#include <memory>
 
-<<<<<<< HEAD
 namespace rtype::client {
     class Client {
         private:
@@ -20,6 +19,7 @@ namespace rtype::client {
 
             void connect(char *av[]);
             void loop();
+
         public:
             using udp = boost::asio::ip::udp;
 
