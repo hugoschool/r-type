@@ -1,0 +1,27 @@
+{
+    "level_id": 0, // the level id, order it will be loaded at
+    "level_length": 10000, // in px // TODO write here the size of the window for easier calculation
+    // "environnement": "space", // the background of the map
+    "friendly_fire": true, // if there is friendly fire or not
+    "enemies": [
+        {
+            "type": "shooter", // the enemy type -> "shooter", "backshooter", "dunker", "jumper", "special"
+            "tick": 1000, // which tick the enemy spawns
+            "stats": { // override of base stats
+                "damage": 10.0, // the damage it does
+                "health": 100.0, // the enemy health
+                "armor": 20.0 // the enemy armor percentage
+            },
+            "position": { // a float, if no position it it randomized
+                "x": null, // should be set for a dunker or a jumper
+                "y": 450 // should be set for a shooter or a backstaber
+            }
+            // velocity depends on the enemy type
+            // boundaries depends on the enemy type
+            // texture if we want to add a special component with special texture
+            // behavior complex: to add special behavior, like building a wall
+            // lifetime complex: the lifetime of the enemy, maybe to use special behavior
+            // drop complex: what will the enemy drop when killed
+        }
+    ]
+}
