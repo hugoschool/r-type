@@ -1,10 +1,10 @@
 #pragma once
 
-namespace fengine {
-    namespace ecs {
-        struct PositionComponent {
-                int pos_x;
-                int pos_y;
-        };
-    }
+namespace fengine::ecs {
+    struct PositionComponent {
+            float pos_x;
+            float pos_y;
+
+            bool can_be_out_window;
+    };
 }

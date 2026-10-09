@@ -1,0 +1,34 @@
+#pragma once
+
+#include "f-engine/display_module/shapes/IShape.hpp"
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/System/Vector2.hpp>
+
+namespace fengine::modules::display {
+    class SFMLCircle : public IShape {
+        public:
+            SFMLCircle(float radius) {
+                shape = sf::CircleShape();
+
+                shape.setRadius(radius);
+            };
+            ~SFMLCircle() override {};
+
+            void setPosition(ecs::PositionComponent &pos) override {
+                shape.setPosition(sf::Vector2f(pos.pos_x, pos.pos_y));
+            };
+            void setColor(std::tuple<int, int, int> &color) override {
+                int a = 255;
+                int r = std::get<0>(color);
+                int g = std::get<1>(color);
+                int b = std::get<2>(color);
+                sf::Color col = sf::Color(r, g, b, a);
+                shape.setFillColor(col);
+            };
+            void setTexture(std::any texture) override {
+                shape.setTexture(std::any_cast<sf::Texture *>(texture));
+            };
+
+            sf::CircleShape shape;
+    };
+}

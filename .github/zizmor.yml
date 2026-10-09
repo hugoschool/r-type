@@ -7,4 +7,5 @@ rules:
   self-repository:
     ignore:
       - build.yml
+      - cpp-tools.yml
       - release.yml
