@@ -25,6 +25,30 @@
 #include <optional>
 #include <queue>
 #include <tuple>
+#include "f-engine/display_module/IDisplayModule.hpp"
+#include "f-engine/display_module/SFMLDisplayModule.hpp"
+#include <memory>
+#include "f-engine/display_module/SFMLDisplayModule.hpp"
+#include "f-engine/display_module/events/EventKey.hpp"
+#include "f-engine/display_module/events/EventType.hpp"
+#include "f-engine/display_module/events/IEvent.hpp"
+#include "f-engine/display_module/shapes/SFMLRectangle.hpp"
+#include "f-engine/ecs/Entity.hpp"
+#include "f-engine/ecs/Registry.hpp"
+#include "f-engine/ecs/components/BoundaryComponent.hpp"
+#include "f-engine/ecs/components/ControllableComponent.hpp"
+#include "f-engine/ecs/components/DrawableComponent.hpp"
+#include "f-engine/ecs/components/PositionComponent.hpp"
+#include "f-engine/ecs/components/VelocityComponent.hpp"
+#include "f-engine/ecs/systems/BoundarySystem.hpp"
+#include "f-engine/ecs/systems/ControlSystem.hpp"
+#include "f-engine/ecs/systems/DisplaySystem.hpp"
+#include "f-engine/ecs/systems/MoveSystem.hpp"
+#include <iostream>
+#include <memory>
+#include <optional>
+#include <queue>
+#include <tuple>
 
 rtype::client::Client::Client()
     : _io_context(), _resolver(_io_context), _endpoint(), _socket(_io_context),
@@ -46,6 +70,26 @@ void rtype::client::Client::connect(char *av[]) {
     _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
 
     _socket.open(udp::v4());
+    connect();
+}
+
+rtype::client::Client::Client(): _displayModule(new fengine::modules::display::SFMLDisplayModule), _registery() {
+}
+
+rtype::client::Client::~Client() {
+    // maybe delete what was created
+}
+
+int rtype::client::Client::run(char *av[]) {
+    if (this->connect(av) == 84) {
+        return 84;
+    }
+
+    this->loop();
+    return 0;
+}
+
+int rtype::client::Client::connect(char *av[]) {
     std::stringstream ss;
 
     packets::PacketHeader header = {
