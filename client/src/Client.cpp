@@ -28,7 +28,7 @@
 #include <queue>
 #include <tuple>
 
-rtype::client::Client::Client() : _io_context(), _resolver(_io_context), _endpoint(), _socket(_io_context) {
+rtype::client::Client::Client() : _io_context(), _resolver(_io_context), _endpoint(), _socket(_io_context), _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery() {
     const std::string host = "127.0.0.1";
     const std::string port = "25000";
     _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
@@ -37,11 +37,7 @@ rtype::client::Client::Client() : _io_context(), _resolver(_io_context), _endpoi
     connect();
 }
 
-rtype::client::Client::Client(): _displayModule(new fengine::modules::display::SFMLDisplayModule), _registery() {
-}
-
 rtype::client::Client::~Client() {
-    // maybe delete what was created
 }
 
 int rtype::client::Client::run(char *av[]) {
