@@ -56,9 +56,9 @@ namespace fengine::ecs {
                 std::chrono::duration<double> time = elapsedTime - _clock;
                 std::chrono::milliseconds var(_deltaTime);
 
-                if (time < var) {
-                    return;
-                }
+                // if (time < var) {
+                //     return;
+                // }
 
                 for (auto &system : _systems) {
                     system->update(manager);
