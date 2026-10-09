@@ -7,6 +7,7 @@ namespace fengine {
     class Exception : public std::exception {
         private:
             std::string _msg;
+
         public:
             Exception(std::string msg) noexcept : _msg(msg) {};
             ~Exception() noexcept {};

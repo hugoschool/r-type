@@ -44,22 +44,28 @@ namespace fengine::ecs {
                         if (j == i || !pos_other.has_value() || !bound_other.has_value())
                             continue;
 
-                        if (!(pos.value().pos_x < pos_other.value().pos_x + bound_other.value().size_x &&
-                            pos.value().pos_x + bound.value().size_x > pos_other.value().pos_x &&
-                            pos.value().pos_y < pos_other.value().pos_y + bound_other.value().size_y &&
-                            pos.value().pos_y + bound.value().size_y > pos_other.value().pos_y)) {
-                                continue;
+                        if (!(pos.value().pos_x < pos_other.value().pos_x + bound_other.value().size_x
+                                && pos.value().pos_x + bound.value().size_x > pos_other.value().pos_x
+                                && pos.value().pos_y < pos_other.value().pos_y + bound_other.value().size_y
+                                && pos.value().pos_y + bound.value().size_y > pos_other.value().pos_y)) {
+                            continue;
                         }
                         auto &vel_other = velocities[j];
                         auto &att_other = attacks[j];
                         auto &def_other = defenses[j];
 
-                        std::chrono::time_point<std::chrono::steady_clock> elapsedTime = std::chrono::steady_clock::now();
-                        std::chrono::duration<double> movementTime = elapsedTime - (bound.value().can_be_hit.has_value() ? bound.value().can_be_hit.value() : std::chrono::steady_clock::time_point{});
-                        std::chrono::duration<double> movementTimeOther = elapsedTime - (bound_other.value().can_be_hit.has_value() ? bound_other.value().can_be_hit.value() : std::chrono::steady_clock::time_point{});
+                        std::chrono::time_point<std::chrono::steady_clock> elapsedTime =
+                            std::chrono::steady_clock::now();
+                        std::chrono::duration<double> movementTime = elapsedTime
+                            - (bound.value().can_be_hit.has_value() ? bound.value().can_be_hit.value()
+                                                                    : std::chrono::steady_clock::time_point{});
+                        std::chrono::duration<double> movementTimeOther = elapsedTime
+                            - (bound_other.value().can_be_hit.has_value() ? bound_other.value().can_be_hit.value()
+                                                                          : std::chrono::steady_clock::time_point{});
                         std::chrono::milliseconds var(100);
                         // faire la diff ici avec le relation_id si le friendly fire est activé
-                        if (att.value().relation.team == att_other.value().relation.team || movementTime < var || movementTimeOther < var) {
+                        if (att.value().relation.team == att_other.value().relation.team || movementTime < var
+                            || movementTimeOther < var) {
                             continue;
                         }
                         bound.value().can_be_hit.reset();
@@ -74,9 +80,9 @@ namespace fengine::ecs {
 
                     if (def.value().health <= 0) {
                         std::optional<Entity> entity = manager.entityManager.entityFromIndex(i);
-                            if (entity.has_value()) {
-                                manager.entityManager.killEntity(entity.value());
-                            }
+                        if (entity.has_value()) {
+                            manager.entityManager.killEntity(entity.value());
+                        }
                     }
                 }
             };

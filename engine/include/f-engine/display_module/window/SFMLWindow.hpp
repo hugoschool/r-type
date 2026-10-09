@@ -13,17 +13,14 @@
 #define WINDOW_Y 800
 
 namespace fengine::modules::display {
-    class SFMLWindow: public IWindow {
+    class SFMLWindow : public IWindow {
         public:
-            SFMLWindow(): _videoMode({WINDOW_X, WINDOW_Y}), _font()
-            {
+            SFMLWindow() : _videoMode({WINDOW_X, WINDOW_Y}), _font() {
                 try {
                     _window = sf::RenderWindow(_videoMode, "SFML window");
                     _window.setMaximumSize(_window.getSize());
                     _window.setMinimumSize(_window.getSize());
-                } catch (std::exception &) {
-                    throw SfmlException("render window creation");
-                }
+                } catch (std::exception &) { throw SfmlException("render window creation"); }
                 _window.setFramerateLimit(60);
                 // if (_font.openFromFile("textures/fonts/" FONT) == false) { // ajouter une font
                 //     throw SfmlException("font creation");
@@ -35,15 +32,15 @@ namespace fengine::modules::display {
             };
 
             void drawShape(std::shared_ptr<IShape> shape) override {
-                if (auto rect = dynamic_cast<SFMLRectangle*>(shape.get())) {
+                if (auto rect = dynamic_cast<SFMLRectangle *>(shape.get())) {
                     _window.draw(rect->shape);
                 }
-                if (auto circle = dynamic_cast<SFMLCircle*>(shape.get())) {
+                if (auto circle = dynamic_cast<SFMLCircle *>(shape.get())) {
                     _window.draw(circle->shape);
                 }
             };
 
-            void draw(const sf::Drawable &drawable, const sf::RenderStates &states=sf::RenderStates::Default) {
+            void draw(const sf::Drawable &drawable, const sf::RenderStates &states = sf::RenderStates::Default) {
                 _window.draw(drawable, states);
             };
 

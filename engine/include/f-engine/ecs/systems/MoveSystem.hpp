@@ -30,7 +30,8 @@ namespace fengine::ecs {
                         continue;
 
                     if (bound.has_value()) {
-                        boundary = {bound.value().size_x, bound.value().size_y, bound.value().hittable, bound.value().can_be_hit};
+                        boundary = {bound.value().size_x, bound.value().size_y, bound.value().hittable,
+                            bound.value().can_be_hit};
                     } else {
                         boundary = {0, 0, false, std::nullopt};
                     }
@@ -44,7 +45,8 @@ namespace fengine::ecs {
                     if (pos.value().can_be_out_window) {
                         // should be changed so that a message is sent to client to say that the entity is killed instead of deleting here (maybe ?)
                         // also handle this differently so that entities can come from any corner of the window without getting slimed out instantly
-                        if (pos.value().pos_x > WINDOW_X || pos.value().pos_y > WINDOW_Y || pos.value().pos_x < 0 || pos.value().pos_y < 0) {
+                        if (pos.value().pos_x > WINDOW_X || pos.value().pos_y > WINDOW_Y || pos.value().pos_x < 0
+                            || pos.value().pos_y < 0) {
                             std::optional<Entity> entity = manager.entityManager.entityFromIndex(i);
                             if (entity.has_value())
                                 manager.entityManager.killEntity(entity.value());

@@ -1,7 +1,7 @@
 #pragma once
-#include "EventType.hpp"
 #include "EventKey.hpp"
 #include "EventMouseButton.hpp"
+#include "EventType.hpp"
 
 namespace fengine::modules::display {
     class IEvent {
