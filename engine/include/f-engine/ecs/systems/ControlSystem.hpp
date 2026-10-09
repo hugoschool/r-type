@@ -17,7 +17,9 @@ namespace fengine::ecs {
                 auto &velocities = manager.componentManager.getComponents<VelocityComponent>();
                 auto &controllables = manager.componentManager.getComponents<ControllableComponent>();
 
-                for (std::size_t i = 0; i < velocities.size(); i++) {
+                for (std::size_t i = 0; i < manager.entityManager.size(); i++) {
+                    if (!manager.entityManager.entityFromIndex(i).has_value())
+                        continue;
                     auto &vel = velocities[i];
                     auto &control = controllables[i];
 
