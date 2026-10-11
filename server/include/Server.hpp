@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ClientHandler.hpp"
 #include "TickHandler.hpp"
 #include "protocols/UDPProtocol.hpp"
 #include <boost/asio/io_context.hpp>
@@ -25,6 +26,7 @@ namespace rtype::server {
             boost::asio::thread_pool _threadPool;
 
             TickHandler _tickHandler;
+            ClientHandler _clientHandler;
 
             UDPProtocol _udp;
     };

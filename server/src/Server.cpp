@@ -9,6 +9,8 @@ rtype::server::Server::Server(std::uint32_t port)
       _totalThreadAmount(4), _protocolThreadAmount(3), _threadPool(_totalThreadAmount),
       // Tick handling
       _tickHandler(),
+      // Clients
+      _clientHandler(),
       // Protocols
       _udp(_io_context, _port, _tickHandler.getMessageQueue()) {
 }
