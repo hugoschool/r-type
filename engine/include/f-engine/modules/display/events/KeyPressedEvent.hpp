@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AEvent.hpp"
-#include "f-engine/display_module/events/EventKey.hpp"
+#include "f-engine/modules/display/events/EventKey.hpp"
 
 namespace fengine::modules::display {
     class KeyPressedEvent : public AEvent {

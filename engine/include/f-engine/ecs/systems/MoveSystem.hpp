@@ -1,11 +1,11 @@
 #pragma once
 
 #include "ISystem.hpp"
-#include "f-engine/display_module/window/SFMLWindow.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/BoundaryComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
+#include "f-engine/modules/display/window/SFMLWindow.hpp"
 
 namespace fengine::ecs {
     class MovementSystem : public ISystem {

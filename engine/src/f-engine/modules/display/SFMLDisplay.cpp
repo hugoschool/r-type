@@ -1,11 +1,11 @@
-#include "f-engine/display_module/SFMLDisplayModule.hpp"
-#include "f-engine/display_module/events/ClickEvent.hpp"
-#include "f-engine/display_module/events/IEvent.hpp"
-#include "f-engine/display_module/events/KeyPressedEvent.hpp"
-#include "f-engine/display_module/events/KeyReleasedEvent.hpp"
-#include "f-engine/display_module/events/QuitEvent.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
+#include "f-engine/modules/display/SFMLDisplayModule.hpp"
+#include "f-engine/modules/display/events/ClickEvent.hpp"
+#include "f-engine/modules/display/events/IEvent.hpp"
+#include "f-engine/modules/display/events/KeyPressedEvent.hpp"
+#include "f-engine/modules/display/events/KeyReleasedEvent.hpp"
+#include "f-engine/modules/display/events/QuitEvent.hpp"
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <memory>

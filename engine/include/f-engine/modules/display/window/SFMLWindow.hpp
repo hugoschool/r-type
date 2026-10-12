@@ -1,10 +1,10 @@
 #pragma once
 
 #include "f-engine/Exceptions.hpp"
-#include "f-engine/display_module/shapes/IShape.hpp"
-#include "f-engine/display_module/shapes/SFMLCircle.hpp"
-#include "f-engine/display_module/shapes/SFMLRectangle.hpp"
-#include "f-engine/display_module/window/IWindow.hpp"
+#include "f-engine/modules/display/shapes/IShape.hpp"
+#include "f-engine/modules/display/shapes/SFMLCircle.hpp"
+#include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
+#include "f-engine/modules/display/window/IWindow.hpp"
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <memory>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "f-engine/display_module/shapes/IShape.hpp"
+#include "f-engine/modules/display/shapes/IShape.hpp"
 #include <memory>
 #include <optional>
 #include <string>

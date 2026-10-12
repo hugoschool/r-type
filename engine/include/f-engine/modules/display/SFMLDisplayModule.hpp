@@ -1,9 +1,9 @@
 #pragma once
 
-#include "f-engine/display_module/IDisplayModule.hpp"
-#include "f-engine/display_module/window/SFMLWindow.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
+#include "f-engine/modules/display/IDisplayModule.hpp"
+#include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>

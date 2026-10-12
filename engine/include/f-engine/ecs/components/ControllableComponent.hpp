@@ -1,6 +1,6 @@
 #pragma once
 
-#include "f-engine/display_module/events/EventKey.hpp"
+#include "f-engine/modules/display/events/EventKey.hpp"
 
 namespace fengine::ecs {
     struct ControllableComponent {

@@ -1,10 +1,10 @@
 #pragma once
 
 #include "ISystem.hpp"
-#include "f-engine/display_module/events/EventKey.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/ControllableComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
+#include "f-engine/modules/display/events/EventKey.hpp"
 #include <queue>
 
 namespace fengine::ecs {
