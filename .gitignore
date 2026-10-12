@@ -11,3 +11,5 @@ r-type_server
 /.cache/
 /.*-cache/
 compile_commands.json
+
+flake.*
