@@ -1,5 +1,6 @@
 {
     "level_id": 0, // the level id, order it will be loaded at
+    "level_speed": 1, // how many pixel each tick move the window (1 by default)
     "level_length": 10000, // in px // TODO write here the size of the window for easier calculation
     // "environnement": "space", // the background of the map
     "friendly_fire": true, // if there is friendly fire or not
