@@ -10,7 +10,7 @@ namespace rtype::client {
 
         public:
             Exception(std::string msg) noexcept : _msg(msg) {};
-            ~Exception() noexcept {};
+            ~Exception() noexcept override {};
 
             const char *what() const noexcept override {
                 return _msg.c_str();
@@ -20,6 +20,6 @@ namespace rtype::client {
     class ClientException : public Exception {
         public:
             ClientException(std::string msg) noexcept : Exception(msg) {};
-            ~ClientException() noexcept {};
+            ~ClientException() noexcept override {};
     };
 }

@@ -1,9 +1,8 @@
 #pragma once
 
-#include "ClientHelper.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
-#include "f-engine/display_module/IDisplayModule.hpp"
+#include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include <memory>
 
