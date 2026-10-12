@@ -17,7 +17,7 @@ namespace fengine::modules::display {
         public:
             SFMLWindow() : _videoMode({WINDOW_X, WINDOW_Y}), _font() {
                 try {
-                    _window = sf::RenderWindow(_videoMode, "SFML window");
+                    _window = sf::RenderWindow(_videoMode, "R-Type");
                     _window.setMaximumSize(_window.getSize());
                     _window.setMinimumSize(_window.getSize());
                 } catch (std::exception &) { throw SfmlException("render window creation"); }
