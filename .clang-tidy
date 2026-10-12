@@ -9,5 +9,4 @@ Checks: >
   modernize-use-nullptr,
   modernize-use-using,
   modernize-use-override,
-  misc-unused-parameters,
-  misc-explicit-constructor
+  misc-unused-parameters

@@ -1,14 +1,12 @@
 #pragma once
 
-namespace fengine {
-    namespace ecs {
-        class Registry;
+namespace fengine::ecs {
+    class Registry;
 
-        class ISystem {
-            public:
-                virtual ~ISystem() = default;
+    class ISystem {
+        public:
+            virtual ~ISystem() = default;
 
-                virtual void update(Registry &) = 0;
-        };
-    }
+            virtual void update(Registry &) = 0;
+    };
 }

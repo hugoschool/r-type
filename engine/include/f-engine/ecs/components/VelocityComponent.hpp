@@ -1,10 +1,12 @@
 #pragma once
 
-namespace fengine {
-    namespace ecs {
-        struct VelocityComponent {
-                int vel_x;
-                int vel_y;
-        };
-    }
+namespace fengine::ecs {
+    struct VelocityComponent {
+            float vel_x;
+            float vel_y;
+    };
+
+    VelocityComponent operator-(VelocityComponent &vel) {
+        return VelocityComponent(-vel.vel_x, -vel.vel_y);
+    };
 }

@@ -4,18 +4,16 @@
 #include "EntityManager.hpp"
 #include "SystemManager.hpp"
 
-namespace fengine {
-    namespace ecs {
-        class Registry {
-            public:
-                Registry() : systemManager(), entityManager(), componentManager() {};
-                ~Registry() {};
+namespace fengine::ecs {
+    class Registry {
+        public:
+            Registry() : systemManager(), entityManager(), componentManager() {};
+            ~Registry() {};
 
-                SystemManager systemManager;
-                EntityManager entityManager;
-                ComponentManager componentManager;
+            SystemManager systemManager;
+            EntityManager entityManager;
+            ComponentManager componentManager;
 
-            private:
-        };
-    }
+        private:
+    };
 }

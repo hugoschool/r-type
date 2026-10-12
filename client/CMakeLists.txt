@@ -17,4 +17,4 @@ target_include_directories(
     ${freaky-engine_SOURCE_DIR}/include
 )
 
-target_link_libraries(${BINARY} PUBLIC Boost::asio)
+target_link_libraries(${BINARY} PUBLIC freaky-engine Boost::asio)

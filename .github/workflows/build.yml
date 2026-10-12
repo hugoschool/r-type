@@ -24,6 +24,9 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Download libraries
+        uses: ./.github/actions/download-libs
+
       - name: Build
         uses: ./.github/actions/build
         with:

@@ -44,6 +44,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install clang-tidy
 
+      - name: Download libraries
+        uses: ./.github/actions/download-libs
+
+      # TODO: get CPM cache instead of re-downloading it all
+
       - name: Generate build folder and copy compile_commands.json
         run: |
           cmake -B build . -DCMAKE_EXPORT_COMPILE_COMMANDS=true
