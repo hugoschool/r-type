@@ -6,7 +6,7 @@ This game engine also comes with a pure virtual implementation of a graphic disp
 
 For the graphic only, a DrawableComponent is implemented, holding :
 
-```c++
+```cpp
 std::optional<std::string> texture_filepath;
 std::shared_ptr<IShape> shape;
 std::optional<std::tuple<int, int, int>> color;
@@ -18,7 +18,7 @@ It is used by a DisplaySystem, which draws each entity based on a position compo
 
 The IShape is a pure virtual interface with three important methods :
 
-```c++
+```cpp
 virtual void setPosition(PositionComponent &) = 0;
 virtual void setColor(std::tuple<int, int, int> &) = 0;
 virtual void setTexture(std::any) = 0;
@@ -43,7 +43,7 @@ The Events have custom types, keys, mouse buttons enums in order to be virtual.
 
 Last but not least, there is the IDisplayModule interface, implementing three pure virtual methods :
 
-```c++
+```cpp
 virtual void clear() = 0;
 virtual void drawEntity(PositionComponent &, DrawableComponent &) = 0;
 virtual std::optional<std::unique_ptr<IEvent>> pollEvent() = 0;
