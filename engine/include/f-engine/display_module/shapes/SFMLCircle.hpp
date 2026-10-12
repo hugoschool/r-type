@@ -10,7 +10,7 @@ namespace fengine::modules::display {
             SFMLCircle(float radius) {
                 shape = sf::CircleShape();
 
-                shape.setRadius(radius);
+                shape.setRadius(radius / 2);
             };
             ~SFMLCircle() override {};
 
