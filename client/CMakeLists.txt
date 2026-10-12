@@ -5,7 +5,7 @@ set(BINARY r-type_client)
 file(GLOB_RECURSE src "src/*.cpp")
 add_executable(${BINARY} ${src})
 
-if (WIN32)
+if (MSVC)
     target_compile_options(${BINARY} PRIVATE /W4)
 else()
     target_compile_options(${BINARY} PRIVATE -Wall -Wextra)
