@@ -9,8 +9,8 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <memory>
 
-#define WINDOW_X 1000
-#define WINDOW_Y 800
+constexpr int WINDOW_X = 1000;
+constexpr int WINDOW_Y = 800;
 
 namespace fengine::modules::display {
     class SFMLWindow : public IWindow {
