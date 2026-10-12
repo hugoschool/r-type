@@ -1,6 +1,7 @@
 #include "Server.hpp"
 #include <cstdint>
 #include <iostream>
+#include <thread>
 
 rtype::server::Server::Server(std::uint32_t port)
     : _port(port), _io_context(),
@@ -20,8 +21,11 @@ rtype::server::Server::~Server() {
 
 void rtype::server::Server::tickThreadRun() {
     while (true) {
-        if (!_tickHandler.tickPassed())
+        if (!_tickHandler.tickPassed()) {
+            // Using 100% CPU isn't wise, let's wait a little...
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
             continue;
+        }
         while (!_tickHandler.getMessageQueue().empty()) {
             std::string msg = _tickHandler.getMessageQueue().pop();
             std::cout << "Got message: " << msg << std::endl;
