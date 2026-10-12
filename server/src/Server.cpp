@@ -25,7 +25,12 @@ void rtype::server::Server::tickThreadRun() {
         while (!_tickHandler.getMessageQueue().empty()) {
             std::string msg = _tickHandler.getMessageQueue().pop();
             std::cout << "Got message: " << msg << std::endl;
+
+            std::string uuid = _clientHandler.generateUuid();
+            _clientHandler.addClient(uuid);
+            _clientHandler.setAlive(uuid);
         }
+        _clientHandler.verifyStatus();
     }
 }
 

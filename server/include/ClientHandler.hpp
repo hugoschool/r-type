@@ -5,10 +5,19 @@
 #include <unordered_map>
 
 namespace rtype::server {
+    // Maximum number of seconds before a client is considered as disconnected
+    constexpr std::uint64_t MAX_CONNECTED_SECONDS = 10;
+    // Maximum number of seconds before a client is no longer considered connecting
+    constexpr std::uint64_t MAX_CONNECTING_SECONDS = 60;
+    // Maximum number of seconds before a client is removed
+    constexpr std::uint64_t MAX_DISCONNECTED_SECONDS = 60;
+
     enum class ClientStatus {
         Disconnected,
         Connecting,
         Connected,
+        // Client can no longer reconnect
+        Removed,
     };
 
     struct ClientData {
@@ -29,7 +38,14 @@ namespace rtype::server {
             // Simply resets the timer
             void setAlive(std::string &uuid);
 
+            // Verifies the status of all clients
+            //
+            // If a client hasn't sent a packet in too long, he will be switched to disconnected.
+            // If he has been disconnected for too long, he will be removed.
+            void verifyStatus();
+
         private:
+            std::unordered_map<ClientStatus, std::chrono::seconds> _maxStatusSecondsMap;
             std::unordered_map<std::string, ClientData> _clients;
     };
 }
