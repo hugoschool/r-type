@@ -1,8 +1,8 @@
 #include "Server.hpp"
-#include <r-type/packets/Packet.hpp>
-#include <r-type/packets/Serialization.hpp>
 #include <cstdint>
 #include <iostream>
+#include <r-type/packets/Packet.hpp>
+#include <r-type/packets/Serialization.hpp>
 #include <thread>
 
 rtype::server::Server::Server(std::uint32_t port)
@@ -21,7 +21,8 @@ rtype::server::Server::Server(std::uint32_t port)
 rtype::server::Server::~Server() {
 }
 
-void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_archive &, packets::PacketHeader &header) {
+void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_archive &,
+    packets::PacketHeader &header) {
     switch (header.type) {
         case packets::PacketType::Ack: {
             std::string uuid = _clientHandler.generateUuid();
