@@ -14,6 +14,7 @@ endif()
 target_include_directories(
     ${BINARY} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${r-type_common_SOURCE_DIR}/include
     ${freaky-engine_SOURCE_DIR}/include
 )
 

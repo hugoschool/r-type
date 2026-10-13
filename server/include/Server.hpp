@@ -2,6 +2,8 @@
 
 #include "ClientHandler.hpp"
 #include "TickHandler.hpp"
+#include <r-type/packets/Packet.hpp>
+#include <r-type/packets/Serialization.hpp>
 #include "protocols/UDPProtocol.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/thread_pool.hpp>

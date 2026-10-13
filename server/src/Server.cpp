@@ -1,4 +1,6 @@
 #include "Server.hpp"
+#include <r-type/packets/Packet.hpp>
+#include <r-type/packets/Serialization.hpp>
 #include <cstdint>
 #include <iostream>
 #include <thread>
