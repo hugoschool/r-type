@@ -6,7 +6,7 @@
 namespace fengine::world {
     class World {
         public:
-            World(float baseVelocity, float maxLength): _camera(baseVelocity, maxLength), _registry() {};
+            World(float baseVelocity, float maxLength) : _camera(baseVelocity, maxLength), _registry() {};
             ~World();
 
             camera::Camera _camera;

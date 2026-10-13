@@ -5,7 +5,8 @@
 namespace fengine::camera {
     class Camera {
         public:
-            Camera(float baseVelocity, float maxLength): _currentWorldIndex(0), _baseVelocity(baseVelocity), _maxLength(maxLength) {};
+            Camera(float baseVelocity, float maxLength)
+                : _currentWorldIndex(0), _baseVelocity(baseVelocity), _maxLength(maxLength) {};
             ~Camera() {};
 
             ecs::PositionComponent worldPosToCameraPos(ecs::PositionComponent &pos) {
@@ -29,9 +30,9 @@ namespace fengine::camera {
                 return _maxLength;
             };
 
-            private:
-                float _currentWorldIndex;
-                float _baseVelocity;
-                float _maxLength;
+        private:
+            float _currentWorldIndex;
+            float _baseVelocity;
+            float _maxLength;
     };
 }

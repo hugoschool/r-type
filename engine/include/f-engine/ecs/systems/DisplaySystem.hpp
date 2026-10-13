@@ -10,7 +10,8 @@
 namespace fengine::ecs {
     class DisplaySystem : public ISystem {
         public:
-            DisplaySystem(modules::display::IDisplayModule &displayModule, camera::Camera &camera) : _displayModule(displayModule), _camera(camera) {};
+            DisplaySystem(modules::display::IDisplayModule &displayModule, camera::Camera &camera)
+                : _displayModule(displayModule), _camera(camera) {};
             ~DisplaySystem() override {};
 
             void update(Registry &manager) override {

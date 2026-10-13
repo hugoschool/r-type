@@ -11,7 +11,7 @@
 namespace fengine::ecs {
     class MovementSystem : public ISystem {
         public:
-            MovementSystem(camera::Camera &camera): _camera(camera) {};
+            MovementSystem(camera::Camera &camera) : _camera(camera) {};
             ~MovementSystem() override {};
 
             void update(Registry &manager) override {
@@ -68,8 +68,8 @@ namespace fengine::ecs {
                     if (pos.value().can_be_out_window) {
                         // should be changed so that a message is sent to client to say that the entity is killed instead of deleting here (maybe ?)
                         // also handle this differently so that entities can come from any corner of the window without getting slimed out instantly
-                        if (pos.value().pos_x > WINDOW_X + worldIndex || pos.value().pos_y > WINDOW_Y || pos.value().pos_x < 0 + worldIndex
-                            || pos.value().pos_y < 0) {
+                        if (pos.value().pos_x > WINDOW_X + worldIndex || pos.value().pos_y > WINDOW_Y
+                            || pos.value().pos_x < 0 + worldIndex || pos.value().pos_y < 0) {
                             std::optional<Entity> entity = manager.entityManager.entityFromIndex(i);
                             if (entity.has_value())
                                 manager.entityManager.killEntity(entity.value());
