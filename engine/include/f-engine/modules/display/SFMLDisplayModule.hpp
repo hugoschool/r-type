@@ -19,7 +19,7 @@ namespace fengine::modules::display {
             ~SFMLDisplayModule() override;
 
             void clear() override;
-            void drawEntity(ecs::PositionComponent &, ecs::DrawableComponent &) override;
+            void drawEntity(ecs::PositionComponent, ecs::DrawableComponent &) override;
 
             std::optional<std::unique_ptr<IEvent>> pollEvent() override;
 

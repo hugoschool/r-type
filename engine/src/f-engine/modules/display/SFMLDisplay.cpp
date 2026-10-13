@@ -105,7 +105,7 @@ fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule
     }
 }
 
-void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::PositionComponent &pos,
+void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::PositionComponent pos,
     fengine::ecs::DrawableComponent &drawable) {
     if (!drawable.shape)
         return;

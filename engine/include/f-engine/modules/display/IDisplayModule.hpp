@@ -12,7 +12,7 @@ namespace fengine::modules::display {
             virtual ~IDisplayModule() = default;
 
             virtual void clear() = 0;
-            virtual void drawEntity(ecs::PositionComponent &, ecs::DrawableComponent &) = 0;
+            virtual void drawEntity(ecs::PositionComponent, ecs::DrawableComponent &) = 0;
 
             virtual std::optional<std::unique_ptr<IEvent>> pollEvent() = 0;
     };
