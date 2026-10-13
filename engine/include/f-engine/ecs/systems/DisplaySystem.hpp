@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ISystem.hpp"
+#include "f-engine/camera/Camera.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
@@ -9,10 +10,11 @@
 namespace fengine::ecs {
     class DisplaySystem : public ISystem {
         public:
-            DisplaySystem(modules::display::IDisplayModule &displayModule) : _displayModule(displayModule) {};
+            DisplaySystem(modules::display::IDisplayModule &displayModule, camera::Camera &camera) : _displayModule(displayModule), _camera(camera) {};
             ~DisplaySystem() override {};
 
             void update(Registry &manager) override {
+                _camera.incrementWorldIndex();
                 auto &positions = manager.componentManager.getComponents<PositionComponent>();
                 auto &drawables = manager.componentManager.getComponents<DrawableComponent>();
 
@@ -23,12 +25,14 @@ namespace fengine::ecs {
                     auto &drawable = drawables[i];
 
                     if (pos.has_value() && drawable.has_value()) {
-                        _displayModule.drawEntity(pos.value(), drawable.value());
+                        _displayModule.drawEntity(_camera.worldPosToCameraPos(pos.value()), drawable.value());
                     }
                 }
+                _displayModule.clear();
             };
 
         private:
             modules::display::IDisplayModule &_displayModule;
+            camera::Camera &_camera;
     };
 }
