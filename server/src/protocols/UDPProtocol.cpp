@@ -2,7 +2,6 @@
 #include "protocols/AProtocol.hpp"
 #include <boost/asio/placeholders.hpp>
 #include <string>
-#include <unistd.h>
 
 rtype::server::UDPProtocol::UDPProtocol(boost::asio::io_context &io_context, std::uint16_t port,
     TickHandler::MessageQueue &messageQueue)
