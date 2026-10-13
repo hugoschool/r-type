@@ -17,6 +17,7 @@ namespace rtype::server {
 
             void run();
             void tickThreadRun();
+            void interpretPacket(packets::Serialization::deserialize_archive &ar, packets::PacketHeader &header);
 
         private:
             std::uint32_t _port;
