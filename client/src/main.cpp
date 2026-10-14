@@ -1,8 +1,16 @@
-#include "HelloWorld.hpp"
-#include <f-engine/HelloWorld.hpp>
+#include "Client.hpp"
+#include <boost/asio.hpp>
+#include <iostream>
 
 int main(void) {
-    fengine::HelloWorld();
-    rtype::client::HelloWorld();
+    try {
+        rtype::client::Client client;
+
+        return 0;
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return 1;
+    }
+
     return 0;
 }

@@ -1,8 +1,17 @@
-#include "HelloWorld.hpp"
-#include <f-engine/HelloWorld.hpp>
+#include "Server.hpp"
+#include <boost/asio.hpp>
+#include <boost/asio/thread_pool.hpp>
+#include <iostream>
 
 int main(void) {
-    fengine::HelloWorld();
-    rtype::server::HelloWorld();
-    return 0;
+    try {
+        rtype::server::Server server(25000);
+
+        server.run();
+
+        return 0;
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return 1;
+    }
 }
