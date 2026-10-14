@@ -9,7 +9,7 @@ namespace fengine::ecs {
     class ASystem : public ISystem {
         public:
             ASystem() {};
-            ~ASystem() {};
+            ~ASystem() override {};
 
             void addSubscriber(observer::Subscriber &sub) {
                 _subscribers.push_back(sub);
