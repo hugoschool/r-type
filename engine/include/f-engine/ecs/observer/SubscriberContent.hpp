@@ -1,13 +1,14 @@
 #pragma once
 
 #include <any>
+#include <cstddef>
 #include <map>
 #include <typeindex>
 
 namespace fengine::ecs::observer {
     class SubscriberContent {
         public:
-            SubscriberContent() : _content() {};
+            SubscriberContent(std::size_t entityId) : _entityId(entityId), _content() {};
             ~SubscriberContent() = default;
 
             template <class T>
@@ -20,7 +21,12 @@ namespace fengine::ecs::observer {
                 return _content[typeid(T)];
             }
 
+            std::size_t getEntityId() const {
+                return _entityId;
+            }
+
         private:
+            std::size_t _entityId;
             std::map<std::type_index, std::any> _content;
     };
 }
