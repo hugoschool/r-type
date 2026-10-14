@@ -1,5 +1,11 @@
 #include "Client.hpp"
 #include "Exception.hpp"
+#include "f-engine/modules/display/IDisplayModule.hpp"
+#include "f-engine/modules/display/SFMLDisplayModule.hpp"
+#include "f-engine/modules/display/events/EventKey.hpp"
+#include "f-engine/modules/display/events/EventType.hpp"
+#include "f-engine/modules/display/events/IEvent.hpp"
+#include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
 #include "f-engine/ecs/Entity.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/BoundaryComponent.hpp"
@@ -20,30 +26,6 @@
 #include "r-type/packets/Entity.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
-#include <iostream>
-#include <memory>
-#include <optional>
-#include <queue>
-#include <tuple>
-#include "f-engine/display_module/IDisplayModule.hpp"
-#include "f-engine/display_module/SFMLDisplayModule.hpp"
-#include <memory>
-#include "f-engine/display_module/SFMLDisplayModule.hpp"
-#include "f-engine/display_module/events/EventKey.hpp"
-#include "f-engine/display_module/events/EventType.hpp"
-#include "f-engine/display_module/events/IEvent.hpp"
-#include "f-engine/display_module/shapes/SFMLRectangle.hpp"
-#include "f-engine/ecs/Entity.hpp"
-#include "f-engine/ecs/Registry.hpp"
-#include "f-engine/ecs/components/BoundaryComponent.hpp"
-#include "f-engine/ecs/components/ControllableComponent.hpp"
-#include "f-engine/ecs/components/DrawableComponent.hpp"
-#include "f-engine/ecs/components/PositionComponent.hpp"
-#include "f-engine/ecs/components/VelocityComponent.hpp"
-#include "f-engine/ecs/systems/BoundarySystem.hpp"
-#include "f-engine/ecs/systems/ControlSystem.hpp"
-#include "f-engine/ecs/systems/DisplaySystem.hpp"
-#include "f-engine/ecs/systems/MoveSystem.hpp"
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -86,7 +68,13 @@ void rtype::client::Client::run(char *av[]) {
     loop();
 }
 
-int rtype::client::Client::connect(char *av[]) {
+void rtype::client::Client::connect(char *av[]) {
+    const std::string host = av[1];
+    const std::string port = av[2];
+
+    _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
+
+    _socket.open(udp::v4());
     std::stringstream ss;
 
     packets::PacketHeader header = {
@@ -121,7 +109,6 @@ int rtype::client::Client::connect(char *av[]) {
 
 void rtype::client::Client::loop() {
     std::cout.write(recv_buf.data(), len);
-    return 0;
 }
 
 void rtype::client::Client::loop() {
