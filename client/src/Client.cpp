@@ -1,5 +1,6 @@
 #include "Client.hpp"
 #include "Exception.hpp"
+#include "boost/asio/registered_buffer.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
@@ -27,6 +28,7 @@
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include <cstdint>
+#include <exception>
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -39,12 +41,36 @@
 rtype::client::Client::Client()
     : _io_context(), _resolver(_io_context), _endpoint(), _socket(_io_context),
       _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(),
-      _networkThread(), _exit(false), _inputs(1024)
+      _writeThread(), _readThread(), _exit(false), _inputs(1024)
     {
 }
 
 rtype::client::Client::~Client() {
-    _networkThread.join();
+    _socket.close();
+    _writeThread.join();
+    _readThread.join();
+}
+
+void rtype::client::Client::run(char *av[]) {
+    connect(av);
+    loop();
+}
+
+void rtype::client::Client::connect(char *av[]) {
+    const std::string host = av[1];
+    const std::string port = av[2];
+
+    _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
+
+    _socket.open(udp::v4());
+    connect();
+}
+
+rtype::client::Client::Client(): _displayModule(new fengine::modules::display::SFMLDisplayModule), _registery() {
+}
+
+rtype::client::Client::~Client() {
+    // maybe delete what was created
 }
 
 void rtype::client::Client::run(char *av[]) {
@@ -92,17 +118,52 @@ rtype::client::Client::~Client() {
 }
 
 void rtype::client::Client::run(char *av[]) {
-    _networkThread = std::thread(&rtype::client::Client::communicationLoop, this, av);
+    _writeThread = std::thread(&rtype::client::Client::communicationLoop, this, av);
+    loop();
+}
+
+void rtype::client::Client::connect(char *av[]) {
+    const std::string host = av[1];
+    const std::string port = av[2];
+
+    _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
+
+    _socket.open(udp::v4());
+    connect();
+}
+
+rtype::client::Client::Client(): _displayModule(new fengine::modules::display::SFMLDisplayModule), _registery() {
+}
+
+rtype::client::Client::~Client() {
+    // maybe delete what was created
+}
+
+void rtype::client::Client::run(char *av[]) {
+    _writeThread = std::thread(&rtype::client::Client::communicationLoop, this, av);
     loop();
 }
 
 void rtype::client::Client::communicationLoop(char *av[]) {
     connect(av);
+    _readThread = std::thread(&rtype::client::Client::readMsg, this);
     while (!_exit) {
         sleep(1);
         sendMsg();
     }
     std::cout << "BYE BYE" << std::endl;
+}
+
+void rtype::client::Client::readMsg() {
+
+    char reply[1024];
+    try {
+        while (!_exit) {
+            _socket.receive_from(boost::asio::buffer(reply, 1024), _endpoint);
+        }
+    } catch (std::exception &) {
+    }
+    std::cout << "TEST" << std::endl;
 }
 
 void rtype::client::Client::sendMsg() {

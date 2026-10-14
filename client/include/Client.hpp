@@ -23,7 +23,8 @@ namespace rtype::client {
             udp::socket _socket;
             std::unique_ptr<fengine::modules::display::IDisplayModule> _displayModule;
             fengine::ecs::Registry _registery;
-            std::thread _networkThread;
+            std::thread _writeThread;
+            std::thread _readThread;
             bool _exit;
             rtype::client::CircularBuffer<fengine::modules::display::EventKey> _inputs;
             std::string _uuid;
@@ -32,6 +33,7 @@ namespace rtype::client {
             void loop();
             void communicationLoop(char *av[]);
             void sendMsg();
+            void readMsg();
 
         public:
             Client();
