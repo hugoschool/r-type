@@ -4,6 +4,7 @@
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
+#include "f-engine/scene/IScene.hpp"
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -20,6 +21,8 @@ namespace fengine::modules::display {
 
             void clear() override;
             void drawEntity(ecs::PositionComponent, ecs::DrawableComponent &) override;
+
+            void drawScene(scene::IScene &) override;
 
             std::optional<std::unique_ptr<IEvent>> pollEvent() override;
 

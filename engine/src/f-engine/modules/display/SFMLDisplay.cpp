@@ -6,8 +6,14 @@
 #include "f-engine/modules/display/events/KeyPressedEvent.hpp"
 #include "f-engine/modules/display/events/KeyReleasedEvent.hpp"
 #include "f-engine/modules/display/events/QuitEvent.hpp"
+#include "f-engine/modules/display/window/SFMLWindow.hpp"
+#include "f-engine/scene/IScene.hpp"
+#include "f-engine/scene/SceneObjects.hpp"
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <any>
 #include <memory>
 #include <optional>
 
@@ -102,6 +108,58 @@ fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule
             return EventKey::Down;
         default:
             return EventKey::None;
+    }
+}
+
+void fengine::modules::display::SFMLDisplayModule::drawScene(fengine::scene::IScene &scene) {
+    std::optional<std::vector<scene::Button>> &buttons = scene.getButtons();
+    scene::Background &background = scene.getBackground(); // a voir comment definir cela, pour l'instant surement une shape rectangle de la taille de la window + un offset handle dans la scene elle meme
+
+    // background (a changer aussi)
+    sf::RectangleShape bg1 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
+    sf::RectangleShape bg2 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
+    if (_textureMap.contains(background.texture) == false) {
+        sf::Texture textureBg;
+        if (textureBg.loadFromFile(background.texture))
+            _textureMap.insert({background.texture, std::move(textureBg)});
+    }
+    auto &t = _textureMap.at(background.texture).value();
+    bg1.setPosition(sf::Vector2f(-background.offset, 0));
+    bg2.setPosition(sf::Vector2f(-background.offset + WINDOW_X, 0));
+    bg1.setTexture(&t);
+    bg2.setTexture(&t);
+    _window.draw(bg1);
+    _window.draw(bg2);
+
+    // boutons (a changer)
+    if (!buttons.has_value())
+        return;
+    for (auto &button: buttons.value()) {
+        sf::RectangleShape rect = sf::RectangleShape(sf::Vector2f(button.length, button.height));
+        rect.setPosition(sf::Vector2f(button.pos_x, button.pos_y));
+
+        sf::Texture texture;
+
+        if (_textureMap.contains(button.content) == false) {
+            if (texture.loadFromFile(button.content)) {
+                _textureMap.insert({button.content, std::move(texture)});
+            } else {
+                _textureMap.insert({button.content, std::nullopt});
+            }
+        }
+
+        auto &t = _textureMap.at(button.content);
+        if (t.has_value()) {
+            rect.setTexture(&t.value());
+            _window.draw(rect);
+        } else {
+            sf::Text text(_window.font);
+            text.setString(button.content);
+            text.setPosition(sf::Vector2f(button.pos_x + 10, button.pos_y + 10));
+            text.setCharacterSize(20);
+            _window.draw(rect);
+            _window.draw(text);
+        }
     }
 }
 
