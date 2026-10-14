@@ -117,7 +117,6 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(fengine::scene::ISc
 
     // background (a changer aussi)
     sf::RectangleShape bg1 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
-    sf::RectangleShape bg2 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
     if (_textureMap.contains(background.texture) == false) {
         sf::Texture textureBg;
         if (textureBg.loadFromFile(background.texture))
@@ -125,11 +124,14 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(fengine::scene::ISc
     }
     auto &t = _textureMap.at(background.texture).value();
     bg1.setPosition(sf::Vector2f(-background.offset, 0));
-    bg2.setPosition(sf::Vector2f(-background.offset + WINDOW_X, 0));
     bg1.setTexture(&t);
-    bg2.setTexture(&t);
     _window.draw(bg1);
-    _window.draw(bg2);
+    if (background.paralax) {
+        sf::RectangleShape bg2 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
+        bg2.setPosition(sf::Vector2f(-background.offset + WINDOW_X, 0));
+        bg2.setTexture(&t);
+        _window.draw(bg2);
+    }
 
     // boutons (a changer)
     if (!buttons.has_value())
@@ -156,6 +158,7 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(fengine::scene::ISc
             sf::Text text(_window.font);
             text.setString(button.content);
             text.setPosition(sf::Vector2f(button.pos_x + 10, button.pos_y + 10));
+            text.setFillColor(sf::Color::Black);
             text.setCharacterSize(20);
             _window.draw(rect);
             _window.draw(text);

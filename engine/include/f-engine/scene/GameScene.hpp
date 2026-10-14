@@ -9,15 +9,10 @@
 namespace fengine::scene {
     class GameScene: public IScene {
         public:
-            GameScene(std::optional<std::vector<Button>> buttons, std::string bgTexture): _buttons(std::nullopt), _background() {
-                if (buttons.has_value()) {
-                    _buttons.reset();
-                    for (auto &button: buttons.value()) {
-                        _buttons.value().push_back(button);
-                    }
-                }
+            GameScene(std::optional<std::vector<Button>> buttons, std::string bgTexture, bool paralax): _buttons(buttons), _background() {
                 _background.offset = 0;
                 _background.texture = bgTexture;
+                _background.paralax = paralax;
             };
             ~GameScene() {};
 

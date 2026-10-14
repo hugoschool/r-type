@@ -13,6 +13,7 @@ namespace fengine::scene {
     };
 
     struct Background {
+        bool paralax;
         float offset;
         std::string texture;
     };
