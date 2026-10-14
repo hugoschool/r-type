@@ -1,5 +1,12 @@
 #include "Server.hpp"
 #include <cstdint>
+#include <f-engine/ecs/components/AttackComponent.hpp>
+#include <f-engine/ecs/components/BoundaryComponent.hpp>
+#include <f-engine/ecs/components/DefenseComponent.hpp>
+#include <f-engine/ecs/components/PositionComponent.hpp>
+#include <f-engine/ecs/components/VelocityComponent.hpp>
+#include <f-engine/ecs/systems/BoundarySystem.hpp>
+#include <f-engine/ecs/systems/MoveSystem.hpp>
 #include <iostream>
 #include <r-type/packets/Packet.hpp>
 #include <r-type/packets/Serialization.hpp>
@@ -14,8 +21,20 @@ rtype::server::Server::Server(std::uint32_t port)
       _tickHandler(),
       // Clients
       _clientHandler(),
+      // Engine
+      _registry(),
+      _world(1.0, 10000),
       // Protocols
       _udp(_io_context, _port, _tickHandler.getMessageQueue()) {
+
+    _registry.componentManager.registerComponent<fengine::ecs::PositionComponent>();
+    _registry.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
+    _registry.componentManager.registerComponent<fengine::ecs::BoundaryComponent>();
+    _registry.componentManager.registerComponent<fengine::ecs::AttackComponent>();
+    _registry.componentManager.registerComponent<fengine::ecs::DefenseComponent>();
+
+    _registry.systemManager.addSystem<fengine::ecs::MovementSystem>(_world._camera);
+    _registry.systemManager.addSystem<fengine::ecs::BoundarySystem>();
 }
 
 rtype::server::Server::~Server() {
@@ -59,6 +78,7 @@ void rtype::server::Server::tickThreadRun() {
             }
         }
         _clientHandler.verifyStatus();
+        _registry.systemManager.update(_registry);
     }
 }
 
