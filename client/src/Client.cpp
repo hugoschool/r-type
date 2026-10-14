@@ -1,15 +1,5 @@
 #include "Client.hpp"
-#include "r-type/packets/Entity.hpp"
-#include "r-type/packets/Packet.hpp"
-#include "r-type/packets/Serialization.hpp"
-#include <iostream>
 #include "Exception.hpp"
-#include "f-engine/modules/display/IDisplayModule.hpp"
-#include "f-engine/modules/display/SFMLDisplayModule.hpp"
-#include "f-engine/modules/display/events/EventKey.hpp"
-#include "f-engine/modules/display/events/EventType.hpp"
-#include "f-engine/modules/display/events/IEvent.hpp"
-#include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
 #include "f-engine/ecs/Entity.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/BoundaryComponent.hpp"
@@ -21,19 +11,24 @@
 #include "f-engine/ecs/systems/ControlSystem.hpp"
 #include "f-engine/ecs/systems/DisplaySystem.hpp"
 #include "f-engine/ecs/systems/MoveSystem.hpp"
+#include "f-engine/modules/display/IDisplayModule.hpp"
+#include "f-engine/modules/display/SFMLDisplayModule.hpp"
+#include "f-engine/modules/display/events/EventKey.hpp"
+#include "f-engine/modules/display/events/EventType.hpp"
+#include "f-engine/modules/display/events/IEvent.hpp"
+#include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
+#include "r-type/packets/Entity.hpp"
+#include "r-type/packets/Packet.hpp"
+#include "r-type/packets/Serialization.hpp"
 #include <iostream>
 #include <memory>
 #include <optional>
 #include <queue>
 #include <tuple>
 
-rtype::client::Client::Client() : _io_context(), _resolver(_io_context), _endpoint(), _socket(_io_context), _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery() {
-    const std::string host = "127.0.0.1";
-    const std::string port = "25000";
-    _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
-
-    _socket.open(udp::v4());
-    connect();
+rtype::client::Client::Client()
+    : _io_context(), _resolver(_io_context), _endpoint(), _socket(_io_context),
+      _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery() {
 }
 
 rtype::client::Client::~Client() {
@@ -44,7 +39,13 @@ void rtype::client::Client::run(char *av[]) {
     loop();
 }
 
-int rtype::client::Client::connect(char *av[]) {
+void rtype::client::Client::connect(char *av[]) {
+    const std::string host = av[1];
+    const std::string port = av[2];
+
+    _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
+
+    _socket.open(udp::v4());
     std::stringstream ss;
 
     packets::PacketHeader header = {
@@ -65,13 +66,10 @@ int rtype::client::Client::connect(char *av[]) {
         udp::endpoint sender_endpoint;
         size_t len = _socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
 
-<<<<<<< HEAD
         std::cout.write(recv_buf.data(), len);
     }
-=======
     std::cout.write(recv_buf.data(), len);
     return 0;
->>>>>>> 5bdd698 (chore: the client is now setup, need the communication to continue this part)
 }
 
 void rtype::client::Client::loop() {

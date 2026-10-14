@@ -1,13 +1,16 @@
 #pragma once
 
+#include "ClientHelper.hpp"
+#include "f-engine/ecs/Registry.hpp"
+#include "f-engine/modules/display/IDisplayModule.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
-#include "f-engine/modules/display/IDisplayModule.hpp"
-#include "f-engine/ecs/Registry.hpp"
 #include <memory>
 
 namespace rtype::client {
     class Client {
+            using udp = boost::asio::ip::udp;
+
         private:
             boost::asio::io_context _io_context;
             udp::resolver _resolver;
@@ -20,8 +23,6 @@ namespace rtype::client {
             void loop();
 
         public:
-            using udp = boost::asio::ip::udp;
-
             Client();
             ~Client();
 
