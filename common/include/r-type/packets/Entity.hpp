@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <string>
 
 namespace rtype::packets {
@@ -52,6 +53,17 @@ namespace rtype::packets {
         public:
             template <class Archive>
             void serialize(Archive &, unsigned int) {
+            }
+    };
+
+    struct Input {
+        public:
+            std::string uuid;
+            uint16_t input;
+            template<class Archive>
+            void serialize(Archive &ar, unsigned int) {
+                ar & uuid;
+                ar & input;
             }
     };
 }

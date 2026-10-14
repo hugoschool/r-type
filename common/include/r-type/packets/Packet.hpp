@@ -15,6 +15,7 @@ namespace rtype::packets {
         AddEntity,
         DeadPlayer,
         Ack,
+        InputPlayer
     };
 
     struct PacketHeader {

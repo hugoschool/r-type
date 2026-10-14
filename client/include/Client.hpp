@@ -3,10 +3,13 @@
 #include "ClientHelper.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
+#include "f-engine/modules/display/events/EventKey.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
 #include "f-engine/display_module/IDisplayModule.hpp"
 #include <memory>
+#include <thread>
+#include "CircularBuffer.hpp"
 #include "f-engine/ecs/Registry.hpp"
 
 namespace rtype::client {
@@ -20,9 +23,16 @@ namespace rtype::client {
             udp::socket _socket;
             std::unique_ptr<fengine::modules::display::IDisplayModule> _displayModule;
             fengine::ecs::Registry _registery;
+            std::thread _networkThread;
+            bool _exit;
+            rtype::client::CircularBuffer<fengine::modules::display::EventKey> _inputs;
+            std::string _uuid;
 
             void connect(char *av[]);
             void loop();
+            void communicationLoop(char *av[]);
+            void sendMsg();
+
         public:
             Client();
             ~Client();

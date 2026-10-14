@@ -26,19 +26,25 @@
 #include "r-type/packets/Entity.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
+#include <cstdint>
 #include <iostream>
 #include <memory>
 #include <optional>
-#include <queue>
+#include <sstream>
+#include <thread>
 #include <tuple>
 #include "Exception.hpp"
+#include <unistd.h>
 
 rtype::client::Client::Client()
     : _io_context(), _resolver(_io_context), _endpoint(), _socket(_io_context),
-      _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery() {
+      _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(),
+      _networkThread(), _exit(false), _inputs(1024)
+    {
 }
 
 rtype::client::Client::~Client() {
+    _networkThread.join();
 }
 
 void rtype::client::Client::run(char *av[]) {
@@ -64,9 +70,56 @@ rtype::client::Client::~Client() {
 }
 
 void rtype::client::Client::run(char *av[]) {
-    connect(av);
+    _networkThread = std::thread(&rtype::client::Client::communicationLoop, this, av);
     loop();
 }
+
+void rtype::client::Client::connect(char *av[]) {
+    const std::string host = av[1];
+    const std::string port = av[2];
+
+    _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
+
+    _socket.open(udp::v4());
+    connect();
+}
+
+rtype::client::Client::Client(): _displayModule(new fengine::modules::display::SFMLDisplayModule), _registery() {
+}
+
+rtype::client::Client::~Client() {
+    // maybe delete what was created
+}
+
+void rtype::client::Client::run(char *av[]) {
+    _networkThread = std::thread(&rtype::client::Client::communicationLoop, this, av);
+    loop();
+}
+
+void rtype::client::Client::communicationLoop(char *av[]) {
+    connect(av);
+    while (!_exit) {
+        sleep(1);
+    }
+    std::cout << "BYE BYE" << std::endl;
+}
+
+// void rtype::client::Client::sendMsg() {
+//     std::stringstream ss;
+
+//     packets::PacketHeader header = {
+//         .type = packets::PacketType::InputPlayer,
+//         .size = 0
+//     };
+
+//     if (_inputs.canRead()) {
+//         fengine::modules::display::EventKey input = _inputs.getElem();
+//         packets::Input newInput = {_uuid, static_cast<uint16_t>(input)};
+//         packets::Serialization::serialize(ss, header, newInput);
+
+
+//     }
+// }
 
 void rtype::client::Client::connect(char *av[]) {
     const std::string host = av[1];
@@ -120,7 +173,40 @@ void rtype::client::Client::loop() {
 }
 
 void rtype::client::Client::loop() {
+    _registery.componentManager.registerComponent<fengine::ecs::PositionComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::DrawableComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::ControllableComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::BoundaryComponent>();
 
+    float posx = 0;
+    float posy = 0;
+    float vel_x = 8;
+    float vel_y = 7;
+    for (int i = 0; i < 100; i++) {
+        fengine::ecs::Entity entity = _registery.entityManager.spawnEntity();
+        fengine::ecs::PositionComponent pos = {posx, posy};
+        fengine::ecs::VelocityComponent vel = {vel_x, vel_y};
+        fengine::ecs::BoundaryComponent bound = {40, 40, false, false};
+        fengine::ecs::DrawableComponent draw = {std::nullopt, std::make_shared<fengine::modules::display::SFMLCircle>(bound.size_x), std::tuple<int, int, int>(rand()%255, rand()%255, rand()%255)};
+
+        _registery.componentManager.addComponent(entity, std::move(pos));
+        _registery.componentManager.addComponent(entity, std::move(vel));
+        _registery.componentManager.addComponent(entity, std::move(draw));
+        _registery.componentManager.addComponent(entity, std::move(bound));
+        posx += 0.01;
+        posy += 0.01;
+        if (vel_x > 0)
+            vel_x += 0.01;
+        vel_x *= -1;
+        if (vel_y > 0)
+            vel_y += 0.01;
+        vel_y *= -1;
+    }
+
+    _registery.systemManager.addSystem<fengine::ecs::MovementSystem>();
+    _registery.systemManager.addSystem<fengine::ecs::BoundarySystem>();
+    _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule);
     while (true) {
         _displayModule->clear();
 
