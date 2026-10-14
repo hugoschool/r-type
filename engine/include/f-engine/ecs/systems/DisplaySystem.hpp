@@ -28,7 +28,6 @@ namespace fengine::ecs {
                         _displayModule.drawEntity(_camera.worldPosToCameraPos(pos.value()), drawable.value());
                     }
                 }
-                _displayModule.clear();
             };
 
         private:
