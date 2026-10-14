@@ -6,10 +6,12 @@
 #include "f-engine/ecs/components/BoundaryComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
+#include "f-engine/ecs/observer/SubscriberContent.hpp"
+#include "f-engine/ecs/systems/ASystem.hpp"
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
 
 namespace fengine::ecs {
-    class MovementSystem : public ISystem {
+    class MovementSystem : public ASystem {
         public:
             MovementSystem(camera::Camera &camera) : _camera(camera) {};
             ~MovementSystem() override {};
@@ -78,6 +80,10 @@ namespace fengine::ecs {
 
                     pos.value().pos_x += vel.value().vel_x;
                     pos.value().pos_y += vel.value().vel_y;
+
+                    observer::SubscriberContent content(i);
+                    content.add<PositionComponent>(pos.value());
+                    updateSubscribers(content);
                 }
             };
 

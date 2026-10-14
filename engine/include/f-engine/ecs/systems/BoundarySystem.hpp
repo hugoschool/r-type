@@ -7,9 +7,10 @@
 #include "f-engine/ecs/components/DefenseComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
+#include "f-engine/ecs/systems/ASystem.hpp"
 
 namespace fengine::ecs {
-    class BoundarySystem : public ISystem {
+    class BoundarySystem : public ASystem {
         public:
             BoundarySystem() {};
             ~BoundarySystem() override {};
@@ -84,6 +85,13 @@ namespace fengine::ecs {
                             manager.entityManager.killEntity(entity.value());
                         }
                     }
+                    observer::SubscriberContent content(i);
+                    content.add<PositionComponent>(pos.value());
+                    content.add<VelocityComponent>(vel.value());
+                    content.add<AttackComponent>(att.value());
+                    content.add<DefenseComponent>(def.value());
+                    content.add<BoundaryComponent>(bound.value());
+                    updateSubscribers(content);
                 }
             };
     };

@@ -4,11 +4,12 @@
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/ControllableComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
+#include "f-engine/ecs/systems/ASystem.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
 #include <queue>
 
 namespace fengine::ecs {
-    class ControlSystem : public ISystem {
+    class ControlSystem : public ASystem {
         public:
             ControlSystem(std::queue<modules::display::EventKey> &pqueue,
                 std::queue<modules::display::EventKey> &rqueue)

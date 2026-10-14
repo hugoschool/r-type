@@ -5,10 +5,11 @@
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
+#include "f-engine/ecs/systems/ASystem.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 
 namespace fengine::ecs {
-    class DisplaySystem : public ISystem {
+    class DisplaySystem : public ASystem {
         public:
             DisplaySystem(modules::display::IDisplayModule &displayModule, camera::Camera &camera)
                 : _displayModule(displayModule), _camera(camera) {};
