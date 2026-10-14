@@ -55,6 +55,10 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
             _clientHandler.setAlive(uuid);
             break;
         }
+        // test
+        case rtype::packets::PacketType::InputPlayer: {
+            std::cout << "WHALLAHI" << std::endl;
+        }
         default:
             break;
     }

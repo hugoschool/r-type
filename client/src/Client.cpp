@@ -100,26 +100,27 @@ void rtype::client::Client::communicationLoop(char *av[]) {
     connect(av);
     while (!_exit) {
         sleep(1);
+        sendMsg();
     }
     std::cout << "BYE BYE" << std::endl;
 }
 
-// void rtype::client::Client::sendMsg() {
-//     std::stringstream ss;
+void rtype::client::Client::sendMsg() {
+    std::stringstream ss;
 
-//     packets::PacketHeader header = {
-//         .type = packets::PacketType::InputPlayer,
-//         .size = 0
-//     };
+    packets::PacketHeader header = {
+        .type = packets::PacketType::InputPlayer,
+        .size = 0
+    };
 
-//     if (_inputs.canRead()) {
-//         fengine::modules::display::EventKey input = _inputs.getElem();
-//         packets::Input newInput = {_uuid, static_cast<uint16_t>(input)};
-//         packets::Serialization::serialize(ss, header, newInput);
-
-
-//     }
-// }
+    if (_inputs.canRead()) {
+        fengine::modules::display::EventKey input = _inputs.getElem();
+        packets::Input newInput = {_uuid, input};
+        packets::Serialization::serialize(ss, header, newInput);
+        std::string buf = ss.str();
+        _socket.send_to(boost::asio::buffer(buf), _endpoint);
+    }
+}
 
 void rtype::client::Client::connect(char *av[]) {
     const std::string host = av[1];
@@ -173,40 +174,7 @@ void rtype::client::Client::loop() {
 }
 
 void rtype::client::Client::loop() {
-    _registery.componentManager.registerComponent<fengine::ecs::PositionComponent>();
-    _registery.componentManager.registerComponent<fengine::ecs::DrawableComponent>();
-    _registery.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
-    _registery.componentManager.registerComponent<fengine::ecs::ControllableComponent>();
-    _registery.componentManager.registerComponent<fengine::ecs::BoundaryComponent>();
 
-    float posx = 0;
-    float posy = 0;
-    float vel_x = 8;
-    float vel_y = 7;
-    for (int i = 0; i < 100; i++) {
-        fengine::ecs::Entity entity = _registery.entityManager.spawnEntity();
-        fengine::ecs::PositionComponent pos = {posx, posy};
-        fengine::ecs::VelocityComponent vel = {vel_x, vel_y};
-        fengine::ecs::BoundaryComponent bound = {40, 40, false, false};
-        fengine::ecs::DrawableComponent draw = {std::nullopt, std::make_shared<fengine::modules::display::SFMLCircle>(bound.size_x), std::tuple<int, int, int>(rand()%255, rand()%255, rand()%255)};
-
-        _registery.componentManager.addComponent(entity, std::move(pos));
-        _registery.componentManager.addComponent(entity, std::move(vel));
-        _registery.componentManager.addComponent(entity, std::move(draw));
-        _registery.componentManager.addComponent(entity, std::move(bound));
-        posx += 0.01;
-        posy += 0.01;
-        if (vel_x > 0)
-            vel_x += 0.01;
-        vel_x *= -1;
-        if (vel_y > 0)
-            vel_y += 0.01;
-        vel_y *= -1;
-    }
-
-    _registery.systemManager.addSystem<fengine::ecs::MovementSystem>();
-    _registery.systemManager.addSystem<fengine::ecs::BoundarySystem>();
-    _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule);
     while (true) {
         _displayModule->clear();
 
@@ -216,6 +184,9 @@ void rtype::client::Client::loop() {
         if (event.has_value()) {
             if (event.value()->getType() == fengine::modules::display::EventType::Quit) {
                 break;
+            }
+            if (event.value()->getType() == fengine::modules::display::EventType::KeyPressed) {
+                _inputs.addElement(event.value()->getKey());
             }
         }
 
