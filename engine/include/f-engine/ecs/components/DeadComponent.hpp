@@ -4,6 +4,7 @@
 
 namespace fengine::ecs {
     struct DeadComponent {
-        std::size_t dead_id;
+        public:
+            std::size_t entityId;
     };
 }
