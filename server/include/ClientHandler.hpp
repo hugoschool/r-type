@@ -1,6 +1,8 @@
 #pragma once
 
+#include "SafeQueue.hpp"
 #include <chrono>
+#include <map>
 #include <string>
 #include <unordered_map>
 
@@ -26,6 +28,20 @@ namespace rtype::server {
             std::chrono::steady_clock::time_point timer;
     };
 
+    class ClientMessageQueueHandler {
+        public:
+            explicit ClientMessageQueueHandler();
+            ~ClientMessageQueueHandler() = default;
+
+            void addMessage(std::string uuid, std::string content);
+            std::string popMessage(std::string uuid);
+            bool isClientEmpty(std::string uuid);
+
+        private:
+            std::map<std::string, SafeMessageQueue> _map;
+            std::mutex _mutex;
+    };
+
     class ClientHandler {
         public:
             explicit ClientHandler();
@@ -44,8 +60,11 @@ namespace rtype::server {
             // If he has been disconnected for too long, he will be removed.
             void verifyStatus();
 
+            ClientMessageQueueHandler &getMessageQueueHandler();
+
         private:
             std::unordered_map<ClientStatus, std::chrono::seconds> _maxStatusSecondsMap;
             std::unordered_map<std::string, ClientData> _clients;
+            ClientMessageQueueHandler _messageQueueHandler;
     };
 }

@@ -15,6 +15,6 @@ bool rtype::server::TickHandler::tickPassed() {
     return false;
 }
 
-rtype::server::TickHandler::MessageQueue &rtype::server::TickHandler::getMessageQueue() {
+rtype::server::SafeMessageQueue &rtype::server::TickHandler::getMessageQueue() {
     return _messageQueue;
 }

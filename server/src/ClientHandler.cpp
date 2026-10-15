@@ -1,10 +1,42 @@
 #include "ClientHandler.hpp"
+#include "Exception.hpp"
+#include "SafeQueue.hpp"
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/generators.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <chrono>
 #include <iostream>
+
+rtype::server::ClientMessageQueueHandler::ClientMessageQueueHandler() : _map(), _mutex() {
+}
+
+void rtype::server::ClientMessageQueueHandler::addMessage(std::string uuid, std::string content) {
+    std::unique_lock<std::mutex> lock(_mutex);
+
+    if (!_map.contains(uuid)) {
+        _map.insert({uuid, SafeMessageQueue{}});
+    }
+    _map[uuid].push(content);
+}
+
+bool rtype::server::ClientMessageQueueHandler::isClientEmpty(std::string uuid) {
+    std::unique_lock<std::mutex> lock(_mutex);
+
+    try {
+        auto &queue = _map.at(uuid);
+        return queue.empty();
+    } catch (std::exception &) { throw Exception("No queue for client " + uuid); }
+}
+
+std::string rtype::server::ClientMessageQueueHandler::popMessage(std::string uuid) {
+    std::unique_lock<std::mutex> lock(_mutex);
+
+    try {
+        auto &queue = _map.at(uuid);
+        return queue.pop();
+    } catch (std::exception &) { throw Exception("No queue for client " + uuid); }
+}
 
 rtype::server::ClientHandler::ClientHandler()
     : _maxStatusSecondsMap({
@@ -78,4 +110,8 @@ void rtype::server::ClientHandler::verifyStatus() {
 
         data.timer = currentTime;
     }
+}
+
+rtype::server::ClientMessageQueueHandler &rtype::server::ClientHandler::getMessageQueueHandler() {
+    return _messageQueueHandler;
 }

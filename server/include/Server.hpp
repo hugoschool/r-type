@@ -6,6 +6,8 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <cstdint>
+#include <f-engine/ecs/Registry.hpp>
+#include <f-engine/world/World.hpp>
 #include <r-type/packets/Packet.hpp>
 #include <r-type/packets/Serialization.hpp>
 
@@ -30,6 +32,8 @@ namespace rtype::server {
 
             TickHandler _tickHandler;
             ClientHandler _clientHandler;
+
+            fengine::world::World _world;
 
             UDPProtocol _udp;
     };

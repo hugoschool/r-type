@@ -8,6 +8,15 @@ namespace rtype::server {
     template <typename T>
     class SafeQueue {
         public:
+            SafeQueue() : _queue(), _mutex(), _cv() {
+            }
+
+            SafeQueue(SafeQueue<T> &&queue) : _mutex(), _cv() {
+                _queue = std::move(queue._queue);
+            }
+
+            ~SafeQueue() = default;
+
             void push(T item) {
                 std::unique_lock<std::mutex> lock(_mutex);
                 _queue.push(item);
@@ -35,4 +44,6 @@ namespace rtype::server {
             std::mutex _mutex;
             std::condition_variable _cv;
     };
+
+    using SafeMessageQueue = SafeQueue<std::string>;
 }
