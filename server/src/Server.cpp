@@ -34,6 +34,13 @@ rtype::server::Server::Server(std::uint32_t port)
 
     _registry.systemManager.addSystem<fengine::ecs::MovementSystem>(_world._camera);
     _registry.systemManager.addSystem<fengine::ecs::BoundarySystem>();
+
+    // TODO: this is all temporary and to provide an easy message check to the client
+    _clientHandler.getMessageQueueHandler().addMessage("f52ea348-6c57-4acf-9834-059bc9a9c81c", "Hello world!!!!!\n");
+    _clientHandler.getMessageQueueHandler().addMessage("f52ea348-6c57-4acf-9834-059bc9a9c81c",
+        "This is a simple test to verify connection between server & client.\n");
+    _clientHandler.getMessageQueueHandler().addMessage("f52ea348-6c57-4acf-9834-059bc9a9c81c",
+        "Let's hope this makes it through\n");
 }
 
 rtype::server::Server::~Server() {

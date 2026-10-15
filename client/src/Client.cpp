@@ -19,6 +19,9 @@ void rtype::client::Client::connect() {
     packets::PacketHeader header = {
         .type = packets::PacketType::Ack,
         .size = 0,
+        // TODO: this is a simple test UUID for the server <-> client communication
+        // To be removed later
+        .playerUuid = "f52ea348-6c57-4acf-9834-059bc9a9c81c",
     };
 
     packets::Serialization::serialize(ss, header, packets::Empty{});
@@ -26,9 +29,11 @@ void rtype::client::Client::connect() {
     std::string send = ss.str();
     _socket.send_to(boost::asio::buffer(send), _endpoint);
 
-    std::array<char, 1024> recv_buf;
-    udp::endpoint sender_endpoint;
-    size_t len = _socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
+    while (true) {
+        std::array<char, 1024> recv_buf;
+        udp::endpoint sender_endpoint;
+        size_t len = _socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
 
-    std::cout.write(recv_buf.data(), len);
+        std::cout.write(recv_buf.data(), len);
+    }
 }
