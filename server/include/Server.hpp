@@ -33,7 +33,6 @@ namespace rtype::server {
             TickHandler _tickHandler;
             ClientHandler _clientHandler;
 
-            fengine::ecs::Registry _registry;
             fengine::world::World _world;
 
             UDPProtocol _udp;

@@ -22,18 +22,18 @@ rtype::server::Server::Server(std::uint32_t port)
       // Clients
       _clientHandler(),
       // Engine
-      _registry(), _world(1.0, 10000),
+      _world(1.0, 10000),
       // Protocols
       _udp(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler.getMessageQueueHandler()) {
 
-    _registry.componentManager.registerComponent<fengine::ecs::PositionComponent>();
-    _registry.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
-    _registry.componentManager.registerComponent<fengine::ecs::BoundaryComponent>();
-    _registry.componentManager.registerComponent<fengine::ecs::AttackComponent>();
-    _registry.componentManager.registerComponent<fengine::ecs::DefenseComponent>();
+    _world._registry.componentManager.registerComponent<fengine::ecs::PositionComponent>();
+    _world._registry.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
+    _world._registry.componentManager.registerComponent<fengine::ecs::BoundaryComponent>();
+    _world._registry.componentManager.registerComponent<fengine::ecs::AttackComponent>();
+    _world._registry.componentManager.registerComponent<fengine::ecs::DefenseComponent>();
 
-    _registry.systemManager.addSystem<fengine::ecs::MovementSystem>(_world._camera);
-    _registry.systemManager.addSystem<fengine::ecs::BoundarySystem>();
+    _world._registry.systemManager.addSystem<fengine::ecs::MovementSystem>(_world._camera);
+    _world._registry.systemManager.addSystem<fengine::ecs::BoundarySystem>();
 
     // TODO: this is all temporary and to provide an easy message check to the client
     _clientHandler.getMessageQueueHandler().addMessage("f52ea348-6c57-4acf-9834-059bc9a9c81c", "Hello world!!!!!\n");
@@ -84,7 +84,7 @@ void rtype::server::Server::tickThreadRun() {
             }
         }
         _clientHandler.verifyStatus();
-        _registry.systemManager.update(_registry);
+        _world._registry.systemManager.update(_world._registry);
     }
 }
 
