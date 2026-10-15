@@ -24,7 +24,7 @@ rtype::server::Server::Server(std::uint32_t port)
       // Engine
       _registry(), _world(1.0, 10000),
       // Protocols
-      _udp(_io_context, _port, _tickHandler.getMessageQueue()) {
+      _udp(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler.getMessageQueueHandler()) {
 
     _registry.componentManager.registerComponent<fengine::ecs::PositionComponent>();
     _registry.componentManager.registerComponent<fengine::ecs::VelocityComponent>();

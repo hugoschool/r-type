@@ -4,9 +4,9 @@
 #include <string>
 
 rtype::server::UDPProtocol::UDPProtocol(boost::asio::io_context &io_context, std::uint16_t port,
-    SafeMessageQueue &SafeMessageQueue)
-    : AProtocol(io_context, port, SafeMessageQueue), _socket(_io_context, udp::endpoint(udp::v4(), _port)), _endpoint(),
-      _buffer() {
+    SafeMessageQueue &SafeMessageQueue, ClientMessageQueueHandler &clientMQHandler)
+    : AProtocol(io_context, port, SafeMessageQueue, clientMQHandler),
+      _socket(_io_context, udp::endpoint(udp::v4(), _port)), _endpoint(), _buffer() {
     startReceive();
 }
 
@@ -24,6 +24,9 @@ void rtype::server::UDPProtocol::handleReceive(const boost::system::error_code &
         std::shared_ptr<std::string> message = std::make_shared<std::string>(str);
 
         _messageQueue.push(str);
+
+        // TODO: pre-parse the protocol header to get the current client UUID
+        // TODO: then send all the data that he should get
 
         _socket.async_send_to(boost::asio::buffer(*message), _endpoint,
             std::bind(&UDPProtocol::handleSend, this, message, boost::asio::placeholders::error,
