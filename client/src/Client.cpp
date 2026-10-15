@@ -68,7 +68,6 @@ void rtype::client::Client::connect(char *av[]) {
 
         std::cout.write(recv_buf.data(), len);
     }
-    std::cout.write(recv_buf.data(), len);
 
     // Connect to the server and send connection information to it.
 
