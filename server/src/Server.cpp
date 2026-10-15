@@ -22,8 +22,7 @@ rtype::server::Server::Server(std::uint32_t port)
       // Clients
       _clientHandler(),
       // Engine
-      _registry(),
-      _world(1.0, 10000),
+      _registry(), _world(1.0, 10000),
       // Protocols
       _udp(_io_context, _port, _tickHandler.getMessageQueue()) {
 

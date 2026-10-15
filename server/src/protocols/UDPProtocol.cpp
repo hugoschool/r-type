@@ -4,8 +4,8 @@
 #include <string>
 
 rtype::server::UDPProtocol::UDPProtocol(boost::asio::io_context &io_context, std::uint16_t port,
-    TickHandler::MessageQueue &messageQueue)
-    : AProtocol(io_context, port, messageQueue), _socket(_io_context, udp::endpoint(udp::v4(), _port)), _endpoint(),
+    SafeMessageQueue &SafeMessageQueue)
+    : AProtocol(io_context, port, SafeMessageQueue), _socket(_io_context, udp::endpoint(udp::v4(), _port)), _endpoint(),
       _buffer() {
     startReceive();
 }

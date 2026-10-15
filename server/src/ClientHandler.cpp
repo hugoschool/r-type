@@ -1,4 +1,5 @@
 #include "ClientHandler.hpp"
+#include "SafeQueue.hpp"
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/generators.hpp>
 #include <boost/uuid/uuid.hpp>
@@ -78,4 +79,8 @@ void rtype::server::ClientHandler::verifyStatus() {
 
         data.timer = currentTime;
     }
+}
+
+rtype::server::ClientMessageQueueHandler &rtype::server::ClientHandler::getMessageQueueHandler() {
+    return _messageQueueHandler;
 }

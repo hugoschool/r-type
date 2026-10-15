@@ -10,8 +10,6 @@ namespace rtype::server {
 
     class TickHandler {
         public:
-            using MessageQueue = SafeQueue<std::string>;
-
             explicit TickHandler();
             ~TickHandler() = default;
 
@@ -22,13 +20,13 @@ namespace rtype::server {
             // Resets the tick once it has passed
             bool tickPassed();
 
-            MessageQueue &getMessageQueue();
+            SafeMessageQueue &getMessageQueue();
 
         private:
             std::chrono::steady_clock::time_point _clock;
 
             const std::chrono::milliseconds _delayBetweenTicks;
 
-            MessageQueue _messageQueue;
+            SafeMessageQueue _messageQueue;
     };
 }

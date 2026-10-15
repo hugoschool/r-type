@@ -35,4 +35,6 @@ namespace rtype::server {
             std::mutex _mutex;
             std::condition_variable _cv;
     };
+
+    using SafeMessageQueue = SafeQueue<std::string>;
 }
