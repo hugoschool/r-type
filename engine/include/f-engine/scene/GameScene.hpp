@@ -1,15 +1,16 @@
 #pragma once
 
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
-#include "f-engine/scene/SceneObjects.hpp"
 #include "f-engine/scene/IScene.hpp"
+#include "f-engine/scene/SceneObjects.hpp"
 #include <optional>
 #include <vector>
 
 namespace fengine::scene {
-    class GameScene: public IScene {
+    class GameScene : public IScene {
         public:
-            GameScene(std::optional<std::vector<Button>> buttons, std::string bgTexture, bool paralax): _buttons(buttons), _background() {
+            GameScene(std::optional<std::vector<Button>> buttons, std::string bgTexture, bool paralax)
+                : _buttons(buttons), _background() {
                 _background.offset = 0;
                 _background.texture = bgTexture;
                 _background.paralax = paralax;

@@ -10,8 +10,8 @@
 #include "f-engine/scene/IScene.hpp"
 #include "f-engine/scene/SceneObjects.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <any>
 #include <memory>
@@ -113,7 +113,9 @@ fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule
 
 void fengine::modules::display::SFMLDisplayModule::drawScene(fengine::scene::IScene &scene) {
     std::optional<std::vector<scene::Button>> &buttons = scene.getButtons();
-    scene::Background &background = scene.getBackground(); // a voir comment definir cela, pour l'instant surement une shape rectangle de la taille de la window + un offset handle dans la scene elle meme
+    scene::Background &background =
+        scene
+            .getBackground();// a voir comment definir cela, pour l'instant surement une shape rectangle de la taille de la window + un offset handle dans la scene elle meme
 
     // background (a changer aussi)
     sf::RectangleShape bg1 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
@@ -136,7 +138,7 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(fengine::scene::ISc
     // boutons (a changer)
     if (!buttons.has_value())
         return;
-    for (auto &button: buttons.value()) {
+    for (auto &button : buttons.value()) {
         sf::RectangleShape rect = sf::RectangleShape(sf::Vector2f(button.length, button.height));
         rect.setPosition(sf::Vector2f(button.pos_x, button.pos_y));
 

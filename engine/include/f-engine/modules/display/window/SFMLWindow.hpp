@@ -57,6 +57,7 @@ namespace fengine::modules::display {
             };
 
             sf::Font font;
+
         private:
             sf::RenderWindow _window;
             sf::VideoMode _videoMode;
