@@ -4,6 +4,7 @@
 #include "TickHandler.hpp"
 #include "protocols/UDPProtocol.hpp"
 #include <boost/asio/io_context.hpp>
+#include <boost/asio/signal_set.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <cstdint>
 #include <f-engine/ecs/Registry.hpp>
@@ -29,6 +30,9 @@ namespace rtype::server {
             unsigned int _totalThreadAmount;
             unsigned int _protocolThreadAmount;
             boost::asio::thread_pool _threadPool;
+
+            bool _stop;
+            boost::asio::signal_set _signals;
 
             TickHandler _tickHandler;
             ClientHandler _clientHandler;

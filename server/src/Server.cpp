@@ -17,6 +17,8 @@ rtype::server::Server::Server(std::uint32_t port)
       // Threads
       // For now, we're assuming the threads amount ourselves.
       _totalThreadAmount(4), _protocolThreadAmount(3), _threadPool(_totalThreadAmount),
+      // Signals handling
+      _stop(false), _signals(_io_context, SIGINT, SIGTERM),
       // Tick handling
       _tickHandler(),
       // Clients
@@ -25,6 +27,11 @@ rtype::server::Server::Server(std::uint32_t port)
       _world(1.0, 10000),
       // Protocols
       _udp(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler.getMessageQueueHandler()) {
+
+    _signals.async_wait([&](boost::system::error_code, int) {
+        _io_context.stop();
+        _stop = true;
+    });
 
     _world._registry.componentManager.registerComponent<fengine::ecs::PositionComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
@@ -62,6 +69,8 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
 
 void rtype::server::Server::tickThreadRun() {
     while (true) {
+        if (_stop)
+            return;
         if (!_tickHandler.tickPassed()) {
             // Using 100% CPU isn't wise, let's wait a little...
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -93,5 +102,6 @@ void rtype::server::Server::run() {
         boost::asio::post(_threadPool, [&]() { _udp.run(); });
     }
     boost::asio::post(_threadPool, [&]() { this->tickThreadRun(); });
+
     _threadPool.join();
 }
