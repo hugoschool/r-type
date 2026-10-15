@@ -15,14 +15,14 @@ constexpr int WINDOW_Y = 800;
 namespace fengine::modules::display {
     class SFMLWindow : public IWindow {
         public:
-            SFMLWindow() : _videoMode({WINDOW_X, WINDOW_Y}), _font() {
+            SFMLWindow() : font(), _videoMode({WINDOW_X, WINDOW_Y}) {
                 try {
                     _window = sf::RenderWindow(_videoMode, "R-Type");
                     _window.setMaximumSize(_window.getSize());
                     _window.setMinimumSize(_window.getSize());
                 } catch (std::exception &) { throw SfmlException("render window creation"); }
                 _window.setFramerateLimit(60);
-                // if (_font.openFromFile("textures/fonts/" FONT) == false) { // ajouter une font
+                // if (font.openFromFile("textures/fonts/" FONT) == false) { // ajouter une font
                 //     throw SfmlException("font creation");
                 // }
             }
@@ -56,9 +56,10 @@ namespace fengine::modules::display {
                 return _window.pollEvent();
             };
 
+            sf::Font font;
+
         private:
             sf::RenderWindow _window;
             sf::VideoMode _videoMode;
-            sf::Font _font;
     };
 }
