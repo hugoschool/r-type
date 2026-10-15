@@ -10,6 +10,7 @@
 #include "r-type/packets/Entity.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
+#include <cstring>
 #include <exception>
 #include <iostream>
 #include <memory>
@@ -48,12 +49,13 @@ void rtype::client::Client::sendLoop() {
 
 void rtype::client::Client::readLoop() {
     try {
-        std::cout << "TOST" << std::endl;
         _socket.non_blocking(true);
         boost::system::error_code error  = boost::asio::error::would_block;
         while (error == boost::asio::error::would_block && !_exit) {
             readMsg(error);
         }
+        if (!_exit)
+            readLoop();
     } catch (std::exception &) {
     }
 }
@@ -62,7 +64,8 @@ void rtype::client::Client::readMsg(boost::system::error_code &error) {
 
     char reply[1024];
     _socket.receive_from(boost::asio::buffer(reply, 1024), _endpoint, 0, error);
-    std::cout << "TEST" << std::endl;
+    if (std::strlen(reply) > 1)
+        std::cout << "Reply: " << reply << std::endl;
 }
 
 void rtype::client::Client::sendMsg() {

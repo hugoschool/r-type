@@ -1,4 +1,6 @@
 #include "Server.hpp"
+#include "f-engine/modules/display/events/EventKey.hpp"
+#include "r-type/packets/Entity.hpp"
 #include <cstdint>
 #include <f-engine/ecs/components/AttackComponent.hpp>
 #include <f-engine/ecs/components/BoundaryComponent.hpp>
@@ -46,7 +48,7 @@ rtype::server::Server::Server(std::uint32_t port)
 rtype::server::Server::~Server() {
 }
 
-void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_archive &,
+void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_archive &ar,
     packets::PacketHeader &header) {
     switch (header.type) {
         case packets::PacketType::Ack: {
@@ -57,7 +59,19 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
         }
         // test
         case rtype::packets::PacketType::InputPlayer: {
+            // Debug
             std::cout << "WHALLAHI" << std::endl;
+            rtype::packets::Input input;
+            ar & input;
+            if (input.input == fengine::modules::display::EventKey::Z) {
+                _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, "ZZ");
+            }
+            if (input.input == fengine::modules::display::EventKey::A) {
+                _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, "AA");
+            }
+            if (input.input == fengine::modules::display::EventKey::S) {
+                _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, "SS");
+            }
         }
         default:
             break;
