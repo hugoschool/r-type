@@ -4,6 +4,7 @@
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/AttackComponent.hpp"
 #include "f-engine/ecs/components/BoundaryComponent.hpp"
+#include "f-engine/ecs/components/DeadComponent.hpp"
 #include "f-engine/ecs/components/DefenseComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
@@ -79,13 +80,16 @@ namespace fengine::ecs {
                         bound_other.value().can_be_hit = std::chrono::steady_clock::now();
                     }
 
+                    observer::SubscriberContent content(i);
+
                     if (def.value().health <= 0) {
                         std::optional<Entity> entity = manager.entityManager.entityFromIndex(i);
                         if (entity.has_value()) {
+                            DeadComponent deadComp = {entity.value().getId()};
                             manager.entityManager.killEntity(entity.value());
+                            content.add<DeadComponent>(deadComp);
                         }
                     }
-                    observer::SubscriberContent content(i);
                     content.add<PositionComponent>(pos.value());
                     content.add<VelocityComponent>(vel.value());
                     content.add<AttackComponent>(att.value());
