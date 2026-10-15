@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ClientHelper.hpp"
+#include "boost/system/detail/error_code.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
@@ -31,9 +32,10 @@ namespace rtype::client {
 
             void connect(char *av[]);
             void loop();
-            void communicationLoop(char *av[]);
+            void sendLoop();
+            void readLoop();
             void sendMsg();
-            void readMsg();
+            void readMsg(boost::system::error_code &error);
 
         public:
             Client();

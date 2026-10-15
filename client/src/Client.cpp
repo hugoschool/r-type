@@ -1,9 +1,9 @@
 #include "Client.hpp"
-#include "f-engine/modules/display/SFMLDisplayModule.hpp"
-#include "f-engine/modules/display/events/EventKey.hpp"
-#include "f-engine/modules/display/events/EventType.hpp"
-#include "f-engine/modules/display/events/IEvent.hpp"
+#include "boost/asio/error.hpp"
+#include "boost/system/detail/error_code.hpp"
 #include "f-engine/ecs/Registry.hpp"
+#include "f-engine/modules/display/IDisplayModule.hpp"
+#include "f-engine/modules/display/SFMLDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
 #include "f-engine/modules/display/events/EventType.hpp"
 #include "f-engine/modules/display/events/IEvent.hpp"
@@ -15,6 +15,7 @@
 #include <memory>
 #include <optional>
 #include <sstream>
+#include <sys/socket.h>
 #include <thread>
 #include <unistd.h>
 
@@ -26,35 +27,41 @@ rtype::client::Client::Client()
 }
 
 rtype::client::Client::~Client() {
-    _socket.close();
     _writeThread.join();
     _readThread.join();
+    _socket.close();
 }
 
 void rtype::client::Client::run(char *av[]) {
     connect(av);
+    _writeThread = std::thread(&rtype::client::Client::sendLoop, this);
+    _readThread = std::thread(&rtype::client::Client::readLoop, this);
     loop();
 }
 
-void rtype::client::Client::communicationLoop(char *av[]) {
-    connect(av);
-    _readThread = std::thread(&rtype::client::Client::readMsg, this);
+void rtype::client::Client::sendLoop() {
     while (!_exit) {
-        sleep(1);
         sendMsg();
     }
     std::cout << "BYE BYE" << std::endl;
 }
 
-void rtype::client::Client::readMsg() {
-
-    char reply[1024];
+void rtype::client::Client::readLoop() {
     try {
-        while (!_exit) {
-            _socket.receive_from(boost::asio::buffer(reply, 1024), _endpoint);
+        std::cout << "TOST" << std::endl;
+        _socket.non_blocking(true);
+        boost::system::error_code error  = boost::asio::error::would_block;
+        while (error == boost::asio::error::would_block && !_exit) {
+            readMsg(error);
         }
     } catch (std::exception &) {
     }
+}
+
+void rtype::client::Client::readMsg(boost::system::error_code &error) {
+
+    char reply[1024];
+    _socket.receive_from(boost::asio::buffer(reply, 1024), _endpoint, 0, error);
     std::cout << "TEST" << std::endl;
 }
 
@@ -67,12 +74,15 @@ void rtype::client::Client::sendMsg() {
         .playerUuid = "f52ea348-6c57-4acf-9834-059bc9a9c81c",
     };
 
-    if (_inputs.canRead()) {
-        fengine::modules::display::EventKey input = _inputs.getElem();
-        packets::Input newInput = {_uuid, input};
-        packets::Serialization::serialize(ss, header, newInput);
-        std::string buf = ss.str();
-        _socket.send_to(boost::asio::buffer(buf), _endpoint);
+    try {
+        if (_inputs.canRead()) {
+            fengine::modules::display::EventKey input = _inputs.getElem();
+            packets::Input newInput = {_uuid, input};
+            packets::Serialization::serialize(ss, header, newInput);
+            std::string buf = ss.str();
+            _socket.send_to(boost::asio::buffer(buf), _endpoint);
+        }
+    } catch (std::exception &) {
     }
 }
 
@@ -98,14 +108,6 @@ void rtype::client::Client::connect(char *av[]) {
     std::string send = ss.str();
     _socket.send_to(boost::asio::buffer(send), _endpoint);
 
-    while (true) {
-        std::array<char, 1024> recv_buf;
-        udp::endpoint sender_endpoint;
-        size_t len = _socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
-
-        std::cout.write(recv_buf.data(), len);
-    }
-
     // Connect to the server and send connection information to it.
 
     // the cient spams send the henshake to the server
@@ -125,6 +127,7 @@ void rtype::client::Client::loop() {
         std::optional<std::unique_ptr<fengine::modules::display::IEvent>> event = _displayModule->pollEvent();
         if (event.has_value()) {
             if (event.value()->getType() == fengine::modules::display::EventType::Quit) {
+                _exit = true;
                 break;
             }
             if (event.value()->getType() == fengine::modules::display::EventType::KeyPressed) {
@@ -137,13 +140,5 @@ void rtype::client::Client::loop() {
         // send it to the server
         // create prediction based on the input
         // get server response compare server response with the predition
-    // Connect to the server and send connection information to it.
-
-    // the cient spams send the henshake to the server
-    // when the client recieve the server response it stops
-    // the server now sends all his ecs informations
-    // the client now feed all these information into his ecs to match the server's one
-    // throw an exception if the client dont achieve to connect to the server
-
     }
 }
