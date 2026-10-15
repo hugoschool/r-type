@@ -15,7 +15,6 @@ namespace fengine::ecs {
             ~AnimationSystem() override {};
 
             void update(Registry &manager) override {
-                _camera.incrementWorldIndex();
                 auto &velocities = manager.componentManager.getComponents<VelocityComponent>();
                 auto &drawables = manager.componentManager.getComponents<DrawableComponent>();
                 auto &animations = manager.componentManager.getComponents<AnimationComponent>();
