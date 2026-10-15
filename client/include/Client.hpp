@@ -6,7 +6,7 @@
 #include "f-engine/modules/display/events/EventKey.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
-#include "f-engine/display_module/IDisplayModule.hpp"
+#include "f-engine/modules/display/IDisplayModule.hpp"
 #include <memory>
 #include <thread>
 #include "CircularBuffer.hpp"

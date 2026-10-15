@@ -1,41 +1,21 @@
 #include "Client.hpp"
-#include "Exception.hpp"
-#include "boost/asio/registered_buffer.hpp"
-#include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
 #include "f-engine/modules/display/events/EventType.hpp"
 #include "f-engine/modules/display/events/IEvent.hpp"
-#include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
-#include "f-engine/ecs/Entity.hpp"
 #include "f-engine/ecs/Registry.hpp"
-#include "f-engine/ecs/components/BoundaryComponent.hpp"
-#include "f-engine/ecs/components/ControllableComponent.hpp"
-#include "f-engine/ecs/components/DrawableComponent.hpp"
-#include "f-engine/ecs/components/PositionComponent.hpp"
-#include "f-engine/ecs/components/VelocityComponent.hpp"
-#include "f-engine/ecs/systems/BoundarySystem.hpp"
-#include "f-engine/ecs/systems/ControlSystem.hpp"
-#include "f-engine/ecs/systems/DisplaySystem.hpp"
-#include "f-engine/ecs/systems/MoveSystem.hpp"
-#include "f-engine/modules/display/IDisplayModule.hpp"
-#include "f-engine/modules/display/SFMLDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
 #include "f-engine/modules/display/events/EventType.hpp"
 #include "f-engine/modules/display/events/IEvent.hpp"
-#include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
 #include "r-type/packets/Entity.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
-#include <cstdint>
 #include <exception>
 #include <iostream>
 #include <memory>
 #include <optional>
 #include <sstream>
 #include <thread>
-#include <tuple>
-#include "Exception.hpp"
 #include <unistd.h>
 
 rtype::client::Client::Client()
@@ -53,94 +33,6 @@ rtype::client::Client::~Client() {
 
 void rtype::client::Client::run(char *av[]) {
     connect(av);
-    loop();
-}
-
-void rtype::client::Client::connect(char *av[]) {
-    const std::string host = av[1];
-    const std::string port = av[2];
-
-    _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
-
-    _socket.open(udp::v4());
-    connect();
-}
-
-rtype::client::Client::Client(): _displayModule(new fengine::modules::display::SFMLDisplayModule), _registery() {
-}
-
-rtype::client::Client::~Client() {
-    // maybe delete what was created
-}
-
-void rtype::client::Client::run(char *av[]) {
-    connect(av);
-    loop();
-}
-
-void rtype::client::Client::connect(char *av[]) {
-    const std::string host = av[1];
-    const std::string port = av[2];
-
-    _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
-
-    _socket.open(udp::v4());
-    connect();
-}
-
-rtype::client::Client::Client(): _displayModule(new fengine::modules::display::SFMLDisplayModule), _registery() {
-}
-
-rtype::client::Client::~Client() {
-    // maybe delete what was created
-}
-
-void rtype::client::Client::run(char *av[]) {
-    _networkThread = std::thread(&rtype::client::Client::communicationLoop, this, av);
-    loop();
-}
-
-void rtype::client::Client::connect(char *av[]) {
-    const std::string host = av[1];
-    const std::string port = av[2];
-
-    _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
-
-    _socket.open(udp::v4());
-    connect();
-}
-
-rtype::client::Client::Client(): _displayModule(new fengine::modules::display::SFMLDisplayModule), _registery() {
-}
-
-rtype::client::Client::~Client() {
-    // maybe delete what was created
-}
-
-void rtype::client::Client::run(char *av[]) {
-    _writeThread = std::thread(&rtype::client::Client::communicationLoop, this, av);
-    loop();
-}
-
-void rtype::client::Client::connect(char *av[]) {
-    const std::string host = av[1];
-    const std::string port = av[2];
-
-    _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
-
-    _socket.open(udp::v4());
-    connect();
-}
-
-rtype::client::Client::Client(): _displayModule(new fengine::modules::display::SFMLDisplayModule), _registery() {
-}
-
-rtype::client::Client::~Client() {
-    // maybe delete what was created
-}
-
-void rtype::client::Client::run(char *av[]) {
-    _writeThread = std::thread(&rtype::client::Client::communicationLoop, this, av);
     loop();
 }
 
@@ -171,7 +63,8 @@ void rtype::client::Client::sendMsg() {
 
     packets::PacketHeader header = {
         .type = packets::PacketType::InputPlayer,
-        .size = 0
+        .size = 0,
+        .playerUuid = "f52ea348-6c57-4acf-9834-059bc9a9c81c",
     };
 
     if (_inputs.canRead()) {
@@ -223,18 +116,6 @@ void rtype::client::Client::connect(char *av[]) {
 }
 
 void rtype::client::Client::loop() {
-    std::cout.write(recv_buf.data(), len);
-
-    // Connect to the server and send connection information to it.
-
-    // the cient spams send the henshake to the server
-    // when the client recieve the server response it stops
-    // the server now sends all his ecs informations
-    // the client now feed all these information into his ecs to match the server's one
-    // throw an exception if the client dont achieve to connect to the server
-}
-
-void rtype::client::Client::loop() {
 
     while (true) {
         _displayModule->clear();
@@ -256,8 +137,13 @@ void rtype::client::Client::loop() {
         // send it to the server
         // create prediction based on the input
         // get server response compare server response with the predition
-    }
-}
+    // Connect to the server and send connection information to it.
 
-rtype::client::Client::~Client() {
+    // the cient spams send the henshake to the server
+    // when the client recieve the server response it stops
+    // the server now sends all his ecs informations
+    // the client now feed all these information into his ecs to match the server's one
+    // throw an exception if the client dont achieve to connect to the server
+
+    }
 }
