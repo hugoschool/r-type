@@ -22,6 +22,8 @@ namespace fengine::modules::display {
             void clear() override;
             void drawEntity(ecs::PositionComponent, ecs::DrawableComponent &) override;
 
+            void animateEntity(ecs::AnimationComponent &, ecs::DrawableComponent &) override;
+
             void drawScene(scene::IScene &) override;
 
             std::optional<std::unique_ptr<IEvent>> pollEvent() override;
