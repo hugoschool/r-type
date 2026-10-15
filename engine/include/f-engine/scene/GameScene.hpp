@@ -14,7 +14,7 @@ namespace fengine::scene {
                 _background.texture = bgTexture;
                 _background.paralax = paralax;
             };
-            ~GameScene() {};
+            ~GameScene() override {};
 
             std::optional<std::vector<Button>> &getButtons() override {
                 return _buttons;
