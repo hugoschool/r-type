@@ -7,10 +7,14 @@
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventType.hpp"
 #include "f-engine/modules/display/events/IEvent.hpp"
+#include "r-type/packets/Packet.hpp"
+#include "r-type/packets/Serialization.hpp"
 #include <exception>
 #include <iostream>
 #include <memory>
 #include <optional>
+#include <sstream>
+#include <string>
 #include <sys/socket.h>
 #include <thread>
 #include <unistd.h>
@@ -47,11 +51,35 @@ void rtype::client::Client::readLoop() {
         _protocol->setSocketNonBlocking();
         boost::system::error_code error  = boost::asio::error::would_block;
         while (error == boost::asio::error::would_block && !_exit) {
-            _protocol->readMsg(error);
+            std::string msg = _protocol->readMsg(error);
+            interpretMsg(msg);
         }
         if (!_exit)
             readLoop();
     } catch (std::exception &) {
+    }
+}
+
+void rtype::client::Client::interpretMsg(std::string msg) {
+    packets::PacketHeader header;
+
+    try {
+        std::stringstream ss(msg);
+        packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
+
+        packets::Serialization::deserialize(ar, header);
+        switch (header.type) {
+            case rtype::packets::PacketType::Ack:
+            // function for Ack*
+            break;
+            case rtype::packets::PacketType::InputPlayer:
+            // function for Input Player
+            break;
+            default:
+            break;
+        }
+    } catch (std::exception &) {
+        std::cerr << "The message couldn't be deserialized" << std::endl;
     }
 }
 

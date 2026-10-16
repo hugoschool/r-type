@@ -30,6 +30,7 @@ namespace rtype::client {
             void loop();
             void sendLoop();
             void readLoop();
+            void interpretMsg(std::string msg);
 
         public:
             Client();

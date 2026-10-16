@@ -68,12 +68,13 @@ void rtype::client::UDPProtocol::sendMsg() {
     }
 }
 
-void rtype::client::UDPProtocol::readMsg(boost::system::error_code &error) {
+std::string rtype::client::UDPProtocol::readMsg(boost::system::error_code &error) {
     char reply[1024];
 
     _socket.receive_from(boost::asio::buffer(reply, 1024), _endpoint, 0, error);
     if (std::strlen(reply) > 1)
         std::cout << "Reply: " << reply << std::endl;
+    return std::string(reply);
 }
 
 void rtype::client::UDPProtocol::setSocketNonBlocking()

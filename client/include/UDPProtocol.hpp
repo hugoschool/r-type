@@ -11,7 +11,7 @@ namespace rtype::client {
             ~UDPProtocol() override;
             void connect(char *av[]) override;
             void sendMsg() override;
-            void readMsg(boost::system::error_code &error) override;
+            std::string readMsg(boost::system::error_code &error) override;
             void setSocketNonBlocking() override;
             void close() override;
 
