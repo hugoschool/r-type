@@ -43,6 +43,10 @@ namespace rtype::server {
 
             UDPProtocol _udp;
 
+            std::chrono::steady_clock::time_point _spawnClock;
+            short _ennemyCounter;
+
+            void generateEnnemies();
             void userLoginPacket(rtype::packets::PacketHeader &header);
     };
 }
