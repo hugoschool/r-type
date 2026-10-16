@@ -29,6 +29,12 @@ namespace fengine::modules::display {
             void setTexture(std::any texture) override {
                 shape.setTexture(std::any_cast<sf::Texture *>(texture));
             };
+            void setTextureRect(int offset_x, int offset_y, int length, int height) override {
+                sf::IntRect rect;
+                rect.position = sf::Vector2(offset_x, offset_y);
+                rect.size = sf::Vector2(length, height);
+                shape.setTextureRect(rect);
+            };
 
             sf::RectangleShape shape;
     };
