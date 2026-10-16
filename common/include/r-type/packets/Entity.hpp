@@ -49,6 +49,16 @@ namespace rtype::packets {
             }
     };
 
+    struct EntityID {
+        public:
+            std::size_t entityId;
+
+            template <class Archive>
+            void serialize(Archive &ar, unsigned int) {
+                ar & entityId;
+            }
+    };
+
     struct Empty {
         public:
             template <class Archive>

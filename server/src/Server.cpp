@@ -25,7 +25,7 @@ rtype::server::Server::Server(std::uint32_t port)
       // Clients
       _clientHandler(),
       // Engine
-      _world(1.0, 10000),
+      _subscriberHandler(_clientHandler), _world(1.0, 10000),
       // Protocols
       _udp(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler.getMessageQueueHandler()) {
 
@@ -42,6 +42,36 @@ rtype::server::Server::Server(std::uint32_t port)
 
     _world._registry.systemManager.addSystem<fengine::ecs::MovementSystem>(_world._camera);
     _world._registry.systemManager.addSystem<fengine::ecs::BoundarySystem>();
+
+    _subscriberHandler.add(_world._registry);
+
+    float posx = 0;
+    float posy = 0;
+    float vel_x = 8;
+    float vel_y = 7;
+    fengine::ecs::team team = fengine::ecs::team::MONSTERS;
+    for (int i = 0; i < 5; i++) {
+        fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
+        fengine::ecs::PositionComponent pos = {posx, posy, false};
+        fengine::ecs::VelocityComponent vel = {vel_x, vel_y};
+        fengine::ecs::BoundaryComponent bound = {10, 10, true, std::nullopt};
+        fengine::ecs::AttackComponent att = {{.team = team}, 10};
+        fengine::ecs::DefenseComponent def = {100, 0};
+
+        _world._registry.componentManager.addComponent(entity, std::move(pos));
+        _world._registry.componentManager.addComponent(entity, std::move(vel));
+        _world._registry.componentManager.addComponent(entity, std::move(bound));
+        _world._registry.componentManager.addComponent(entity, std::move(att));
+        _world._registry.componentManager.addComponent(entity, std::move(def));
+        posx += 0.1;
+        posy += 0.1;
+        if (vel_x > 0)
+            vel_x += 0.1;
+        vel_x *= -1;
+        if (vel_y > 0)
+            vel_y += 0.1;
+        vel_y *= -1;
+    }
 
     // TODO: this is all temporary and to provide an easy message check to the client
     _clientHandler.getMessageQueueHandler().addMessage("f52ea348-6c57-4acf-9834-059bc9a9c81c", "Hello world!!!!!\n");
@@ -98,6 +128,7 @@ void rtype::server::Server::tickThreadRun() {
         }
         _clientHandler.verifyStatus();
         _world._registry.systemManager.update(_world._registry);
+        _subscriberHandler.process();
     }
 }
 
