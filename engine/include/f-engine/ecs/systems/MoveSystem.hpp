@@ -24,7 +24,7 @@ namespace fengine::ecs {
                 float baseVel = _camera.getBaseVelocity();
                 float maxLength = _camera.getMaxLength();
                 float worldIndex = _camera.getWorldIndex();
-                BoundaryComponent boundary = {0, 0, false, std::nullopt};
+                BoundaryComponent boundary = {0, 0, false, false, std::nullopt};
 
                 for (std::size_t i = 0; i < manager.entityManager.size(); i++) {
                     if (!manager.entityManager.entityFromIndex(i).has_value())
@@ -43,10 +43,10 @@ namespace fengine::ecs {
                         continue;
 
                     if (bound.has_value()) {
-                        boundary = {bound.value().size_x, bound.value().size_y, bound.value().hittable,
-                            bound.value().can_be_hit};
+                        boundary = {bound.value().size_x, bound.value().size_y, bound.value().bouncy,
+                            bound.value().hittable, bound.value().can_be_hit};
                     } else {
-                        boundary = {0, 0, false, std::nullopt};
+                        boundary = {0, 0, false, false, std::nullopt};
                     }
 
                     if (!pos.value().can_be_out_window) {

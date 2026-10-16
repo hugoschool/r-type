@@ -72,8 +72,10 @@ namespace fengine::ecs {
                         }
                         bound.value().can_be_hit.reset();
                         bound_other.value().can_be_hit.reset();
-                        vel.value() = -vel.value();
-                        vel_other.value() = -vel_other.value();
+                        if (bound.value().bouncy)
+                            vel.value() = -vel.value();
+                        if (bound_other.value().bouncy)
+                            vel_other.value() = -vel_other.value();
                         def.value().health -= (att_other.value().damage * (1 - def.value().armor / 100));
                         def_other.value().health -= (att.value().damage * (1 - def_other.value().armor / 100));
                         bound.value().can_be_hit = std::chrono::steady_clock::now();
