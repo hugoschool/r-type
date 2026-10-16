@@ -73,14 +73,14 @@ void rtype::client::Client::sendMsg() {
 
     packets::PacketHeader header = {
         .type = packets::PacketType::InputPlayer,
-        .size = 0,
+        .size = sizeof(packets::Input),
         .playerUuid = "f52ea348-6c57-4acf-9834-059bc9a9c81c",
     };
 
     try {
         if (_inputs.canRead()) {
             fengine::modules::display::EventKey input = _inputs.getElem();
-            packets::Input newInput = {_uuid, input};
+            packets::Input newInput = {input};
             packets::Serialization::serialize(ss, header, newInput);
             std::string buf = ss.str();
             _socket.send_to(boost::asio::buffer(buf), _endpoint);

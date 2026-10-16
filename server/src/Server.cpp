@@ -60,9 +60,11 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
         // test
         case rtype::packets::PacketType::InputPlayer: {
             // Debug
-            std::cout << "WHALLAHI" << std::endl;
             rtype::packets::Input input;
-            ar & input;
+            packets::Serialization::deserialize(ar, input);
+
+            std::cout << "Input is " << static_cast<int>(input.input) << std::endl;
+
             if (input.input == fengine::modules::display::EventKey::Z) {
                 _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, "ZZ");
             }
