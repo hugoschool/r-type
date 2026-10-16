@@ -1,4 +1,6 @@
 #include "Server.hpp"
+#include "f-engine/modules/display/window/SFMLWindow.hpp"
+#include <chrono>
 #include <cstdint>
 #include <f-engine/ecs/components/AttackComponent.hpp>
 #include <f-engine/ecs/components/BoundaryComponent.hpp>
@@ -26,7 +28,10 @@ rtype::server::Server::Server(std::uint32_t port)
       // Engine
       _world(1.0, 10000),
       // Protocols
-      _udp(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler.getMessageQueueHandler()) {
+      _udp(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler.getMessageQueueHandler()),
+      // Enemy generation
+      _spawnClock(std::chrono::steady_clock::now()),
+      _ennemyCounter(0) {
 
     _signals.async_wait([&](boost::system::error_code, int) {
         _io_context.stop();
@@ -67,6 +72,43 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
     }
 }
 
+void rtype::server::Server::generateEnnemies() {
+    std::chrono::steady_clock::time_point elapsedTime = std::chrono::steady_clock::now();
+    std::chrono::duration<double> spawnTime = elapsedTime - _spawnClock;
+    std::chrono::milliseconds var(10000);
+
+    if (spawnTime < var)
+        return;
+
+    fengine::ecs::PositionComponent pos = {WINDOW_X, static_cast<float>(rand() % (WINDOW_Y - 100) + 100), false};
+    fengine::ecs::VelocityComponent vel = {-10, 0};
+    fengine::ecs::BoundaryComponent bound = {125, 75, false, true};
+    fengine::ecs::AttackComponent atk = {{.team = fengine::ecs::team::MONSTERS}, 10};
+    fengine::ecs::DefenseComponent def = {150, 0};
+
+    if (_ennemyCounter == 10) {
+        _ennemyCounter = 0;
+        vel = {-5, 2};
+        atk.damage += 15;
+        def = {300, 20};
+        bound.size_x += 100;
+        bound.size_y += 50;
+        bound.bouncy = true;
+    } else {
+        _ennemyCounter++;
+    }
+
+    // envoyer un message de creation ici - vasy hugo, c'est pour toi
+    // le client est grand et lui attribuera lui meme le drawable et le anim
+    // ou alors on le met la et on l'envoie
+    fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
+    _world._registry.componentManager.addComponent(entity, std::move(pos));
+    _world._registry.componentManager.addComponent(entity, std::move(vel));
+    _world._registry.componentManager.addComponent(entity, std::move(bound));
+    _world._registry.componentManager.addComponent(entity, std::move(atk));
+    _world._registry.componentManager.addComponent(entity, std::move(def));
+}
+
 void rtype::server::Server::tickThreadRun() {
     while (true) {
         if (_stop)
@@ -92,6 +134,7 @@ void rtype::server::Server::tickThreadRun() {
                 continue;
             }
         }
+        generateEnnemies();
         _clientHandler.verifyStatus();
         _world._registry.systemManager.update(_world._registry);
     }

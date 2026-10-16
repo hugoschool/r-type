@@ -40,5 +40,9 @@ namespace rtype::server {
             fengine::world::World _world;
 
             UDPProtocol _udp;
+
+            std::chrono::steady_clock::time_point _spawnClock;
+            short _ennemyCounter;
+            void generateEnnemies();
     };
 }
