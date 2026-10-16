@@ -3,6 +3,7 @@
 #include "ISystem.hpp"
 #include "f-engine/ecs/observer/Subscriber.hpp"
 #include "f-engine/ecs/observer/SubscriberContent.hpp"
+#include <memory>
 #include <vector>
 
 namespace fengine::ecs {
@@ -11,17 +12,17 @@ namespace fengine::ecs {
             ASystem() {};
             ~ASystem() override {};
 
-            void addSubscriber(observer::Subscriber &sub) {
+            void addSubscriber(std::shared_ptr<observer::Subscriber> &sub) {
                 _subscribers.push_back(sub);
             };
 
             void updateSubscribers(observer::SubscriberContent &content) {
-                for (observer::Subscriber &sub : _subscribers) {
-                    sub.send(content);
+                for (auto &sub : _subscribers) {
+                    sub->send(content);
                 }
             };
 
         protected:
-            std::vector<observer::Subscriber> _subscribers;
+            std::vector<std::shared_ptr<observer::Subscriber>> _subscribers;
     };
 }
