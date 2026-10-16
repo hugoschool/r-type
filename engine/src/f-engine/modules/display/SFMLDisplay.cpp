@@ -203,7 +203,6 @@ void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::Posi
 }
 
 void fengine::modules::display::SFMLDisplayModule::animateEntity(ecs::AnimationComponent &anim,
-    ecs::DrawableComponent &drawable)
-{
+    ecs::DrawableComponent &drawable) {
     drawable.shape->setTextureRect(anim.offset_x, anim.offset_y, anim.length, anim.height);
 }

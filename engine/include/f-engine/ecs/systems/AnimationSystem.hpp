@@ -11,7 +11,8 @@
 namespace fengine::ecs {
     class AnimationSystem : public ISystem {
         public:
-            AnimationSystem(modules::display::IDisplayModule &displayModule, camera::Camera &camera) : _displayModule(displayModule), _camera(camera) {};
+            AnimationSystem(modules::display::IDisplayModule &displayModule, camera::Camera &camera)
+                : _displayModule(displayModule), _camera(camera) {};
             ~AnimationSystem() override {};
 
             void update(Registry &manager) override {
@@ -35,7 +36,8 @@ namespace fengine::ecs {
 
                         if (movementTime < var)
                             continue;
-                        if (vel.value().vel_x > baseVelocity || vel.value().vel_y > baseVelocity || vel.value().vel_x < -baseVelocity || vel.value().vel_y < -baseVelocity) {
+                        if (vel.value().vel_x > baseVelocity || vel.value().vel_y > baseVelocity
+                            || vel.value().vel_x < -baseVelocity || vel.value().vel_y < -baseVelocity) {
                             if (!anim.value().immobile) {
                                 if (anim.value().cols > 1)
                                     anim.value().offset_x += anim.value().length;
