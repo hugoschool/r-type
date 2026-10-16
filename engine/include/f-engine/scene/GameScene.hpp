@@ -9,8 +9,9 @@
 namespace fengine::scene {
     class GameScene : public IScene {
         public:
-            GameScene(std::optional<std::vector<Button>> buttons, std::string bgTexture, bool paralax)
-                : _buttons(buttons), _background() {
+            GameScene(float cameraVelocity, std::optional<std::vector<Button>> buttons, std::string bgTexture,
+                bool paralax)
+                : _buttons(buttons), _background(), _cameraVelocity(cameraVelocity) {
                 _background.offset = 0;
                 _background.texture = bgTexture;
                 _background.paralax = paralax;
@@ -26,7 +27,7 @@ namespace fengine::scene {
             };
 
             void update() override {
-                _background.offset += 10;
+                _background.offset += _cameraVelocity;
                 if (_background.offset > WINDOW_X) {
                     _background.offset = 0;
                 }
@@ -35,5 +36,7 @@ namespace fengine::scene {
         private:
             std::optional<std::vector<Button>> _buttons;
             Background _background;
+
+            float _cameraVelocity;
     };
 }
