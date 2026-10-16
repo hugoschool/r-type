@@ -23,7 +23,7 @@ namespace fengine::ecs::observer {
 
             template <class T>
             T retrieve() {
-                return _content[typeid(T)];
+                return std::any_cast<T>(_content[typeid(T)]);
             }
 
             std::size_t getEntityId() const {
