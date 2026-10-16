@@ -4,6 +4,7 @@
 #include "f-engine/camera/Camera.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/BoundaryComponent.hpp"
+#include "f-engine/ecs/components/DeadComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
 #include "f-engine/ecs/observer/SubscriberContent.hpp"
@@ -67,22 +68,27 @@ namespace fengine::ecs {
                             vel.value().vel_y = -vel.value().vel_y;
                         }
                     }
+
+                    observer::SubscriberContent content(i);
+
                     if (pos.value().can_be_out_window) {
-                        // should be changed so that a message is sent to client to say that the entity is killed instead of deleting here (maybe ?)
-                        // also handle this differently so that entities can come from any corner of the window without getting slimed out instantly
+                        // handle this differently so that entities can come from any corner of the window without getting slimed out instantly
                         if (pos.value().pos_x > WINDOW_X + worldIndex || pos.value().pos_y > WINDOW_Y
                             || pos.value().pos_x < 0 + worldIndex || pos.value().pos_y < 0) {
                             std::optional<Entity> entity = manager.entityManager.entityFromIndex(i);
-                            if (entity.has_value())
+                            if (entity.has_value()) {
+                                DeadComponent deadComp = {entity.value().getId()};
                                 manager.entityManager.killEntity(entity.value());
+                                content.add<DeadComponent>(deadComp);
+                            }
                         }
                     }
 
                     pos.value().pos_x += vel.value().vel_x;
                     pos.value().pos_y += vel.value().vel_y;
 
-                    observer::SubscriberContent content(i);
                     content.add<PositionComponent>(pos.value());
+                    content.add<VelocityComponent>(vel.value());
                     updateSubscribers(content);
                 }
             };
