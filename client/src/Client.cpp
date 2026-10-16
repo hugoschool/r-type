@@ -1,40 +1,35 @@
 #include "Client.hpp"
+#include "UDPProtocol.hpp"
 #include "boost/asio/error.hpp"
 #include "boost/system/detail/error_code.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
-#include "f-engine/modules/display/events/EventKey.hpp"
 #include "f-engine/modules/display/events/EventType.hpp"
 #include "f-engine/modules/display/events/IEvent.hpp"
-#include "r-type/packets/Entity.hpp"
-#include "r-type/packets/Packet.hpp"
-#include "r-type/packets/Serialization.hpp"
-#include <cstring>
 #include <exception>
 #include <iostream>
 #include <memory>
 #include <optional>
-#include <sstream>
 #include <sys/socket.h>
 #include <thread>
 #include <unistd.h>
 
 rtype::client::Client::Client()
-    : _io_context(), _resolver(_io_context), _endpoint(), _socket(_io_context),
-      _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(),
-      _writeThread(), _readThread(), _exit(false), _inputs(1024)
+    : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(),
+      _writeThread(), _readThread(), _exit(false), _inputs(1024),
+      _protocol(std::make_unique<UDPProtocol>(_inputs))
     {
 }
 
 rtype::client::Client::~Client() {
     _writeThread.join();
     _readThread.join();
-    _socket.close();
+    _protocol->close();
 }
 
 void rtype::client::Client::run(char *av[]) {
-    connect(av);
+    _protocol->connect(av);
     _writeThread = std::thread(&rtype::client::Client::sendLoop, this);
     _readThread = std::thread(&rtype::client::Client::readLoop, this);
     loop();
@@ -42,82 +37,22 @@ void rtype::client::Client::run(char *av[]) {
 
 void rtype::client::Client::sendLoop() {
     while (!_exit) {
-        sendMsg();
+        _protocol->sendMsg();
     }
     std::cout << "BYE BYE" << std::endl;
 }
 
 void rtype::client::Client::readLoop() {
     try {
-        _socket.non_blocking(true);
+        _protocol->setSocketNonBlocking();
         boost::system::error_code error  = boost::asio::error::would_block;
         while (error == boost::asio::error::would_block && !_exit) {
-            readMsg(error);
+            _protocol->readMsg(error);
         }
         if (!_exit)
             readLoop();
     } catch (std::exception &) {
     }
-}
-
-void rtype::client::Client::readMsg(boost::system::error_code &error) {
-
-    char reply[1024];
-    _socket.receive_from(boost::asio::buffer(reply, 1024), _endpoint, 0, error);
-    if (std::strlen(reply) > 1)
-        std::cout << "Reply: " << reply << std::endl;
-}
-
-void rtype::client::Client::sendMsg() {
-    std::stringstream ss;
-
-    packets::PacketHeader header = {
-        .type = packets::PacketType::InputPlayer,
-        .size = sizeof(packets::Input),
-        .playerUuid = "f52ea348-6c57-4acf-9834-059bc9a9c81c",
-    };
-
-    try {
-        if (_inputs.canRead()) {
-            fengine::modules::display::EventKey input = _inputs.getElem();
-            packets::Input newInput = {input};
-            packets::Serialization::serialize(ss, header, newInput);
-            std::string buf = ss.str();
-            _socket.send_to(boost::asio::buffer(buf), _endpoint);
-        }
-    } catch (std::exception &) {
-    }
-}
-
-void rtype::client::Client::connect(char *av[]) {
-    const std::string host = av[1];
-    const std::string port = av[2];
-
-    _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
-
-    _socket.open(udp::v4());
-    std::stringstream ss;
-
-    packets::PacketHeader header = {
-        .type = packets::PacketType::Ack,
-        .size = 0,
-        // TODO: this is a simple test UUID for the server <-> client communication
-        // To be removed later
-        .playerUuid = "f52ea348-6c57-4acf-9834-059bc9a9c81c",
-    };
-
-    packets::Serialization::serialize(ss, header, packets::Empty{});
-
-    std::string send = ss.str();
-    _socket.send_to(boost::asio::buffer(send), _endpoint);
-
-    // Connect to the server and send connection information to it.
-
-    // the cient spams send the henshake to the server
-    // when the client recieve the server response it stops
-    // the server now sends all his ecs informations
-    // the client now feed all these information into his ecs to match the server's one
-    // throw an exception if the client dont achieve to connect to the server
 }
 
 void rtype::client::Client::loop() {

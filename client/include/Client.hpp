@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ClientHelper.hpp"
-#include "boost/system/detail/error_code.hpp"
+#include "IProtocol.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
@@ -18,10 +18,6 @@ namespace rtype::client {
             using udp = boost::asio::ip::udp;
 
         private:
-            boost::asio::io_context _io_context;
-            udp::resolver _resolver;
-            udp::endpoint _endpoint;
-            udp::socket _socket;
             std::unique_ptr<fengine::modules::display::IDisplayModule> _displayModule;
             fengine::ecs::Registry _registery;
             std::thread _writeThread;
@@ -29,13 +25,11 @@ namespace rtype::client {
             bool _exit;
             rtype::client::CircularBuffer<fengine::modules::display::EventKey> _inputs;
             std::string _uuid;
+            std::unique_ptr<IProtocol> _protocol;
 
-            void connect(char *av[]);
             void loop();
             void sendLoop();
             void readLoop();
-            void sendMsg();
-            void readMsg(boost::system::error_code &error);
 
         public:
             Client();
