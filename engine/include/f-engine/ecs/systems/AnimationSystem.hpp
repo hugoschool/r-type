@@ -36,15 +36,17 @@ namespace fengine::ecs {
                         if (movementTime < var)
                             continue;
                         if (vel.value().vel_x > baseVelocity || vel.value().vel_y > baseVelocity || vel.value().vel_x < -baseVelocity || vel.value().vel_y < -baseVelocity) {
-                            if (anim.value().cols > 1)
-                                anim.value().offset_x += anim.value().length;
-                            if (anim.value().offset_x > anim.value().length * (anim.value().cols - 1)) {
-                                if (anim.value().rows > 1)
-                                    anim.value().offset_y += anim.value().height;
-                                if (anim.value().offset_y > anim.value().height * (anim.value().rows - 1)) {
-                                    anim.value().offset_y = 0;
+                            if (!anim.value().immobile) {
+                                if (anim.value().cols > 1)
+                                    anim.value().offset_x += anim.value().length;
+                                if (anim.value().offset_x > anim.value().length * (anim.value().cols - 1)) {
+                                    if (anim.value().rows > 1)
+                                        anim.value().offset_y += anim.value().height;
+                                    if (anim.value().offset_y > anim.value().height * (anim.value().rows - 1)) {
+                                        anim.value().offset_y = 0;
+                                    }
+                                    anim.value().offset_x = 0;
                                 }
-                                anim.value().offset_x = 0;
                             }
                             _displayModule.animateEntity(anim.value(), drawable.value());
                         }

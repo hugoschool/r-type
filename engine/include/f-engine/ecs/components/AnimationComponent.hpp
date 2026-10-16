@@ -11,6 +11,8 @@ namespace fengine::ecs {
         int cols;
         int rows;
 
+        bool immobile;
+
         std::chrono::time_point<std::chrono::steady_clock> anim_clock;
     };
 }
