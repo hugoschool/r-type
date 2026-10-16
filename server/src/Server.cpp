@@ -1,4 +1,6 @@
 #include "Server.hpp"
+#include "f-engine/ecs/components/BehaviourComponent.hpp"
+#include "f-engine/ecs/systems/BehaviouralSystem.hpp"
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include <chrono>
 #include <cstdint>
@@ -43,9 +45,11 @@ rtype::server::Server::Server(std::uint32_t port)
     _world._registry.componentManager.registerComponent<fengine::ecs::BoundaryComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::AttackComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::DefenseComponent>();
+    _world._registry.componentManager.registerComponent<fengine::ecs::BehaviourComponent>();
 
     _world._registry.systemManager.addSystem<fengine::ecs::MovementSystem>(_world._camera);
     _world._registry.systemManager.addSystem<fengine::ecs::BoundarySystem>();
+    _world._registry.systemManager.addSystem<fengine::ecs::BehaviouralSystem>();
 
     // TODO: this is all temporary and to provide an easy message check to the client
     _clientHandler.getMessageQueueHandler().addMessage("f52ea348-6c57-4acf-9834-059bc9a9c81c", "Hello world!!!!!\n");
@@ -80,6 +84,8 @@ void rtype::server::Server::generateEnnemies() {
     if (spawnTime < var)
         return;
 
+    fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
+
     fengine::ecs::PositionComponent pos = {WINDOW_X, static_cast<float>(rand() % (WINDOW_Y - 100) + 100), false};
     fengine::ecs::VelocityComponent vel = {-10, 0};
     fengine::ecs::BoundaryComponent bound = {125, 75, false, true};
@@ -95,18 +101,21 @@ void rtype::server::Server::generateEnnemies() {
         bound.size_y += 50;
         bound.bouncy = true;
     } else {
+        fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER, std::chrono::steady_clock::now()};
+        _world._registry.componentManager.addComponent(entity, std::move(behaviour));
         _ennemyCounter++;
     }
 
     // envoyer un message de creation ici - vasy hugo, c'est pour toi
     // le client est grand et lui attribuera lui meme le drawable et le anim
     // ou alors on le met la et on l'envoie
-    fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
     _world._registry.componentManager.addComponent(entity, std::move(pos));
     _world._registry.componentManager.addComponent(entity, std::move(vel));
     _world._registry.componentManager.addComponent(entity, std::move(bound));
     _world._registry.componentManager.addComponent(entity, std::move(atk));
     _world._registry.componentManager.addComponent(entity, std::move(def));
+
+    _spawnClock = std::chrono::steady_clock::now();
 }
 
 void rtype::server::Server::tickThreadRun() {
