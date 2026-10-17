@@ -1,8 +1,8 @@
 #pragma once
 
 #include "f-engine/modules/display/events/EventKey.hpp"
+#include "r-type/packets/Packet.hpp"
 #include <cstddef>
-#include <string>
 
 namespace rtype::packets {
     struct Vector2D {
@@ -17,45 +17,47 @@ namespace rtype::packets {
             }
     };
 
-    struct Player {
+    struct LoginAnswer {
         public:
-            std::string uuid;
-            Vector2D position;
-            Vector2D velocity;
-            int health;
+            char uuid[UUID_SIZE + 1];
 
             template <class Archive>
             void serialize(Archive &ar, unsigned int) {
                 ar & uuid;
-                ar & position;
-                ar & velocity;
-                ar & health;
             }
     };
 
-    struct Entity {
-        public:
-            std::size_t id;
-            Vector2D position;
-            Vector2D velocity;
-            int health;
-
-            template <class Archive>
-            void serialize(Archive &ar, unsigned int) {
-                ar & id;
-                ar & position;
-                ar & velocity;
-                ar & health;
-            }
-    };
-
-    struct EntityID {
+    struct EntitySpawn {
         public:
             std::size_t entityId;
 
             template <class Archive>
             void serialize(Archive &ar, unsigned int) {
                 ar & entityId;
+            }
+    };
+
+    struct EntityMove {
+        public:
+            std::size_t entityId;
+            Vector2D coordinates;
+
+            template <class Archive>
+            void serialize(Archive &ar, unsigned int) {
+                ar & entityId;
+                ar & coordinates;
+            }
+    };
+
+    struct EntityVelocityChange {
+        public:
+            std::size_t entityId;
+            Vector2D velocity;
+
+            template <class Archive>
+            void serialize(Archive &ar, unsigned int) {
+                ar & entityId;
+                ar & velocity;
             }
     };
 
