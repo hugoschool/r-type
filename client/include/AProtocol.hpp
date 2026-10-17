@@ -3,12 +3,10 @@
 #include "CircularBuffer.hpp"
 #include "IProtocol.hpp"
 #include "boost/asio/io_context.hpp"
-#include "boost/asio/ip/udp.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
 
 namespace rtype::client {
     class AProtocol : public IProtocol {
-            using udp = boost::asio::ip::udp;
             using EventKey = fengine::modules::display::EventKey;
 
         protected:
