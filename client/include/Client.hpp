@@ -10,11 +10,14 @@ namespace rtype::client {
             Client();
 
             void connect();
+            void run();
 
         private:
             boost::asio::io_context _io_context;
             udp::resolver _resolver;
             udp::endpoint _endpoint;
             udp::socket _socket;
+
+            std::string _uuid;
     };
 }
