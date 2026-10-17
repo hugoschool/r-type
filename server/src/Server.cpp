@@ -43,6 +43,7 @@ rtype::server::Server::Server(std::uint32_t port)
 
     _subscriberHandler.add(_world._registry);
 
+    // TODO: temporary monster spawning & moving mechanics
     float posx = 0;
     float posy = 0;
     float vel_x = 8;
