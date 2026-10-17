@@ -20,14 +20,12 @@ rtype::server::Server::Server(std::uint32_t port)
       _totalThreadAmount(4), _protocolThreadAmount(3), _threadPool(_totalThreadAmount),
       // Signals handling
       _stop(false), _signals(_io_context, SIGINT, SIGTERM),
-      // Tick handling
-      _tickHandler(),
-      // Clients
-      _clientHandler(),
       // Engine
       _subscriberHandler(_clientHandler), _world(1.0, 10000),
+      // Handlers
+      _tickHandler(), _clientHandler(_world._registry),
       // Protocols
-      _udp(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler.getMessageQueueHandler()) {
+      _udp(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler) {
 
     _signals.async_wait([&](boost::system::error_code, int) {
         _io_context.stop();
@@ -72,13 +70,6 @@ rtype::server::Server::Server(std::uint32_t port)
             vel_y += 0.1;
         vel_y *= -1;
     }
-
-    // TODO: this is all temporary and to provide an easy message check to the client
-    _clientHandler.getMessageQueueHandler().addMessage("f52ea348-6c57-4acf-9834-059bc9a9c81c", "Hello world!!!!!\n");
-    _clientHandler.getMessageQueueHandler().addMessage("f52ea348-6c57-4acf-9834-059bc9a9c81c",
-        "This is a simple test to verify connection between server & client.\n");
-    _clientHandler.getMessageQueueHandler().addMessage("f52ea348-6c57-4acf-9834-059bc9a9c81c",
-        "Let's hope this makes it through\n");
 }
 
 rtype::server::Server::~Server() {
@@ -88,8 +79,7 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
     packets::PacketHeader &header) {
     switch (header.type) {
         case packets::PacketType::Ack: {
-            std::string uuid = _clientHandler.generateUuid();
-            _clientHandler.addClient(uuid);
+            std::string uuid(header.playerUuid);
             _clientHandler.setAlive(uuid);
             break;
         }

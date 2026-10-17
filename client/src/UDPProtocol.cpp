@@ -27,7 +27,7 @@ void rtype::client::UDPProtocol::connect(char *av[]) {
     std::stringstream ss;
 
     packets::PacketHeader header = {
-        .type = packets::PacketType::Ack,
+        .type = packets::PacketType::LoginRequest,
         .size = 0,
         // TODO: this is a simple test UUID for the server <-> client communication
         // To be removed later
