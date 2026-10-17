@@ -7,13 +7,12 @@ namespace rtype::packets {
     constexpr std::size_t UUID_SIZE = 36;
 
     enum class PacketType {
-        UpdatePlayer,
-        UpdateEntity,
-        KillPlayer,
-        KillEntity,
-        AddPlayer,
-        AddEntity,
-        DeadPlayer,
+        LoginRequest,
+        LoginAnswer,
+        EntitySpawn,
+        EntityMove,
+        EntityVelocityChange,
+        EntityDied,
         Ack,
     };
 
