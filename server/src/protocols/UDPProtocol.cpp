@@ -1,4 +1,5 @@
 #include "protocols/UDPProtocol.hpp"
+#include "ClientHandler.hpp"
 #include "protocols/AProtocol.hpp"
 #include <boost/asio/placeholders.hpp>
 #include <iostream>
@@ -8,8 +9,8 @@
 #include <string>
 
 rtype::server::UDPProtocol::UDPProtocol(boost::asio::io_context &io_context, std::uint16_t port,
-    SafeMessageQueue &SafeMessageQueue, ClientMessageQueueHandler &clientMQHandler)
-    : AProtocol(io_context, port, SafeMessageQueue, clientMQHandler),
+    SafeMessageQueue &SafeMessageQueue, ClientHandler &clientHandler)
+    : AProtocol(io_context, port, SafeMessageQueue, clientHandler),
       _socket(_io_context, udp::endpoint(udp::v4(), _port)), _endpoint(), _buffer() {
     startReceive();
 }
@@ -33,11 +34,27 @@ void rtype::server::UDPProtocol::handleReceive(const boost::system::error_code &
 
             packets::Serialization::deserialize(ar, header);
 
-            _messageQueue.push(str);
+            bool addMessageToQueue = false;
+            std::string playerUuid(header.playerUuid);
+
+            // A login request is a very important message, it must be handled on the spot, hence why it is here.
+            // We cannot wait for another tick, since the client must know its UUID for the ACK requests.
+            if (header.type == packets::PacketType::LoginRequest && !_clientHandler.clientExists(playerUuid)) {
+                playerUuid = _clientHandler.newClient();
+                _clientHandler.setAlive(playerUuid);
+                addMessageToQueue = false;
+            }
+
+            if (addMessageToQueue) {
+                _messageQueue.push(str);
+            }
 
             try {
-                while (!_clientMQHandler.isClientEmpty(header.playerUuid)) {
-                    std::string poppedMessage = _clientMQHandler.popMessage(header.playerUuid);
+                ClientMessageQueueHandler &clientMessageQueue = _clientHandler.getMessageQueueHandler();
+
+                while (!clientMessageQueue.isClientEmpty(playerUuid)) {
+                    std::string poppedMessage = clientMessageQueue.popMessage(playerUuid);
+
                     std::shared_ptr<std::string> message = std::make_shared<std::string>(poppedMessage);
 
                     _socket.async_send_to(boost::asio::buffer(*message), _endpoint,

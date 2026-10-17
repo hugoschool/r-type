@@ -32,9 +32,7 @@ namespace fengine::ecs {
                 try {
                     auto system = _systems.at(typeid(T));
                     return dynamic_cast<T *>(system.get());
-                } catch (std::exception &) {
-                    return nullptr;
-                }
+                } catch (std::exception &) { return nullptr; }
             };
 
             template <is_system T>

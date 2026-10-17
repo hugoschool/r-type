@@ -6,7 +6,11 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <chrono>
+#include <cstring>
 #include <iostream>
+#include <r-type/packets/Entity.hpp>
+#include <r-type/packets/Packet.hpp>
+#include <r-type/packets/Serialization.hpp>
 
 rtype::server::ClientMessageQueueHandler::ClientMessageQueueHandler() : _map(), _mutex() {
 }
@@ -48,26 +52,52 @@ void rtype::server::ClientMessageQueueHandler::sendToAllClients(std::string cont
     }
 }
 
-rtype::server::ClientHandler::ClientHandler()
+rtype::server::ClientHandler::ClientHandler(fengine::ecs::Registry &registry)
     : _maxStatusSecondsMap({
           {ClientStatus::Disconnected, std::chrono::seconds(MAX_DISCONNECTED_SECONDS)},
           {ClientStatus::Connecting, std::chrono::seconds(MAX_CONNECTING_SECONDS)},
           {ClientStatus::Connected, std::chrono::seconds(MAX_CONNECTED_SECONDS)},
       }),
-      _clients() {
+      _clients(), _uuids(), _registry(registry) {
+    for (std::size_t i = 0; i < MAX_PLAYERS; i++) {
+        _uuids.push(generateUuid());
+    }
 }
 
 std::string rtype::server::ClientHandler::generateUuid() {
     return boost::lexical_cast<std::string>(boost::uuids::to_string(boost::uuids::random_generator()()));
 }
 
-void rtype::server::ClientHandler::addClient(std::string &uuid) {
+std::string rtype::server::ClientHandler::newClient() {
+    std::string uuid = _uuids.front();
+    _uuids.pop();
+
+    fengine::ecs::Entity entity = _registry.entityManager.spawnEntity();
+
     ClientData data = {
         .status = ClientStatus::Disconnected,
+        .entityId = entity.getId(),
         .timer = std::chrono::steady_clock::now(),
     };
 
     _clients.insert({uuid, data});
+
+    packets::LoginAnswer payload;
+    std::strncpy(payload.uuid, uuid.c_str(), packets::UUID_SIZE);
+
+    packets::PacketHeader header = {
+        .type = packets::PacketType::LoginAnswer,
+        .size = sizeof(payload),
+        .playerUuid = "",
+    };
+    std::strncpy(header.playerUuid, uuid.c_str(), packets::UUID_SIZE);
+
+    std::stringstream ss;
+    packets::Serialization::serialize(ss, header, payload);
+
+    _messageQueueHandler.addMessage(uuid, ss.str());
+
+    return uuid;
 }
 
 void rtype::server::ClientHandler::setStatus(std::string &uuid, ClientStatus newStatus) {
@@ -77,6 +107,10 @@ void rtype::server::ClientHandler::setStatus(std::string &uuid, ClientStatus new
     if (data.status == ClientStatus::Connected) {
         data.timer = std::chrono::steady_clock::now();
     }
+}
+
+bool rtype::server::ClientHandler::clientExists(std::string &uuid) {
+    return _clients.contains(uuid);
 }
 
 void rtype::server::ClientHandler::setAlive(std::string &uuid) {

@@ -1,18 +1,25 @@
 #pragma once
 
 #include "SafeQueue.hpp"
+#include "f-engine/ecs/Registry.hpp"
 #include <chrono>
 #include <map>
+#include <r-type/packets/Packet.hpp>
 #include <string>
 #include <unordered_map>
 
 namespace rtype::server {
+    constexpr char DUMMY_UUID[packets::UUID_SIZE + 1] = "00000000-0000-4000-8000-000000000000";
+
     // Maximum number of seconds before a client is considered as disconnected
     constexpr std::uint64_t MAX_CONNECTED_SECONDS = 10;
     // Maximum number of seconds before a client is no longer considered connecting
     constexpr std::uint64_t MAX_CONNECTING_SECONDS = 60;
     // Maximum number of seconds before a client is removed
     constexpr std::uint64_t MAX_DISCONNECTED_SECONDS = 60;
+
+    // Maximum amount of players that can be connected to a single server
+    constexpr std::size_t MAX_PLAYERS = 4;
 
     enum class ClientStatus {
         Disconnected,
@@ -25,6 +32,7 @@ namespace rtype::server {
     struct ClientData {
         public:
             ClientStatus status;
+            std::size_t entityId;
             std::chrono::steady_clock::time_point timer;
     };
 
@@ -46,13 +54,14 @@ namespace rtype::server {
 
     class ClientHandler {
         public:
-            explicit ClientHandler();
+            explicit ClientHandler(fengine::ecs::Registry &registry);
             ~ClientHandler() = default;
 
             static std::string generateUuid();
 
-            void addClient(std::string &uuid);
+            std::string newClient();
             void setStatus(std::string &uuid, ClientStatus newStatus);
+            bool clientExists(std::string &uuid);
             // Simply resets the timer
             void setAlive(std::string &uuid);
 
@@ -67,6 +76,12 @@ namespace rtype::server {
         private:
             std::unordered_map<ClientStatus, std::chrono::seconds> _maxStatusSecondsMap;
             std::unordered_map<std::string, ClientData> _clients;
+
+            // Array of pregenerated UUIDs
+            std::queue<std::string> _uuids;
+
+            fengine::ecs::Registry &_registry;
+
             ClientMessageQueueHandler _messageQueueHandler;
     };
 }

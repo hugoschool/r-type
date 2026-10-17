@@ -17,11 +17,9 @@ void rtype::client::Client::connect() {
     std::stringstream ss;
 
     packets::PacketHeader header = {
-        .type = packets::PacketType::Ack,
+        .type = packets::PacketType::LoginRequest,
         .size = 0,
-        // TODO: this is a simple test UUID for the server <-> client communication
-        // To be removed later
-        .playerUuid = "f52ea348-6c57-4acf-9834-059bc9a9c81c",
+        .playerUuid = "",
     };
 
     packets::Serialization::serialize(ss, header, packets::Empty{});
@@ -35,5 +33,6 @@ void rtype::client::Client::connect() {
         size_t len = _socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
 
         std::cout.write(recv_buf.data(), len);
+        std::cout << std::flush;
     }
 }
