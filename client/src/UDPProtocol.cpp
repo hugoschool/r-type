@@ -38,14 +38,6 @@ void rtype::client::UDPProtocol::connect(char *av[]) {
 
     std::string send = ss.str();
     _socket.send_to(boost::asio::buffer(send), _endpoint);
-
-    // Connect to the server and send connection information to it.
-
-    // the cient spams send the henshake to the server
-    // when the client recieve the server response it stops
-    // the server now sends all his ecs informations
-    // the client now feed all these information into his ecs to match the server's one
-    // throw an exception if the client dont achieve to connect to the server
 }
 
 void rtype::client::UDPProtocol::sendMsg() {

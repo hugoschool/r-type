@@ -47,7 +47,7 @@ rtype::server::Server::Server(std::uint32_t port)
 rtype::server::Server::~Server() {
 }
 
-void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_archive &ar,
+void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_archive &,
     packets::PacketHeader &header) {
     switch (header.type) {
         case packets::PacketType::Ack: {
@@ -56,36 +56,8 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
             _clientHandler.setAlive(uuid);
             break;
         }
-        // test
+        // TODO: all types
         case rtype::packets::PacketType::InputPlayer: {
-            // Debug
-            // rtype::packets::Input input;
-            // packets::Serialization::deserialize(ar, input);
-
-            // std::cout << "Input is " << static_cast<int>(input.input) << std::endl;
-
-            // if (input.input == fengine::modules::display::EventKey::Z) {
-            //     _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, "ZZzzzzzzzzzzzz");
-            // }
-            // if (input.input == fengine::modules::display::EventKey::A) {
-            //     _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, "AAaaaaaaaaaaaa");
-            // }
-            // if (input.input == fengine::modules::display::EventKey::S) {
-            //     _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, "SSssssssssssssssssss");
-            // }
-            // std::stringstream ss;
-            // packets::PacketHeader NewHeader = {
-            //     .type = packets::PacketType::Ack,
-            //     .size = 0,
-            //     // TODO: this is a simple test UUID for the server <-> client communication
-            //     // To be removed later
-            //     .playerUuid = "f52ea348-6c57-4acf-9834-059bc9a9c81c",
-            // };
-
-            // packets::Serialization::serialize(ss, NewHeader, packets::Empty{});
-
-            // std::string send = ss.str();
-            // _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, send);
         }
         default:
             break;

@@ -68,17 +68,29 @@ void rtype::client::Client::interpretMsg(std::string msg) {
         packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
         packets::Serialization::deserialize(ar, header);
         switch (header.type) {
+            // TODO: All packets
             case rtype::packets::PacketType::Ack:
-            std::cout << "WORKING" << std::endl;
             break;
             case rtype::packets::PacketType::InputPlayer:
-            // function for Input Player
+            break;
+            case rtype::packets::PacketType::AddPlayer:
+            break;
+            case rtype::packets::PacketType::AddEntity:
+            break;
+            case rtype::packets::PacketType::KillEntity:
+            break;
+            case rtype::packets::PacketType::KillPlayer:
+            break;
+            case rtype::packets::PacketType::UpdatePlayer:
+            break;
+            case rtype::packets::PacketType::UpdateEntity:
+            break;
+            case rtype::packets::PacketType::DeadPlayer:
             break;
             default:
             break;
         }
     } catch (std::exception &) {
-        // std::cerr << "The message couldn't be deserialized" << std::endl;
     }
 }
 
@@ -99,11 +111,5 @@ void rtype::client::Client::loop() {
                 _inputs.addElement(event.value()->getKey());
             }
         }
-
-        // get player input
-        // well format it with serialization
-        // send it to the server
-        // create prediction based on the input
-        // get server response compare server response with the predition
     }
 }
