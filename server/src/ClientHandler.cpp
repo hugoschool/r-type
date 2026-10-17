@@ -15,13 +15,21 @@
 rtype::server::ClientMessageQueueHandler::ClientMessageQueueHandler() : _map(), _mutex() {
 }
 
-void rtype::server::ClientMessageQueueHandler::addMessage(std::string uuid, std::string content) {
+void rtype::server::ClientMessageQueueHandler::createClient(std::string uuid) {
     std::unique_lock<std::mutex> lock(_mutex);
 
     if (!_map.contains(uuid)) {
         _map.insert({uuid, SafeMessageQueue{}});
     }
-    _map[uuid].push(content);
+}
+
+void rtype::server::ClientMessageQueueHandler::addMessage(std::string uuid, std::string content) {
+    createClient(uuid);
+
+    {
+        std::unique_lock<std::mutex> lock(_mutex);
+        _map[uuid].push(content);
+    }
 }
 
 bool rtype::server::ClientMessageQueueHandler::isClientEmpty(std::string uuid) {
@@ -71,6 +79,8 @@ std::string rtype::server::ClientHandler::generateUuid() {
 std::string rtype::server::ClientHandler::newClient() {
     std::string uuid = _uuids.front();
     _uuids.pop();
+
+    _messageQueueHandler.createClient(uuid);
 
     fengine::ecs::Entity entity = _registry.entityManager.spawnEntity();
 

@@ -41,6 +41,7 @@ namespace rtype::server {
             explicit ClientMessageQueueHandler();
             ~ClientMessageQueueHandler() = default;
 
+            void createClient(std::string uuid);
             void addMessage(std::string uuid, std::string content);
             std::string popMessage(std::string uuid);
             bool isClientEmpty(std::string uuid);
