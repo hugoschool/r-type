@@ -22,6 +22,15 @@ namespace fengine::ecs::observer {
             }
 
             template <class T>
+            bool existsAndRetrieve(T &content) {
+                if (_content.contains(typeid(T))) {
+                    content = retrieve<T>();
+                    return true;
+                }
+                return false;
+            }
+
+            template <class T>
             T retrieve() {
                 return std::any_cast<T>(_content[typeid(T)]);
             }
