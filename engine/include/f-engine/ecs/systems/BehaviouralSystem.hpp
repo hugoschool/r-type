@@ -56,6 +56,7 @@ namespace fengine::ecs {
                         content.add<BoundaryComponent>(newBound);
                         content.add<AttackComponent>(newAtk);
                         content.add<DefenseComponent>(newDef);
+                        updateSubscribers(content);
                     }
                 }
             };
