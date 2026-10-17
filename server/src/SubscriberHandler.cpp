@@ -6,7 +6,6 @@
 #include <f-engine/ecs/systems/BoundarySystem.hpp>
 #include <f-engine/ecs/systems/MoveSystem.hpp>
 #include <functional>
-#include <iostream>
 #include <memory>
 #include <r-type/packets/Entity.hpp>
 #include <r-type/packets/Packet.hpp>
@@ -43,27 +42,33 @@ void rtype::server::SubscriberHandler::process() {
 
 void rtype::server::SubscriberHandler::processMovement(shared_subscriber &subscriber) {
     fengine::ecs::observer::SubscriberContent content = subscriber->getContent();
-    if (content.exists<fengine::ecs::DeadComponent>()) {
-        auto component = content.retrieve<fengine::ecs::DeadComponent>();
+    fengine::ecs::PositionComponent position;
 
-        packets::EntityID payload = {component.entityId};
+    if (content.existsAndRetrieve(position)) {
+        packets::EntityMove payload = {
+            .entityId = content.getEntityId(),
+            .coordinates = packets::Vector2D(position.pos_x, position.pos_y),
+        };
+
         packets::PacketHeader header = {
-            .type = packets::PacketType::KillEntity,
-            .size = sizeof(packets::EntityID),
+            .type = packets::PacketType::EntityMove,
+            .size = sizeof(packets::EntityMove),
             .playerUuid = "",
         };
-        std::stringstream ss;
+        strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
 
+        std::stringstream ss;
         packets::Serialization::serialize(ss, header, payload);
-        std::cout << ss.str() << std::endl;
+
+        _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
     }
 }
 
 void rtype::server::SubscriberHandler::processBoundary(shared_subscriber &subscriber) {
     fengine::ecs::observer::SubscriberContent content = subscriber->getContent();
     if (content.exists<fengine::ecs::PositionComponent>()) {
-        auto component = content.retrieve<fengine::ecs::PositionComponent>();
+        auto _ = content.retrieve<fengine::ecs::PositionComponent>();
 
-        std::cout << "X: " << component.pos_x << ", Y: " << component.pos_y << std::endl;
+        // std::cout << "X: " << component.pos_x << ", Y: " << component.pos_y << std::endl;
     }
 }
