@@ -66,11 +66,10 @@ void rtype::client::Client::interpretMsg(std::string msg) {
     try {
         std::stringstream ss(msg);
         packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
-
         packets::Serialization::deserialize(ar, header);
         switch (header.type) {
             case rtype::packets::PacketType::Ack:
-            // function for Ack*
+            std::cout << "WORKING" << std::endl;
             break;
             case rtype::packets::PacketType::InputPlayer:
             // function for Input Player
@@ -79,7 +78,7 @@ void rtype::client::Client::interpretMsg(std::string msg) {
             break;
         }
     } catch (std::exception &) {
-        std::cerr << "The message couldn't be deserialized" << std::endl;
+        // std::cerr << "The message couldn't be deserialized" << std::endl;
     }
 }
 

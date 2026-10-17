@@ -2,6 +2,7 @@
 
 #include "AProtocol.hpp"
 #include "CircularBuffer.hpp"
+#include <array>
 namespace rtype::client {
     class UDPProtocol : public AProtocol {
         using udp = boost::asio::ip::udp;
@@ -18,6 +19,7 @@ namespace rtype::client {
         private:
             udp::resolver _resolver;
             udp::endpoint _endpoint;
+            std::array<char, 1024> _buffer;
             udp::socket _socket;
     };
 }

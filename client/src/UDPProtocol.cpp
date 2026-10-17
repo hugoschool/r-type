@@ -1,11 +1,12 @@
 #include "UDPProtocol.hpp"
 #include "AProtocol.hpp"
 #include "CircularBuffer.hpp"
+#include "boost/asio/socket_base.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
 #include "r-type/packets/Entity.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
-#include <iostream>
+#include <iterator>
 
 using EventKey = fengine::modules::display::EventKey;
 
@@ -69,12 +70,11 @@ void rtype::client::UDPProtocol::sendMsg() {
 }
 
 std::string rtype::client::UDPProtocol::readMsg(boost::system::error_code &error) {
-    char reply[1024];
+    _buffer.fill(0);
 
-    _socket.receive_from(boost::asio::buffer(reply, 1024), _endpoint, 0, error);
-    if (std::strlen(reply) > 1)
-        std::cout << "Reply: " << reply << std::endl;
-    return std::string(reply);
+    _socket.receive_from(boost::asio::buffer(_buffer), _endpoint, boost::asio::socket_base::wait_read, error);
+    std::string test(std::begin(_buffer), std::end(_buffer));
+    return test;
 }
 
 void rtype::client::UDPProtocol::setSocketNonBlocking()

@@ -1,6 +1,4 @@
 #include "Server.hpp"
-#include "f-engine/modules/display/events/EventKey.hpp"
-#include "r-type/packets/Entity.hpp"
 #include <cstdint>
 #include <f-engine/ecs/components/AttackComponent.hpp>
 #include <f-engine/ecs/components/BoundaryComponent.hpp>
@@ -12,6 +10,7 @@
 #include <iostream>
 #include <r-type/packets/Packet.hpp>
 #include <r-type/packets/Serialization.hpp>
+#include <sstream>
 #include <thread>
 
 rtype::server::Server::Server(std::uint32_t port)
@@ -60,20 +59,33 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
         // test
         case rtype::packets::PacketType::InputPlayer: {
             // Debug
-            rtype::packets::Input input;
-            packets::Serialization::deserialize(ar, input);
+            // rtype::packets::Input input;
+            // packets::Serialization::deserialize(ar, input);
 
-            std::cout << "Input is " << static_cast<int>(input.input) << std::endl;
+            // std::cout << "Input is " << static_cast<int>(input.input) << std::endl;
 
-            if (input.input == fengine::modules::display::EventKey::Z) {
-                _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, "ZZ");
-            }
-            if (input.input == fengine::modules::display::EventKey::A) {
-                _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, "AA");
-            }
-            if (input.input == fengine::modules::display::EventKey::S) {
-                _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, "SS");
-            }
+            // if (input.input == fengine::modules::display::EventKey::Z) {
+            //     _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, "ZZzzzzzzzzzzzz");
+            // }
+            // if (input.input == fengine::modules::display::EventKey::A) {
+            //     _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, "AAaaaaaaaaaaaa");
+            // }
+            // if (input.input == fengine::modules::display::EventKey::S) {
+            //     _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, "SSssssssssssssssssss");
+            // }
+            // std::stringstream ss;
+            // packets::PacketHeader NewHeader = {
+            //     .type = packets::PacketType::Ack,
+            //     .size = 0,
+            //     // TODO: this is a simple test UUID for the server <-> client communication
+            //     // To be removed later
+            //     .playerUuid = "f52ea348-6c57-4acf-9834-059bc9a9c81c",
+            // };
+
+            // packets::Serialization::serialize(ss, NewHeader, packets::Empty{});
+
+            // std::string send = ss.str();
+            // _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, send);
         }
         default:
             break;
