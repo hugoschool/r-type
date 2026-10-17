@@ -101,8 +101,8 @@ void rtype::server::Server::generateEnnemies() {
         bound.size_y += 50;
         bound.bouncy = true;
     } else {
-        fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER, std::chrono::steady_clock::now()};
-        _world._registry.componentManager.addComponent(entity, std::move(behaviour));
+        // fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER, std::chrono::steady_clock::now()};
+        // _world._registry.componentManager.addComponent(entity, std::move(behaviour));
         _ennemyCounter++;
     }
 
