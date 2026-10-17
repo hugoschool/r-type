@@ -36,6 +36,8 @@ namespace rtype::server {
             void addMessage(std::string uuid, std::string content);
             std::string popMessage(std::string uuid);
             bool isClientEmpty(std::string uuid);
+            void sendToAllClients(std::string content);
+            std::map<std::string, SafeMessageQueue> &getMap();
 
         private:
             std::map<std::string, SafeMessageQueue> _map;

@@ -38,6 +38,16 @@ std::string rtype::server::ClientMessageQueueHandler::popMessage(std::string uui
     } catch (std::exception &) { throw Exception("No queue for client " + uuid); }
 }
 
+std::map<std::string, rtype::server::SafeMessageQueue> &rtype::server::ClientMessageQueueHandler::getMap() {
+    return _map;
+}
+
+void rtype::server::ClientMessageQueueHandler::sendToAllClients(std::string content) {
+    for (auto &[uuid, _] : _map) {
+        addMessage(uuid, content);
+    }
+}
+
 rtype::server::ClientHandler::ClientHandler()
     : _maxStatusSecondsMap({
           {ClientStatus::Disconnected, std::chrono::seconds(MAX_DISCONNECTED_SECONDS)},
