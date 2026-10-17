@@ -16,7 +16,6 @@
 #include <sstream>
 #include <string>
 #include <thread>
-#include <unistd.h>
 
 rtype::client::Client::Client()
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(), _writeThread(),
