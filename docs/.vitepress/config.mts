@@ -19,6 +19,7 @@ export default defineConfig({
                     { text: "Building", link: "/building" },
                     { text: "Contributing", link: "/contributing" },
                     { text: "Protocol", link: "/protocol" },
+                    { text: "Client", link: "/client"}
                 ]
             },
             {

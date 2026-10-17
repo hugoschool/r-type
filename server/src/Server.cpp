@@ -10,6 +10,7 @@
 #include <iostream>
 #include <r-type/packets/Packet.hpp>
 #include <r-type/packets/Serialization.hpp>
+#include <sstream>
 #include <thread>
 
 rtype::server::Server::Server(std::uint32_t port)
@@ -61,6 +62,9 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
             _clientHandler.addClient(uuid);
             _clientHandler.setAlive(uuid);
             break;
+        }
+        // TODO: all types
+        case rtype::packets::PacketType::InputPlayer: {
         }
         default:
             break;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "f-engine/modules/display/events/EventKey.hpp"
 #include <cstddef>
 #include <string>
 
@@ -52,6 +53,15 @@ namespace rtype::packets {
         public:
             template <class Archive>
             void serialize(Archive &, unsigned int) {
+            }
+    };
+
+    struct Input {
+        public:
+            fengine::modules::display::EventKey input;
+            template <class Archive>
+            void serialize(Archive &ar, unsigned int) {
+                ar & input;
             }
     };
 }

@@ -1,39 +1,109 @@
 #include "Client.hpp"
-#include "r-type/packets/Entity.hpp"
+#include "UDPProtocol.hpp"
+#include "boost/asio/error.hpp"
+#include "boost/system/detail/error_code.hpp"
+#include "f-engine/ecs/Registry.hpp"
+#include "f-engine/modules/display/IDisplayModule.hpp"
+#include "f-engine/modules/display/SFMLDisplayModule.hpp"
+#include "f-engine/modules/display/events/EventType.hpp"
+#include "f-engine/modules/display/events/IEvent.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
+#include <exception>
 #include <iostream>
+#include <memory>
+#include <optional>
+#include <sstream>
+#include <string>
+#include <thread>
 
-rtype::client::Client::Client() : _io_context(), _resolver(_io_context), _endpoint(), _socket(_io_context) {
-    const std::string host = "127.0.0.1";
-    const std::string port = "25000";
-    _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
-
-    _socket.open(udp::v4());
-    connect();
+rtype::client::Client::Client()
+    : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(), _writeThread(),
+      _readThread(), _exit(false), _inputs(1024), _protocol(std::make_unique<UDPProtocol>(_inputs)) {
 }
 
-void rtype::client::Client::connect() {
-    std::stringstream ss;
+rtype::client::Client::~Client() {
+    _writeThread.join();
+    _readThread.join();
+    _protocol->close();
+}
 
-    packets::PacketHeader header = {
-        .type = packets::PacketType::Ack,
-        .size = 0,
-        // TODO: this is a simple test UUID for the server <-> client communication
-        // To be removed later
-        .playerUuid = "f52ea348-6c57-4acf-9834-059bc9a9c81c",
-    };
+void rtype::client::Client::run(char *av[]) {
+    _protocol->connect(av);
+    _writeThread = std::thread(&rtype::client::Client::sendLoop, this);
+    _readThread = std::thread(&rtype::client::Client::readLoop, this);
+    loop();
+}
 
-    packets::Serialization::serialize(ss, header, packets::Empty{});
+void rtype::client::Client::sendLoop() {
+    while (!_exit) {
+        _protocol->sendMsg();
+    }
+    std::cout << "BYE BYE" << std::endl;
+}
 
-    std::string send = ss.str();
-    _socket.send_to(boost::asio::buffer(send), _endpoint);
+void rtype::client::Client::readLoop() {
+    try {
+        _protocol->setSocketNonBlocking();
+        boost::system::error_code error = boost::asio::error::would_block;
+        while (error == boost::asio::error::would_block && !_exit) {
+            std::string msg = _protocol->readMsg(error);
+            interpretMsg(msg);
+        }
+        if (!_exit)
+            readLoop();
+    } catch (std::exception &) {}
+}
+
+void rtype::client::Client::interpretMsg(std::string msg) {
+    packets::PacketHeader header;
+
+    try {
+        std::stringstream ss(msg);
+        packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
+        packets::Serialization::deserialize(ar, header);
+        switch (header.type) {
+            // TODO: All packets
+            case rtype::packets::PacketType::Ack:
+                break;
+            case rtype::packets::PacketType::InputPlayer:
+                break;
+            case rtype::packets::PacketType::AddPlayer:
+                break;
+            case rtype::packets::PacketType::AddEntity:
+                break;
+            case rtype::packets::PacketType::KillEntity:
+                break;
+            case rtype::packets::PacketType::KillPlayer:
+                break;
+            case rtype::packets::PacketType::UpdatePlayer:
+                break;
+            case rtype::packets::PacketType::UpdateEntity:
+                break;
+            case rtype::packets::PacketType::DeadPlayer:
+                break;
+            default:
+                break;
+        }
+    } catch (std::exception &) {}
+}
+
+void rtype::client::Client::loop() {
 
     while (true) {
-        std::array<char, 1024> recv_buf;
-        udp::endpoint sender_endpoint;
-        size_t len = _socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
+        _displayModule->clear();
 
-        std::cout.write(recv_buf.data(), len);
+        _registery.systemManager.update(_registery);
+
+        std::optional<std::unique_ptr<fengine::modules::display::IEvent>> event = _displayModule->pollEvent();
+        if (event.has_value()) {
+            if (event.value()->getType() == fengine::modules::display::EventType::Quit) {
+                _exit = true;
+                break;
+            }
+            if (event.value()->getType() == fengine::modules::display::EventType::KeyPressed) {
+                _inputs.addElement(event.value()->getKey());
+            }
+        }
     }
 }
