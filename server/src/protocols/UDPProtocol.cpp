@@ -3,6 +3,7 @@
 #include "protocols/AProtocol.hpp"
 #include <boost/asio/placeholders.hpp>
 #include <iostream>
+#include <r-type/packets/Entity.hpp>
 #include <r-type/packets/Packet.hpp>
 #include <r-type/packets/Serialization.hpp>
 #include <sstream>
@@ -52,16 +53,43 @@ void rtype::server::UDPProtocol::handleReceive(const boost::system::error_code &
             try {
                 ClientMessageQueueHandler &clientMessageQueue = _clientHandler.getMessageQueueHandler();
 
+                // Always respond even if the queue is empty as to not block the client
+                if (clientMessageQueue.isClientEmpty(playerUuid)) {
+                    packets::PacketHeader header = {
+                        .type = packets::PacketType::Ack,
+                        .size = 0,
+                        .playerUuid = "",
+                    };
+
+                    std::stringstream ss;
+                    packets::Serialization::serialize(ss, header, packets::Empty{});
+
+                    std::shared_ptr<std::string> message = std::make_shared<std::string>(ss.str());
+
+                    _socket.async_send_to(boost::asio::buffer(*message), _endpoint,
+                        std::bind(&UDPProtocol::handleSend, this, message, boost::asio::placeholders::error,
+                            boost::asio::placeholders::bytes_transferred));
+                }
+
                 while (!clientMessageQueue.isClientEmpty(playerUuid)) {
                     std::string poppedMessage = clientMessageQueue.popMessage(playerUuid);
-
                     std::shared_ptr<std::string> message = std::make_shared<std::string>(poppedMessage);
                     _socket.async_send_to(boost::asio::buffer(*message), _endpoint,
                         std::bind(&UDPProtocol::handleSend, this, message, boost::asio::placeholders::error,
                             boost::asio::placeholders::bytes_transferred));
                 }
-            } catch (std::exception &e) { std::cerr << e.what() << std::endl; }
+            } catch (std::exception &e) {
+                std::cerr << "Message queue error: " << e.what() << std::endl;
+
+                // Escalate error as to still send a packet incase of a random unreliable client error
+                throw e;
+            }
         } catch (std::exception &) {
+            // TODO: determine whether we should send a packet here
+            // Maybe it can happen that the game sends us a weird unreliable packet
+            //
+            // This may block the client randomly, the question is: should we send a packet
+            // as to "unblock" the client or shall we continue normally?
             std::cerr << "Couldn't decrypt header, message sent is probably not a packet" << std::endl;
         }
 
