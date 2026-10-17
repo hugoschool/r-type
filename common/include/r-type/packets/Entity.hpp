@@ -1,8 +1,8 @@
 #pragma once
 
+#include "f-engine/modules/display/events/EventKey.hpp"
 #include <cstddef>
 #include <string>
-#include "f-engine/modules/display/events/EventKey.hpp"
 
 namespace rtype::packets {
     struct Vector2D {
@@ -59,7 +59,7 @@ namespace rtype::packets {
     struct Input {
         public:
             fengine::modules::display::EventKey input;
-            template<class Archive>
+            template <class Archive>
             void serialize(Archive &ar, unsigned int) {
                 ar & input;
             }

@@ -20,10 +20,8 @@
 #include <unistd.h>
 
 rtype::client::Client::Client()
-    : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(),
-      _writeThread(), _readThread(), _exit(false), _inputs(1024),
-      _protocol(std::make_unique<UDPProtocol>(_inputs))
-    {
+    : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(), _writeThread(),
+      _readThread(), _exit(false), _inputs(1024), _protocol(std::make_unique<UDPProtocol>(_inputs)) {
 }
 
 rtype::client::Client::~Client() {
@@ -49,15 +47,14 @@ void rtype::client::Client::sendLoop() {
 void rtype::client::Client::readLoop() {
     try {
         _protocol->setSocketNonBlocking();
-        boost::system::error_code error  = boost::asio::error::would_block;
+        boost::system::error_code error = boost::asio::error::would_block;
         while (error == boost::asio::error::would_block && !_exit) {
             std::string msg = _protocol->readMsg(error);
             interpretMsg(msg);
         }
         if (!_exit)
             readLoop();
-    } catch (std::exception &) {
-    }
+    } catch (std::exception &) {}
 }
 
 void rtype::client::Client::interpretMsg(std::string msg) {
@@ -70,28 +67,27 @@ void rtype::client::Client::interpretMsg(std::string msg) {
         switch (header.type) {
             // TODO: All packets
             case rtype::packets::PacketType::Ack:
-            break;
+                break;
             case rtype::packets::PacketType::InputPlayer:
-            break;
+                break;
             case rtype::packets::PacketType::AddPlayer:
-            break;
+                break;
             case rtype::packets::PacketType::AddEntity:
-            break;
+                break;
             case rtype::packets::PacketType::KillEntity:
-            break;
+                break;
             case rtype::packets::PacketType::KillPlayer:
-            break;
+                break;
             case rtype::packets::PacketType::UpdatePlayer:
-            break;
+                break;
             case rtype::packets::PacketType::UpdateEntity:
-            break;
+                break;
             case rtype::packets::PacketType::DeadPlayer:
-            break;
+                break;
             default:
-            break;
+                break;
         }
-    } catch (std::exception &) {
-    }
+    } catch (std::exception &) {}
 }
 
 void rtype::client::Client::loop() {

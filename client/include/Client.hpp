@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CircularBuffer.hpp"
 #include "ClientHelper.hpp"
 #include "IProtocol.hpp"
 #include "f-engine/ecs/Registry.hpp"
@@ -7,11 +8,8 @@
 #include "f-engine/modules/display/events/EventKey.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
-#include "f-engine/modules/display/IDisplayModule.hpp"
 #include <memory>
 #include <thread>
-#include "CircularBuffer.hpp"
-#include "f-engine/ecs/Registry.hpp"
 
 namespace rtype::client {
     class Client {

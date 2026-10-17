@@ -10,8 +10,8 @@
 
 using EventKey = fengine::modules::display::EventKey;
 
-rtype::client::UDPProtocol::UDPProtocol(rtype::client::CircularBuffer<EventKey> &input) :
-    rtype::client::AProtocol(input), _resolver(_io_context), _endpoint(), _socket(_io_context) {
+rtype::client::UDPProtocol::UDPProtocol(rtype::client::CircularBuffer<EventKey> &input)
+    : rtype::client::AProtocol(input), _resolver(_io_context), _endpoint(), _socket(_io_context) {
 }
 
 rtype::client::UDPProtocol::~UDPProtocol() {
@@ -57,8 +57,7 @@ void rtype::client::UDPProtocol::sendMsg() {
             std::string buf = ss.str();
             _socket.send_to(boost::asio::buffer(buf), _endpoint);
         }
-    } catch (std::exception &) {
-    }
+    } catch (std::exception &) {}
 }
 
 std::string rtype::client::UDPProtocol::readMsg(boost::system::error_code &error) {
@@ -69,12 +68,10 @@ std::string rtype::client::UDPProtocol::readMsg(boost::system::error_code &error
     return test;
 }
 
-void rtype::client::UDPProtocol::setSocketNonBlocking()
-{
+void rtype::client::UDPProtocol::setSocketNonBlocking() {
     _socket.non_blocking(true);
 }
 
-void rtype::client::UDPProtocol::close()
-{
+void rtype::client::UDPProtocol::close() {
     _socket.close();
 }

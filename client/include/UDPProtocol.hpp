@@ -5,8 +5,9 @@
 #include <array>
 namespace rtype::client {
     class UDPProtocol : public AProtocol {
-        using udp = boost::asio::ip::udp;
-        using EventKey = fengine::modules::display::EventKey;
+            using udp = boost::asio::ip::udp;
+            using EventKey = fengine::modules::display::EventKey;
+
         public:
             UDPProtocol(rtype::client::CircularBuffer<EventKey> &input);
             ~UDPProtocol() override;

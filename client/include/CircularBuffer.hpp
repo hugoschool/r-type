@@ -4,12 +4,11 @@
 #include <vector>
 
 namespace rtype::client {
-    template<typename T>
+    template <typename T>
     class CircularBuffer {
         public:
-            CircularBuffer(std::size_t size) : _size(size), _buffer(),
-                _writerIndex(0), _readerIndex(0)
-            {}
+            CircularBuffer(std::size_t size) : _size(size), _buffer(), _writerIndex(0), _readerIndex(0) {
+            }
 
             ~CircularBuffer() = default;
 
@@ -30,7 +29,7 @@ namespace rtype::client {
             }
 
             bool canRead() const {
-                return  _writerIndex != _readerIndex;
+                return _writerIndex != _readerIndex;
             }
 
         private:
