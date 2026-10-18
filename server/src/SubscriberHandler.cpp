@@ -2,6 +2,7 @@
 #include "ClientHandler.hpp"
 #include <f-engine/ecs/components/DeadComponent.hpp>
 #include <f-engine/ecs/components/PositionComponent.hpp>
+#include <f-engine/ecs/components/VelocityComponent.hpp>
 #include <f-engine/ecs/observer/Subscriber.hpp>
 #include <f-engine/ecs/systems/BoundarySystem.hpp>
 #include <f-engine/ecs/systems/MoveSystem.hpp>
@@ -42,33 +43,87 @@ void rtype::server::SubscriberHandler::process() {
 
 void rtype::server::SubscriberHandler::processMovement(shared_subscriber &subscriber) {
     fengine::ecs::observer::SubscriberContent content = subscriber->getContent();
-    fengine::ecs::PositionComponent position;
 
-    if (content.existsAndRetrieve(position)) {
-        packets::EntityMove payload = {
-            .entityId = content.getEntityId(),
-            .coordinates = packets::Vector2D(position.pos_x, position.pos_y),
-        };
-
-        packets::PacketHeader header = {
-            .type = packets::PacketType::EntityMove,
-            .size = sizeof(packets::EntityMove),
-            .playerUuid = "",
-        };
-        strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
-
-        std::stringstream ss;
-        packets::Serialization::serialize(ss, header, payload);
-
-        _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
-    }
+    handlePositionComponent(content);
+    handleVelocityComponent(content);
+    handleDeadComponent(content);
 }
 
 void rtype::server::SubscriberHandler::processBoundary(shared_subscriber &subscriber) {
     fengine::ecs::observer::SubscriberContent content = subscriber->getContent();
-    if (content.exists<fengine::ecs::PositionComponent>()) {
-        auto _ = content.retrieve<fengine::ecs::PositionComponent>();
 
-        // std::cout << "X: " << component.pos_x << ", Y: " << component.pos_y << std::endl;
-    }
+    handlePositionComponent(content);
+    handleVelocityComponent(content);
+    handleDeadComponent(content);
+}
+
+void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observer::SubscriberContent &content) {
+    fengine::ecs::DeadComponent dead;
+
+    if (!content.existsAndRetrieve(dead))
+        return;
+
+    packets::EntityDied payload = {
+        .entityId = dead.entityId,
+    };
+
+    packets::PacketHeader header = {
+        .type = packets::PacketType::EntityDied,
+        .size = sizeof(packets::EntityDied),
+        .playerUuid = "",
+    };
+    strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
+
+    std::stringstream ss;
+    packets::Serialization::serialize(ss, header, payload);
+
+    _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
+}
+
+void rtype::server::SubscriberHandler::handleVelocityComponent(fengine::ecs::observer::SubscriberContent &content) {
+    fengine::ecs::VelocityComponent velocity;
+
+    if (!content.existsAndRetrieve(velocity))
+        return;
+
+    packets::EntityVelocityChange payload = {
+        .entityId = content.getEntityId(),
+        .velocity = packets::Vector2D(velocity.vel_x, velocity.vel_y),
+    };
+
+    packets::PacketHeader header = {
+        .type = packets::PacketType::EntityVelocityChange,
+        .size = sizeof(packets::EntityVelocityChange),
+        .playerUuid = "",
+    };
+    strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
+
+    std::stringstream ss;
+    packets::Serialization::serialize(ss, header, payload);
+
+    _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
+}
+
+void rtype::server::SubscriberHandler::handlePositionComponent(fengine::ecs::observer::SubscriberContent &content) {
+    fengine::ecs::PositionComponent position;
+
+    if (!content.existsAndRetrieve(position))
+        return;
+
+    packets::EntityMove payload = {
+        .entityId = content.getEntityId(),
+        .coordinates = packets::Vector2D(position.pos_x, position.pos_y),
+    };
+
+    packets::PacketHeader header = {
+        .type = packets::PacketType::EntityMove,
+        .size = sizeof(packets::EntityMove),
+        .playerUuid = "",
+    };
+    strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
+
+    std::stringstream ss;
+    packets::Serialization::serialize(ss, header, payload);
+
+    _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
 }

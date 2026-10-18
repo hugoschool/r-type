@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ClientHandler.hpp"
+#include "f-engine/ecs/observer/SubscriberContent.hpp"
 #include <f-engine/ecs/Registry.hpp>
 #include <f-engine/ecs/observer/Subscriber.hpp>
 #include <functional>
@@ -22,5 +23,9 @@ namespace rtype::server {
 
             void processMovement(shared_subscriber &subscriber);
             void processBoundary(shared_subscriber &subscriber);
+
+            void handlePositionComponent(fengine::ecs::observer::SubscriberContent &content);
+            void handleVelocityComponent(fengine::ecs::observer::SubscriberContent &content);
+            void handleDeadComponent(fengine::ecs::observer::SubscriberContent &content);
     };
 }

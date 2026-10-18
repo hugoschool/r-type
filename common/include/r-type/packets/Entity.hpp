@@ -27,7 +27,7 @@ namespace rtype::packets {
             }
     };
 
-    struct EntitySpawn {
+    struct EntityIdOnly {
         public:
             std::size_t entityId;
 
@@ -36,6 +36,9 @@ namespace rtype::packets {
                 ar & entityId;
             }
     };
+
+    using EntitySpawn = EntityIdOnly;
+    using EntityDied = EntityIdOnly;
 
     struct EntityMove {
         public:
