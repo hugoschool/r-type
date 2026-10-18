@@ -7,13 +7,13 @@
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
+#include "f-engine/scene/GameScene.hpp"
+#include "r-type/packets/Serialization.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
-#include "r-type/packets/Serialization.hpp"
 #include <memory>
 #include <queue>
 #include <thread>
-#include "f-engine/scene/GameScene.hpp"
 
 namespace rtype::client {
 
@@ -34,7 +34,6 @@ namespace rtype::client {
             rtype::client::CircularBuffer<fengine::modules::display::EventKey> _inputs;
             std::string _uuid;
             std::unique_ptr<IProtocol> _protocol;
-
 
             void loop();
             void sendLoop();
