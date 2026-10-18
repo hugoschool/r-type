@@ -52,7 +52,7 @@ rtype::client::Client::Client()
     _registery.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::ControllableComponent>();
 
-    fengine::ecs::BoundaryComponent bound = {100, 50, true, true, std::nullopt};
+    fengine::ecs::BoundaryComponent bound = {100, 50, true, false, std::nullopt};
     fengine::ecs::PositionComponent pos = {0, 0, false};
     fengine::ecs::VelocityComponent vel = {0, 0};
     fengine::ecs::DrawableComponent draw = {std::nullopt, std::make_shared<fengine::modules::display::SFMLCircle>(bound.size_x), std::nullopt};
@@ -175,20 +175,24 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
     packets::EntityIdOnly id;
     ar & id;
 
-    fengine::ecs::Entity entity = _registery.entityManager.createEntity(id.entityId);
-    fengine::ecs::PositionComponent pos = {200, 200, false};
-    fengine::ecs::VelocityComponent vel = {0, 0};
-    fengine::ecs::BoundaryComponent bound = {40, 40, true, true,std::nullopt};
-    fengine::ecs::DrawableComponent draw = {std::nullopt, std::make_shared<fengine::modules::display::SFMLRectangle>(bound.size_x, bound.size_y), std::nullopt};
-    fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::MONSTERS}, 10};
-    fengine::ecs::DefenseComponent def = {100, 0};
+    try {
+        auto &_ = _registery.entityManager.getEntities().at(id.entityId);
+    } catch (std::exception &) {
+        fengine::ecs::Entity entity = _registery.entityManager.createEntity(id.entityId);
+        fengine::ecs::PositionComponent pos = {200, 200, false};
+        fengine::ecs::VelocityComponent vel = {0, 0};
+        fengine::ecs::BoundaryComponent bound = {40, 40, true, true,std::nullopt};
+        fengine::ecs::DrawableComponent draw = {std::nullopt, std::make_shared<fengine::modules::display::SFMLRectangle>(bound.size_x, bound.size_y), std::nullopt};
+        fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::MONSTERS}, 10};
+        fengine::ecs::DefenseComponent def = {100, 0};
 
-    _registery.componentManager.addComponent(entity, std::move(pos));
-    _registery.componentManager.addComponent(entity, std::move(vel));
-    _registery.componentManager.addComponent(entity, std::move(draw));
-    _registery.componentManager.addComponent(entity, std::move(bound));
-    _registery.componentManager.addComponent(entity, std::move(att));
-    _registery.componentManager.addComponent(entity, std::move(def));
+        _registery.componentManager.addComponent(entity, std::move(pos));
+        _registery.componentManager.addComponent(entity, std::move(vel));
+        _registery.componentManager.addComponent(entity, std::move(draw));
+        _registery.componentManager.addComponent(entity, std::move(bound));
+        _registery.componentManager.addComponent(entity, std::move(att));
+        _registery.componentManager.addComponent(entity, std::move(def));
+    }
 }
 
 void rtype::client::Client::moveEntity(rtype::packets::Serialization::deserialize_archive &ar) {
@@ -196,7 +200,6 @@ void rtype::client::Client::moveEntity(rtype::packets::Serialization::deserializ
     packets::Vector2D pos;
     ar & id;
     ar & pos;
-    std::cout << "MOVE" << id.entityId << std::endl;
     try {
         auto &sparseArray = _registery.componentManager.getComponents<fengine::ecs::PositionComponent>();
 
