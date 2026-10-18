@@ -9,6 +9,7 @@
 #include "f-engine/modules/display/events/IEvent.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
+#include <chrono>
 #include <exception>
 #include <iostream>
 #include <memory>
@@ -38,6 +39,7 @@ void rtype::client::Client::run(char *av[]) {
 void rtype::client::Client::sendLoop() {
     while (!_exit) {
         _protocol->sendMsg();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     std::cout << "BYE BYE" << std::endl;
 }
