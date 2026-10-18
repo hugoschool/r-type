@@ -34,8 +34,7 @@ rtype::server::Server::Server(std::uint32_t port)
       // Protocols
       _udp(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler),
       // Enemy generation
-      _spawnClock(std::chrono::steady_clock::now()),
-      _enemyCounter(0) {
+      _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0) {
 
     _signals.async_wait([&](boost::system::error_code, int) {
         _io_context.stop();
@@ -59,8 +58,7 @@ rtype::server::Server::Server(std::uint32_t port)
 rtype::server::Server::~Server() {
 }
 
-void rtype::server::Server::userLoginPacket(std::string uuid) {
-    const std::vector<std::optional<fengine::ecs::Entity>> &entities = _world._registry.entityManager.getEntities();
+void rtype::server::Server::newEntityPacket(std::size_t entityId, std::string uuid) {
     auto &velocityComponents = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>();
     auto &positionComponents = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>();
     // auto &boundaryComponents =
@@ -68,15 +66,34 @@ void rtype::server::Server::userLoginPacket(std::string uuid) {
     // auto &attackComponents = _world._registry.componentManager.getComponents<fengine::ecs::AttackComponent>();
     // auto &defenseComponents = _world._registry.componentManager.getComponents<fengine::ecs::DefenseComponent>();
 
-    for (auto &entity : entities) {
-        const std::size_t entityId = entity->getId();
+    // Send a new entity
+    {
+        packets::EntitySpawn payload = {.entityId = entityId};
 
-        // Send a new entity
+        packets::PacketHeader newHeader = {
+            .type = packets::PacketType::EntitySpawn,
+            .size = sizeof(payload),
+            .playerUuid = "",
+        };
+        std::strncpy(newHeader.playerUuid, uuid.c_str(), packets::UUID_SIZE);
+
+        std::stringstream ss;
+        packets::Serialization::serialize(ss, newHeader, payload);
+        _clientHandler.getMessageQueueHandler().addMessage(uuid, ss.str());
+    }
+
+    // TODO: code cleaning would be appreciated here
+    if (velocityComponents.contains(entityId)) {
+        auto &velocity = velocityComponents[entityId];
+
         {
-            packets::EntitySpawn payload = {.entityId = entityId};
+            packets::EntityVelocityChange payload = {
+                .entityId = entityId,
+                .velocity = packets::Vector2D(velocity->vel_x, velocity->vel_y),
+            };
 
             packets::PacketHeader newHeader = {
-                .type = packets::PacketType::EntitySpawn,
+                .type = packets::PacketType::EntityVelocityChange,
                 .size = sizeof(payload),
                 .playerUuid = "",
             };
@@ -86,50 +103,36 @@ void rtype::server::Server::userLoginPacket(std::string uuid) {
             packets::Serialization::serialize(ss, newHeader, payload);
             _clientHandler.getMessageQueueHandler().addMessage(uuid, ss.str());
         }
+    }
+    if (positionComponents.contains(entityId)) {
+        auto &position = positionComponents[entityId];
 
-        // TODO: code cleaning would be appreciated here
-        if (velocityComponents.contains(entityId)) {
-            auto &velocity = velocityComponents[entityId];
+        {
+            packets::EntityMove payload = {
+                .entityId = entityId,
+                .coordinates = packets::Vector2D(position->pos_x, position->pos_y),
+            };
 
-            {
-                packets::EntityVelocityChange payload = {
-                    .entityId = entityId,
-                    .velocity = packets::Vector2D(velocity->vel_x, velocity->vel_y),
-                };
+            packets::PacketHeader newHeader = {
+                .type = packets::PacketType::EntityVelocityChange,
+                .size = sizeof(payload),
+                .playerUuid = "",
+            };
+            std::strncpy(newHeader.playerUuid, uuid.c_str(), packets::UUID_SIZE);
 
-                packets::PacketHeader newHeader = {
-                    .type = packets::PacketType::EntityVelocityChange,
-                    .size = sizeof(payload),
-                    .playerUuid = "",
-                };
-                std::strncpy(newHeader.playerUuid, uuid.c_str(), packets::UUID_SIZE);
-
-                std::stringstream ss;
-                packets::Serialization::serialize(ss, newHeader, payload);
-                _clientHandler.getMessageQueueHandler().addMessage(uuid, ss.str());
-            }
+            std::stringstream ss;
+            packets::Serialization::serialize(ss, newHeader, payload);
+            _clientHandler.getMessageQueueHandler().addMessage(uuid, ss.str());
         }
-        if (positionComponents.contains(entityId)) {
-            auto &position = positionComponents[entityId];
+    }
+}
 
-            {
-                packets::EntityMove payload = {
-                    .entityId = entityId,
-                    .coordinates = packets::Vector2D(position->pos_x, position->pos_y),
-                };
+void rtype::server::Server::userLoginPacket(std::string uuid) {
+    const std::vector<std::optional<fengine::ecs::Entity>> &entities = _world._registry.entityManager.getEntities();
 
-                packets::PacketHeader newHeader = {
-                    .type = packets::PacketType::EntityVelocityChange,
-                    .size = sizeof(payload),
-                    .playerUuid = "",
-                };
-                std::strncpy(newHeader.playerUuid, uuid.c_str(), packets::UUID_SIZE);
-
-                std::stringstream ss;
-                packets::Serialization::serialize(ss, newHeader, payload);
-                _clientHandler.getMessageQueueHandler().addMessage(uuid, ss.str());
-            }
-        }
+    for (auto &entity : entities) {
+        const std::size_t entityId = entity->getId();
+        newEntityPacket(entityId, uuid);
     }
 }
 
@@ -184,14 +187,17 @@ void rtype::server::Server::generateEnemies() {
         _enemyCounter++;
     }
 
-    // envoyer un message de creation ici - vasy hugo, c'est pour toi
-    // le client est grand et lui attribuera lui meme le drawable et le anim
-    // ou alors on le met la et on l'envoie
     _world._registry.componentManager.addComponent(entity, std::move(pos));
     _world._registry.componentManager.addComponent(entity, std::move(vel));
     _world._registry.componentManager.addComponent(entity, std::move(bound));
     _world._registry.componentManager.addComponent(entity, std::move(atk));
     _world._registry.componentManager.addComponent(entity, std::move(def));
+
+    auto &clients = _clientHandler.getClients();
+    const std::size_t entityId = entity.getId();
+    for (auto &client : clients) {
+        newEntityPacket(entityId, client.first);
+    }
 
     _spawnClock = std::chrono::steady_clock::now();
 }

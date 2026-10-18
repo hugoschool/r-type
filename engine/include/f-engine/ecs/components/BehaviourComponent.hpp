@@ -9,7 +9,7 @@ namespace fengine::ecs {
     };
 
     struct BehaviourComponent {
-        enum behaviour behaviour;
-        std::chrono::steady_clock::time_point behaviourClock;
+            enum behaviour behaviour;
+            std::chrono::steady_clock::time_point behaviourClock;
     };
 }
