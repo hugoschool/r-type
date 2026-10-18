@@ -18,7 +18,6 @@ export default defineConfig({
                     { text: "Introduction", link: "/introduction" },
                     { text: "Building", link: "/building" },
                     { text: "Contributing", link: "/contributing" },
-                    { text: "Protocol", link: "/protocol" },
                 ]
             },
             {
@@ -30,6 +29,12 @@ export default defineConfig({
                     { text: "Network library", link: "/comparative/network" },
                     { text: "Graphical library", link: "/comparative/graphical" },
                     { text: "Conclusion", link: "/comparative/conclusion" },
+                ]
+            },
+            {
+                text: "Protocol",
+                items: [
+                    { text: "Overview", link: "/protocol/overview" },
                 ]
             },
             {

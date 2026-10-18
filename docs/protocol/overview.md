@@ -1,6 +1,6 @@
-# Protocol
+# Overview
 
-This protocol isn't definitive but represents globally how our protocol for the R-Type shall work between the server & client.
+This overview describes the vision we have for our protocol for the R-Type.
 
 ## Client Server Connection
 
@@ -27,7 +27,7 @@ Once the client hits *connected* it starts sending connection payload packets to
 
 ## Server Architecture
 
-![image.png](assets/Architecture.png)
+![image.png](../assets/Architecture.png)
 
 - A **Master Gamestate** that is the universal true state of things. Clients send their commands on the communication channel. They are transformed in a packet which will modifiy the state of the game when they arrive on the server.
 - For each client, the server keeps the **32 last gamestate** sent over the network in a cycling array: they are called snapshots. The array cycle with the famous binary mask trick that is mentionned in Quake World Network ([Some elegant things](http://fabiensanglard.net/quakeSource/quakeSourceNetWork.php)).
@@ -42,7 +42,7 @@ In order to understand the snapshot system, here is an example with the followin
 
 Server Frame 1:
 
-![image.png](assets/server_frame_1.png)
+![image.png](../assets/server_frame_1.png)
 
 In order to generate a message the network module will ALWAYS do the following :
 
@@ -54,13 +54,13 @@ This is what we can see in the next drawing:
 1. Master gamestate is copied at index 0 in Client1 history: It is now called"Snapshot1".
 2. Since this is the first udpate, there are no valid snapshot in Client1 history so the engine is going to use the "Dummy snapshot" where all fields are always ZEROed. This results in a FULL update since every single field is sent to the NetChannel.
 
-![image.png](assets/game_state_snapshot_1.png)
+![image.png](../assets/game_state_snapshot_1.png)
 
 Server Frame 2:
 
 Client2 has moved on the Y axis so pos[1] is now equal to E (in blue). Client1 has also sent commands but more important it has also acknowledged receiving the previous udpate so Snapshot1 has been marked as "ACK":
 
-![image.png](assets/server_frame_2.png)
+![image.png](../assets/server_frame_2.png)
 
 The process is the same:
 
@@ -69,20 +69,20 @@ The process is the same:
 
 only a partial update ( pos[1] = E ) is sent over the network. This is the beauty of the design: The process is always the same.
 
-![image.png](assets/game_state_snapshot_2.png)
+![image.png](../assets/game_state_snapshot_2.png)
 
 Since each field is preceeded by a bit marker (1=changed, 0=not changed) the partial update above would uses 36 bits: `[0 1 32bitsNewValue 0 0]`
 
 Server frame 3:
 
-![image.png](assets/server_frame_3.png)
+![image.png](../assets/server_frame_3.png)
 
 Regardless the process remains the same:
 
 1. Copy the Master gamestate in the next Client history slot: (index 2): This is Snapshot3
 2. Compare with the last valid acknowledged snapshot (snapshot1).
 
-![image.png](assets/game_state_snapshot_3.png)
+![image.png](../assets/game_state_snapshot_3.png)
 
 As a result the message sent it partial and contains a combination of old changes and new changes: (pos[1]=E and health=H). Note that snapshot1 could have been too old to be used. In this case the engine would have used the "dummy snapshot" again, resulting in a full update.
 
@@ -90,55 +90,6 @@ The beauty and elegance of the system resides in its simplicity. The same algori
 
 - Generate partial or full update.
 - Resend OLD information that were not received and NEW information in a single message.
-
-## Packet:
-
-> [!WARNING]
-> This is an example, we don't guarantee that the structure will stay the same inside the game.
-
-```cpp
-struct Packet {
-		int packetId;
-		enum Cmd;
-		std::string uuid; // Fixed length of 36 characters of length, could be represented by a fixed length array
-		union structType {
-			playerStruct;
-			entityStruct;
-			bool rep;
-		};
-};
-```
-
-## Commands(Enum)
-
-Communication Server → Client:
-
-- UpdatePlayer -> updates Player position or his velocity vector
-- UpdateEntity -> update Entity position or his velocity vector
-- KillPlayer -> the Player n°i is dead
-- KillEntity -> the Entity n°j is destroyed
-- AddPlayer -> adds a new Player to the game
-- AddEntity -> adds a new Entity to the game
-- DeadPlayer -> the client is dead → disconnected / spectate, only the own client receives that
-
-Communication Client → Server:
-
-- UpdatePlayer -> updates Player position or his velocity vector
-- AddEntity -> adds a new Entity to the game
-- Ack -> acknowledges the last recieved message.
-
-## Serialization
-
-To serialize, we are going to use `boost::serialize` with also `boost::endian` for platforms which differ in endianness.
-
-## Going further
-
-Changing the handshake from UDP to TCP is something we might want to do.
-
-Here's how we're thinking on doing:
-- Server sends UUID to the client
-- The Client sends a Ok with his UUID
-- The Server Sends him all the entities
 
 ## Resources
 
