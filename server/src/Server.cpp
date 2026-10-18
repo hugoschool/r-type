@@ -53,7 +53,7 @@ rtype::server::Server::Server(std::uint32_t port)
         fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
         fengine::ecs::PositionComponent pos = {posx, posy, false};
         fengine::ecs::VelocityComponent vel = {vel_x, vel_y};
-        fengine::ecs::BoundaryComponent bound = {10, 10, true, std::nullopt};
+        fengine::ecs::BoundaryComponent bound = {10, 10, true, true, std::nullopt};
         fengine::ecs::AttackComponent att = {{.team = team}, 10};
         fengine::ecs::DefenseComponent def = {100, 0};
 
