@@ -1,16 +1,17 @@
 #include "Server.hpp"
-#include "f-engine/ecs/components/BehaviourComponent.hpp"
-#include "f-engine/ecs/systems/BehaviouralSystem.hpp"
-#include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include <chrono>
 #include <cstdint>
 #include <f-engine/ecs/Entity.hpp>
 #include <f-engine/ecs/components/AttackComponent.hpp>
+#include <f-engine/ecs/components/BehaviourComponent.hpp>
 #include <f-engine/ecs/components/BoundaryComponent.hpp>
+#include <f-engine/ecs/components/ControllableComponent.hpp>
 #include <f-engine/ecs/components/DefenseComponent.hpp>
 #include <f-engine/ecs/components/PositionComponent.hpp>
 #include <f-engine/ecs/components/VelocityComponent.hpp>
+#include <f-engine/ecs/systems/BehaviouralSystem.hpp>
 #include <f-engine/ecs/systems/BoundarySystem.hpp>
+#include <f-engine/ecs/systems/ControlSystem.hpp>
 #include <f-engine/ecs/systems/MoveSystem.hpp>
 #include <iostream>
 #include <optional>
@@ -34,7 +35,7 @@ rtype::server::Server::Server(std::uint32_t port)
       // Protocols
       _udp(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler),
       // Enemy generation
-      _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0) {
+      _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0), _resendClock() {
 
     _signals.async_wait([&](boost::system::error_code, int) {
         _io_context.stop();
@@ -47,10 +48,12 @@ rtype::server::Server::Server(std::uint32_t port)
     _world._registry.componentManager.registerComponent<fengine::ecs::AttackComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::DefenseComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::BehaviourComponent>();
+    _world._registry.componentManager.registerComponent<fengine::ecs::ControllableComponent>();
 
     _world._registry.systemManager.addSystem<fengine::ecs::MovementSystem>(_world._camera);
     _world._registry.systemManager.addSystem<fengine::ecs::BoundarySystem>();
     _world._registry.systemManager.addSystem<fengine::ecs::BehaviouralSystem>();
+    _world._registry.systemManager.addSystem<fengine::ecs::ControlSystem>(_pressedQueue, _releasedQueue);
 
     _subscriberHandler.add(_world._registry);
 }
@@ -136,7 +139,7 @@ void rtype::server::Server::userLoginPacket(std::string uuid) {
     }
 }
 
-void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_archive &,
+void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_archive &ar,
     packets::PacketHeader &header) {
     switch (header.type) {
         case packets::PacketType::Ack: {
@@ -150,6 +153,10 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
         }
         // TODO: all types
         case rtype::packets::PacketType::InputPlayer: {
+            packets::Input input;
+
+            packets::Serialization::deserialize(ar, input);
+            _pressedQueue.push(input.input);
             break;
         }
         default:
@@ -160,7 +167,7 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
 void rtype::server::Server::generateEnemies() {
     std::chrono::steady_clock::time_point elapsedTime = std::chrono::steady_clock::now();
     std::chrono::duration<double> spawnTime = elapsedTime - _spawnClock;
-    std::chrono::milliseconds var(10000);
+    std::chrono::milliseconds var(2000);
 
     if (spawnTime < var)
         return;
@@ -202,6 +209,26 @@ void rtype::server::Server::generateEnemies() {
     _spawnClock = std::chrono::steady_clock::now();
 }
 
+void rtype::server::Server::checkResend() {
+    std::chrono::steady_clock::time_point elapsedTime = std::chrono::steady_clock::now();
+    std::chrono::duration<double> spawnTime = elapsedTime - _resendClock;
+    std::chrono::seconds var(2);
+
+    if (spawnTime < var) {
+        return;
+    }
+
+    auto &clients = _clientHandler.getClients();
+    auto &entities = _world._registry.entityManager.getEntities();
+
+    for (auto &entity : entities) {
+        const std::size_t entityId = entity->getId();
+        for (auto &client : clients) {
+            newEntityPacket(entityId, client.first);
+        }
+    }
+}
+
 void rtype::server::Server::tickThreadRun() {
     while (true) {
         if (_stop)
@@ -228,6 +255,7 @@ void rtype::server::Server::tickThreadRun() {
             }
         }
         generateEnemies();
+        checkResend();
         _clientHandler.verifyStatus();
         _world._registry.systemManager.update(_world._registry);
         _subscriberHandler.process();
