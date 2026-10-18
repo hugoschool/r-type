@@ -18,7 +18,6 @@ export default defineConfig({
                     { text: "Introduction", link: "/introduction" },
                     { text: "Building", link: "/building" },
                     { text: "Contributing", link: "/contributing" },
-                    { text: "Protocol", link: "/protocol" },
                 ]
             },
             {
@@ -30,6 +29,14 @@ export default defineConfig({
                     { text: "Network library", link: "/comparative/network" },
                     { text: "Graphical library", link: "/comparative/graphical" },
                     { text: "Conclusion", link: "/comparative/conclusion" },
+                ]
+            },
+            {
+                text: "Protocol",
+                items: [
+                    { text: "Overview", link: "/protocol/overview" },
+                    { text: "Communication example", link: "/protocol/example" },
+                    { text: "Packets", link: "/protocol/packets" },
                 ]
             },
             {
@@ -45,6 +52,13 @@ export default defineConfig({
                     { text: "ECS", link: "/engine/ecs" },
                     { text: "Display Module", link: "/engine/display_module" },
                     { text: "Architecture", link: "/engine/architecture" },
+                ]
+            },
+            {
+                text: "Server",
+                items: [
+                    { text: "Overview", link: "/server/overview" },
+                    { text: "Architecture", link: "/server/architecture" },
                 ]
             }
         ],
