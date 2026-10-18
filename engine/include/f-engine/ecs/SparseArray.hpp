@@ -40,6 +40,13 @@ namespace fengine::ecs {
                 return *this;
             };
 
+            bool contains(size_t idx) {
+                if (idx >= _data.capacity()) {
+                    return false;
+                }
+                return true;
+            };
+
             reference_type operator[](size_t idx) {
                 if (idx >= _data.capacity()) {
                     _data.resize((_data.capacity() + 1 + idx) * 2, std::nullopt);
