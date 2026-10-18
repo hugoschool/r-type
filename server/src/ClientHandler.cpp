@@ -76,6 +76,10 @@ std::string rtype::server::ClientHandler::generateUuid() {
     return boost::lexical_cast<std::string>(boost::uuids::to_string(boost::uuids::random_generator()()));
 }
 
+std::unordered_map<std::string, rtype::server::ClientData> &rtype::server::ClientHandler::getClients() {
+    return _clients;
+}
+
 std::string rtype::server::ClientHandler::newClient() {
     std::string uuid = _uuids.front();
     _uuids.pop();
