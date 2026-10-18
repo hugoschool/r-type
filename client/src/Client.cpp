@@ -108,3 +108,10 @@ void rtype::client::Client::removeEntity(packets::Serialization::deserialize_arc
     } catch (std::exception &) {
     }
 }
+
+void rtype::client::Client::addEntity(packets::Serialization::deserialize_archive &ar) {
+    packets::EntityIdOnly id;
+    ar & id;
+    Entity newEntity = {id.entityId, {0, 0}, {0, 0}};
+    _entities.insert({id.entityId, newEntity});
+}
