@@ -34,7 +34,7 @@ rtype::server::Server::Server(std::uint32_t port)
       // Protocols
       _udp(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler),
       // Enemy generation
-      _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0) {
+      _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0), _resendClock() {
 
     _signals.async_wait([&](boost::system::error_code, int) {
         _io_context.stop();
@@ -160,7 +160,7 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
 void rtype::server::Server::generateEnemies() {
     std::chrono::steady_clock::time_point elapsedTime = std::chrono::steady_clock::now();
     std::chrono::duration<double> spawnTime = elapsedTime - _spawnClock;
-    std::chrono::milliseconds var(10000);
+    std::chrono::milliseconds var(2000);
 
     if (spawnTime < var)
         return;
@@ -202,6 +202,26 @@ void rtype::server::Server::generateEnemies() {
     _spawnClock = std::chrono::steady_clock::now();
 }
 
+void rtype::server::Server::checkResend() {
+    std::chrono::steady_clock::time_point elapsedTime = std::chrono::steady_clock::now();
+    std::chrono::duration<double> spawnTime = elapsedTime - _resendClock;
+    std::chrono::seconds var(2);
+
+    if (spawnTime < var) {
+        return;
+    }
+
+    auto &clients = _clientHandler.getClients();
+    auto &entities = _world._registry.entityManager.getEntities();
+
+    for (auto &entity : entities) {
+        const std::size_t entityId = entity->getId();
+        for (auto &client : clients) {
+            newEntityPacket(entityId, client.first);
+        }
+    }
+}
+
 void rtype::server::Server::tickThreadRun() {
     while (true) {
         if (_stop)
@@ -228,6 +248,7 @@ void rtype::server::Server::tickThreadRun() {
             }
         }
         generateEnemies();
+        checkResend();
         _clientHandler.verifyStatus();
         _world._registry.systemManager.update(_world._registry);
         _subscriberHandler.process();

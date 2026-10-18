@@ -50,5 +50,8 @@ namespace rtype::server {
 
             void newEntityPacket(std::size_t entityId, std::string uuid);
             void userLoginPacket(std::string uuid);
+
+            std::chrono::steady_clock::time_point _resendClock;
+            void checkResend();
     };
 }
