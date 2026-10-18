@@ -45,13 +45,13 @@ void rtype::client::Client::sendLoop() {
 void rtype::client::Client::readLoop() {
     try {
         _protocol->setSocketNonBlocking();
-        boost::system::error_code error = boost::asio::error::would_block;
-        while (error == boost::asio::error::would_block && !_exit) {
-            std::string msg = _protocol->readMsg(error);
-            interpretMsg(msg);
+        while (!_exit) {
+            boost::system::error_code error = boost::asio::error::would_block;
+            while (error == boost::asio::error::would_block && !_exit) {
+                std::string msg = _protocol->readMsg(error);
+                interpretMsg(msg);
+            }
         }
-        if (!_exit)
-            readLoop();
     } catch (std::exception &) {}
 }
 
