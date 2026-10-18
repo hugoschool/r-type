@@ -2,28 +2,20 @@
 
 #include "CircularBuffer.hpp"
 #include "IProtocol.hpp"
+#include "f-engine/camera/Camera.hpp"
+#include "f-engine/ecs/Entity.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
-#include "r-type/packets/Entity.hpp"
 #include "r-type/packets/Serialization.hpp"
-#include <cstddef>
 #include <memory>
+#include <queue>
 #include <thread>
-#include <unordered_map>
+#include "f-engine/scene/GameScene.hpp"
 
 namespace rtype::client {
-
-
-    // TODO: change the entities
-    struct Entity {
-        public:
-            size_t _id;
-            packets::Vector2D _pos;
-            packets::Vector2D _vel;
-    };
 
     class Client {
             using udp = boost::asio::ip::udp;
@@ -31,6 +23,11 @@ namespace rtype::client {
         private:
             std::unique_ptr<fengine::modules::display::IDisplayModule> _displayModule;
             fengine::ecs::Registry _registery;
+            fengine::camera::Camera _camera;
+            std::queue<fengine::modules::display::EventKey> _pressqueue;
+            std::queue<fengine::modules::display::EventKey> _releasequeue;
+            fengine::scene::GameScene _scene;
+            fengine::ecs::Entity _entity;
             std::thread _writeThread;
             std::thread _readThread;
             bool _exit;
@@ -38,8 +35,6 @@ namespace rtype::client {
             std::string _uuid;
             std::unique_ptr<IProtocol> _protocol;
 
-            // TODO: change this
-            std::unordered_map<size_t, Entity> _entities;
 
             void loop();
             void sendLoop();
@@ -48,7 +43,7 @@ namespace rtype::client {
             void interpretMsg(std::string msg);
             void removeEntity(packets::Serialization::deserialize_archive &ar);
             void addEntity(packets::Serialization::deserialize_archive &ar);
-
+            void moveEntity(packets::Serialization::deserialize_archive &ar);
 
         public:
             Client();
