@@ -9,6 +9,7 @@
 #include <boost/asio/thread_pool.hpp>
 #include <cstdint>
 #include <f-engine/ecs/Registry.hpp>
+#include <f-engine/modules/display/events/EventKey.hpp>
 #include <f-engine/world/World.hpp>
 #include <r-type/packets/Packet.hpp>
 #include <r-type/packets/Serialization.hpp>
@@ -53,5 +54,8 @@ namespace rtype::server {
 
             std::chrono::steady_clock::time_point _resendClock;
             void checkResend();
+
+            std::queue<fengine::modules::display::EventKey> _pressedQueue;
+            std::queue<fengine::modules::display::EventKey> _releasedQueue;
     };
 }

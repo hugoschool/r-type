@@ -7,6 +7,9 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <chrono>
 #include <cstring>
+#include <f-engine/ecs/components/ControllableComponent.hpp>
+#include <f-engine/ecs/components/PositionComponent.hpp>
+#include <f-engine/ecs/components/VelocityComponent.hpp>
 #include <iostream>
 #include <r-type/packets/Entity.hpp>
 #include <r-type/packets/Packet.hpp>
@@ -95,6 +98,16 @@ std::string rtype::server::ClientHandler::newClient() {
     };
 
     _clients.insert({uuid, data});
+
+    fengine::ecs::PositionComponent pos = {50, 50, false};
+    fengine::ecs::ControllableComponent control = {fengine::modules::display::EventKey::Z,
+        fengine::modules::display::EventKey::Q, fengine::modules::display::EventKey::S,
+        fengine::modules::display::EventKey::D};
+    fengine::ecs::VelocityComponent vel = {0, 0};
+
+    _registry.componentManager.addComponent(entity, std::move(pos));
+    _registry.componentManager.addComponent(entity, std::move(vel));
+    _registry.componentManager.addComponent(entity, std::move(control));
 
     packets::LoginAnswer payload;
     std::strncpy(payload.uuid, uuid.c_str(), packets::UUID_SIZE);
