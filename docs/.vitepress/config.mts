@@ -35,6 +35,7 @@ export default defineConfig({
                 text: "Protocol",
                 items: [
                     { text: "Overview", link: "/protocol/overview" },
+                    { text: "Communication example", link: "/protocol/example" },
                 ]
             },
             {
