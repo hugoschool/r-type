@@ -46,6 +46,12 @@ export default defineConfig({
                     { text: "Display Module", link: "/engine/display_module" },
                     { text: "Architecture", link: "/engine/architecture" },
                 ]
+            },
+            {
+                text: "Server",
+                items: [
+                    { text: "Architecture", link: "/server/architecture" },
+                ]
             }
         ],
 
