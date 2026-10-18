@@ -1,7 +1,6 @@
 #pragma once
 
 #include "CircularBuffer.hpp"
-#include "ClientHelper.hpp"
 #include "IProtocol.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
@@ -34,7 +33,6 @@ namespace rtype::client {
             Client();
             ~Client();
 
-            ClientHelper helper;
             void run(char *av[]);
     };
 }

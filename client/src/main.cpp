@@ -1,20 +1,21 @@
 #include "Client.hpp"
-#include "Exception.hpp"
+#include "ClientHelper.hpp"
 #include <f-engine/HelloWorld.hpp>
 #include <iostream>
 
 int main(int ac, char *av[]) {
     try {
-        rtype::client::Client client;
+        rtype::client::ClientHelper helper;
 
-        if (client.helper.checkHelp(ac, av) == true) {
+        if (helper.checkHelp(ac, av) == true) {
             return 0;
         }
 
-        client.helper.verifyArgumentCount(ac);
+        helper.verifyArgumentCount(ac);
 
+        rtype::client::Client client;
         client.run(av);
-    } catch (rtype::client::ClientException &exception) {
+    } catch (std::exception &exception) {
         std::cerr << exception.what() << std::endl;
         return 1;
     }
