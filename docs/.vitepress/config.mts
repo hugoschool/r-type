@@ -44,7 +44,7 @@ export default defineConfig({
                 items: [
                     { text: "ECS", link: "/engine/ecs" },
                     { text: "Display Module", link: "/engine/display_module" },
-                    { text: "Architecture", link: "/engine/architechture" },
+                    { text: "Architecture", link: "/engine/architecture" },
                 ]
             }
         ],
