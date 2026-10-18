@@ -39,7 +39,6 @@ void rtype::server::UDPProtocol::handleReceive(const boost::system::error_code &
                 while (!_clientMQHandler.isClientEmpty(header.playerUuid)) {
                     std::string poppedMessage = _clientMQHandler.popMessage(header.playerUuid);
                     std::shared_ptr<std::string> message = std::make_shared<std::string>(poppedMessage);
-
                     _socket.async_send_to(boost::asio::buffer(*message), _endpoint,
                         std::bind(&UDPProtocol::handleSend, this, message, boost::asio::placeholders::error,
                             boost::asio::placeholders::bytes_transferred));

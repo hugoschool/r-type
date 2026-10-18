@@ -1,16 +1,23 @@
 #include "Client.hpp"
-#include <boost/asio.hpp>
+#include "ClientHelper.hpp"
+#include <f-engine/HelloWorld.hpp>
 #include <iostream>
 
-int main(void) {
+int main(int ac, char *av[]) {
     try {
-        rtype::client::Client client;
+        rtype::client::ClientHelper helper;
 
-        return 0;
-    } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
+        if (helper.checkHelp(ac, av) == true) {
+            return 0;
+        }
+
+        helper.verifyArgumentCount(ac);
+
+        rtype::client::Client client;
+        client.run(av);
+    } catch (std::exception &exception) {
+        std::cerr << exception.what() << std::endl;
         return 1;
     }
-
     return 0;
 }
