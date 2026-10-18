@@ -68,20 +68,6 @@ void rtype::client::Client::interpretMsg(std::string msg) {
                 break;
             case rtype::packets::PacketType::InputPlayer:
                 break;
-            case rtype::packets::PacketType::AddPlayer:
-                break;
-            case rtype::packets::PacketType::AddEntity:
-                break;
-            case rtype::packets::PacketType::KillEntity:
-                break;
-            case rtype::packets::PacketType::KillPlayer:
-                break;
-            case rtype::packets::PacketType::UpdatePlayer:
-                break;
-            case rtype::packets::PacketType::UpdateEntity:
-                break;
-            case rtype::packets::PacketType::DeadPlayer:
-                break;
             default:
                 break;
         }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ClientHandler.hpp"
+#include "SubscriberHandler.hpp"
 #include "TickHandler.hpp"
 #include "protocols/UDPProtocol.hpp"
 #include <boost/asio/io_context.hpp>
@@ -34,11 +35,14 @@ namespace rtype::server {
             bool _stop;
             boost::asio::signal_set _signals;
 
+            SubscriberHandler _subscriberHandler;
+            fengine::world::World _world;
+
             TickHandler _tickHandler;
             ClientHandler _clientHandler;
 
-            fengine::world::World _world;
-
             UDPProtocol _udp;
+
+            void userLoginPacket(rtype::packets::PacketHeader &header);
     };
 }

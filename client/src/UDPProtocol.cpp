@@ -6,6 +6,8 @@
 #include "r-type/packets/Entity.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
+#include <cstring>
+#include <iostream>
 #include <iterator>
 
 using EventKey = fengine::modules::display::EventKey;
@@ -24,36 +26,71 @@ void rtype::client::UDPProtocol::connect(char *av[]) {
     _endpoint = *_resolver.resolve(udp::v4(), host, port).begin();
 
     _socket.open(udp::v4());
-    std::stringstream ss;
 
-    packets::PacketHeader header = {
-        .type = packets::PacketType::Ack,
-        .size = 0,
-        // TODO: this is a simple test UUID for the server <-> client communication
-        // To be removed later
-        .playerUuid = "f52ea348-6c57-4acf-9834-059bc9a9c81c",
-    };
+    {
+        std::stringstream ss;
 
-    packets::Serialization::serialize(ss, header, packets::Empty{});
+        packets::PacketHeader header = {
+            .type = packets::PacketType::LoginRequest,
+            .size = 0,
+            .playerUuid = "",
+        };
 
-    std::string send = ss.str();
-    _socket.send_to(boost::asio::buffer(send), _endpoint);
+        packets::Serialization::serialize(ss, header, packets::Empty{});
+
+        std::string send = ss.str();
+        _socket.send_to(boost::asio::buffer(send), _endpoint);
+    }
+
+    {
+        std::array<char, 1024> recv_buf;
+        udp::endpoint sender_endpoint;
+        _socket.receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
+
+        std::string loginAnswerStr(std::begin(recv_buf), std::end(recv_buf));
+        std::stringstream loginAnswerSs(loginAnswerStr);
+        auto ar = packets::Serialization::createDeserializeArchive(loginAnswerSs);
+
+        packets::PacketHeader header;
+
+        packets::Serialization::deserialize(ar, header);
+        _uuid = header.playerUuid;
+
+        std::cout << "UUID: " << _uuid << std::endl;
+    }
 }
 
 void rtype::client::UDPProtocol::sendMsg() {
-    std::stringstream ss;
-
-    packets::PacketHeader header = {
-        .type = packets::PacketType::InputPlayer,
-        .size = sizeof(packets::Input),
-        .playerUuid = "f52ea348-6c57-4acf-9834-059bc9a9c81c",
-    };
-
     try {
         if (_inputs.canRead()) {
+            std::stringstream ss;
+
+            packets::PacketHeader header = {
+                .type = packets::PacketType::InputPlayer,
+                .size = sizeof(packets::Input),
+                .playerUuid = "",
+            };
+
+            std::strncpy(header.playerUuid, _uuid.c_str(), packets::UUID_SIZE);
+
             fengine::modules::display::EventKey input = _inputs.getElem();
             packets::Input newInput = {input};
             packets::Serialization::serialize(ss, header, newInput);
+            std::string buf = ss.str();
+            _socket.send_to(boost::asio::buffer(buf), _endpoint);
+        } else {
+            // Send Ack if nothing else
+            std::stringstream ss;
+
+            packets::PacketHeader header = {
+                .type = packets::PacketType::Ack,
+                .size = 0,
+                .playerUuid = "",
+            };
+
+            std::strncpy(header.playerUuid, _uuid.c_str(), packets::UUID_SIZE);
+            packets::Serialization::serialize(ss, header, packets::Empty{});
+
             std::string buf = ss.str();
             _socket.send_to(boost::asio::buffer(buf), _endpoint);
         }

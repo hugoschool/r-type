@@ -4,7 +4,8 @@
 #include <chrono>
 #include <concepts>
 #include <memory>
-#include <vector>
+#include <typeindex>
+#include <unordered_map>
 
 namespace fengine::ecs {
     template <typename T>
@@ -21,34 +22,22 @@ namespace fengine::ecs {
 
             template <is_system T, typename... Args>
             void addSystem(Args &&...args) {
-                for (auto &system : _systems) {
-                    if (dynamic_cast<T *>(system.get())) {
-                        return;
-                    }
-                }
-                std::unique_ptr<T> system = std::make_unique<T>(std::forward<Args>(args)...);
+                std::shared_ptr<T> system = std::make_shared<T>(std::forward<Args>(args)...);
 
-                _systems.push_back(std::move(system));
+                _systems.insert({typeid(T), std::move(system)});
             };
 
             template <is_system T>
             T *getSystem() {
-                for (auto &system : _systems) {
-                    if (dynamic_cast<T *>(system.get())) {
-                        return system;
-                    }
-                }
-                return nullptr;
+                try {
+                    auto system = _systems.at(typeid(T));
+                    return dynamic_cast<T *>(system.get());
+                } catch (std::exception &) { return nullptr; }
             };
 
             template <is_system T>
             void removeSystem() {
-                for (auto it = _systems.begin(); it != _systems.end(); ++it) {
-                    if (dynamic_cast<T *>(it->get())) {
-                        _systems.erase(it);
-                        return;
-                    }
-                }
+                _systems.erase(typeid(T));
             };
 
             void update(Registry &manager) {
@@ -61,14 +50,14 @@ namespace fengine::ecs {
                 //     return;
                 // }
 
-                for (auto &system : _systems) {
+                for (auto &[_, system] : _systems) {
                     system->update(manager);
                 }
                 _clock = std::chrono::steady_clock::now();
             };
 
         private:
-            std::vector<std::unique_ptr<ISystem>> _systems;
+            std::unordered_map<std::type_index, std::shared_ptr<ISystem>> _systems;
             int _deltaTime;
             std::chrono::time_point<std::chrono::steady_clock> _clock;
     };

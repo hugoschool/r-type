@@ -11,7 +11,7 @@ namespace rtype::server {
             using udp = boost::asio::ip::udp;
 
             UDPProtocol(boost::asio::io_context &io_context, std::uint16_t port, SafeMessageQueue &SafeMessageQueue,
-                ClientMessageQueueHandler &clientMQHandler);
+                ClientHandler &clientHandler);
             ~UDPProtocol() override = default;
 
             void startReceive();
