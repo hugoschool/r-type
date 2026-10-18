@@ -7,6 +7,7 @@
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventType.hpp"
 #include "f-engine/modules/display/events/IEvent.hpp"
+#include "r-type/packets/Entity.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include <chrono>
@@ -70,6 +71,9 @@ void rtype::client::Client::interpretMsg(std::string msg) {
                 break;
             case rtype::packets::PacketType::InputPlayer:
                 break;
+            case rtype::packets::PacketType::EntityDied:
+                removeEntity(ar);
+                break;
             default:
                 break;
         }
@@ -93,5 +97,14 @@ void rtype::client::Client::loop() {
                 _inputs.addElement(event.value()->getKey());
             }
         }
+    }
+}
+
+void rtype::client::Client::removeEntity(packets::Serialization::deserialize_archive &ar) {
+    packets::EntityIdOnly id;
+    ar & id;
+    try {
+        _entities.erase(id.entityId);
+    } catch (std::exception &) {
     }
 }
