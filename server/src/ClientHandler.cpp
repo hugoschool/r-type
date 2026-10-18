@@ -123,6 +123,10 @@ bool rtype::server::ClientHandler::clientExists(std::string &uuid) {
     return _clients.contains(uuid);
 }
 
+std::size_t rtype::server::ClientHandler::getClientsAmount() {
+    return _clients.size();
+}
+
 void rtype::server::ClientHandler::setAlive(std::string &uuid) {
     ClientData &data = _clients.at(uuid);
     data.status = ClientStatus::Connected;

@@ -63,6 +63,7 @@ namespace rtype::server {
             std::string newClient();
             void setStatus(std::string &uuid, ClientStatus newStatus);
             bool clientExists(std::string &uuid);
+            std::size_t getClientsAmount();
             // Simply resets the timer
             void setAlive(std::string &uuid);
 

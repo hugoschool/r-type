@@ -9,6 +9,7 @@ namespace rtype::packets {
     enum class PacketType {
         LoginRequest,
         LoginAnswer,
+        LoginFailed,
         EntitySpawn,
         EntityMove,
         EntityVelocityChange,

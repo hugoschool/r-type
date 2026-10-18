@@ -30,20 +30,40 @@ void rtype::server::UDPProtocol::handleReceive(const boost::system::error_code &
 
         try {
             packets::PacketHeader header;
-            std::stringstream ss(str);
-            packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
 
-            packets::Serialization::deserialize(ar, header);
+            {
+                std::stringstream ss(str);
+                packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
 
-            bool addMessageToQueue = false;
+                packets::Serialization::deserialize(ar, header);
+            }
+
+            bool addMessageToQueue = true;
             std::string playerUuid(header.playerUuid);
+
+            // Temporary queue for important messages, ex: LoginFailed
+            std::queue<std::string> instantQueue;
 
             // A login request is a very important message, it must be handled on the spot, hence why it is here.
             // We cannot wait for another tick, since the client must know its UUID for the ACK requests.
             if (header.type == packets::PacketType::LoginRequest && !_clientHandler.clientExists(playerUuid)) {
-                playerUuid = _clientHandler.newClient();
-                _clientHandler.setAlive(playerUuid);
-                addMessageToQueue = false;
+                // TODO: handle a reconnecting player
+                if (_clientHandler.getClientsAmount() + 1 > MAX_PLAYERS) {
+                    packets::PacketHeader header = {
+                        .type = packets::PacketType::LoginFailed,
+                        .size = 0,
+                        .playerUuid = "",
+                    };
+
+                    std::stringstream ss;
+                    packets::Serialization::serialize(ss, header, packets::Empty{});
+                    instantQueue.push(ss.str());
+
+                    addMessageToQueue = false;
+                } else {
+                    playerUuid = _clientHandler.newClient();
+                    _clientHandler.setAlive(playerUuid);
+                }
             }
 
             if (addMessageToQueue) {
@@ -51,6 +71,16 @@ void rtype::server::UDPProtocol::handleReceive(const boost::system::error_code &
             }
 
             try {
+                while (!instantQueue.empty()) {
+                    std::string str = instantQueue.front();
+                    instantQueue.pop();
+                    std::shared_ptr<std::string> message = std::make_shared<std::string>(str);
+
+                    _socket.async_send_to(boost::asio::buffer(*message), _endpoint,
+                        std::bind(&UDPProtocol::handleSend, this, message, boost::asio::placeholders::error,
+                            boost::asio::placeholders::bytes_transferred));
+                }
+
                 ClientMessageQueueHandler &clientMessageQueue = _clientHandler.getMessageQueueHandler();
 
                 // Always respond even if the queue is empty as to not block the client

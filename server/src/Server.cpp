@@ -84,6 +84,9 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
             _clientHandler.setAlive(uuid);
             break;
         }
+        case packets::PacketType::LoginRequest: {
+            // TODO: send all the registry
+        }
         // TODO: all types
         case rtype::packets::PacketType::InputPlayer: {
         }
