@@ -19,7 +19,6 @@ export default defineConfig({
                     { text: "Building", link: "/building" },
                     { text: "Contributing", link: "/contributing" },
                     { text: "Protocol", link: "/protocol" },
-                    { text: "Client", link: "/client"}
                 ]
             },
             {
@@ -31,6 +30,13 @@ export default defineConfig({
                     { text: "Network library", link: "/comparative/network" },
                     { text: "Graphical library", link: "/comparative/graphical" },
                     { text: "Conclusion", link: "/comparative/conclusion" },
+                ]
+            },
+            {
+                text: "Client",
+                items: [
+                    { text: "Overview", link: "/client/overview" },
+                    { text: "Architecture", link: "/client/architecture" },
                 ]
             },
             {
