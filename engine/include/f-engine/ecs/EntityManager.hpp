@@ -34,6 +34,10 @@ namespace fengine::ecs {
                 return _entities.size();
             };
 
+            std::vector<std::optional<Entity>> &getEntities() {
+                return _entities;
+            }
+
         private:
             std::vector<std::optional<Entity>> _entities;
     };
