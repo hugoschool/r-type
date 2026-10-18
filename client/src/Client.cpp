@@ -133,6 +133,9 @@ void rtype::client::Client::interpretMsg(std::string msg) {
             case rtype::packets::PacketType::EntityMove:
                 moveEntity(ar);
                 break;
+            case rtype::packets::PacketType::EntityVelocityChange:
+                modifyVelocity(ar);
+                break;
             default:
                 break;
         }
@@ -206,6 +209,21 @@ void rtype::client::Client::moveEntity(rtype::packets::Serialization::deserializ
         auto & oldPos = sparseArray[id.entityId];
         oldPos->pos_x = pos.x;
         oldPos->pos_y = pos.y;
+    } catch (std::exception &) {
+    }
+}
+
+void rtype::client::Client::modifyVelocity(rtype::packets::Serialization::deserialize_archive &ar) {
+    packets::EntityIdOnly id;
+    packets::Vector2D vel;
+    ar & id;
+    ar & vel;
+    try {
+        auto &sparseArray = _registery.componentManager.getComponents<fengine::ecs::VelocityComponent>();
+
+        auto & oldVel = sparseArray[id.entityId];
+        oldVel->vel_x = vel.x;
+        oldVel->vel_y = vel.y;
     } catch (std::exception &) {
     }
 }

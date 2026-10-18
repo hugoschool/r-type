@@ -44,6 +44,7 @@ namespace rtype::client {
             void removeEntity(packets::Serialization::deserialize_archive &ar);
             void addEntity(packets::Serialization::deserialize_archive &ar);
             void moveEntity(packets::Serialization::deserialize_archive &ar);
+            void modifyVelocity(packets::Serialization::deserialize_archive &ar);
 
         public:
             Client();
