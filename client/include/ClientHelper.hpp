@@ -13,8 +13,12 @@ namespace rtype {
                 }
 
                 static void help() {
-                    // TODO write a valid help message
-                    std::cout << "Help message." << std::endl;
+                    std::cout << "r-type_client: Client for the r-type game" << std::endl;
+                    std::cout << std::endl;
+                    std::cout << "Usage:" << std::endl;
+                    std::cout << "r-type_client [host] [port]" << std::endl;
+                    std::cout << "host: IP address of the game host" << std::endl;
+                    std::cout << "port: Port of the game host" << std::endl;
                 }
 
             public:
