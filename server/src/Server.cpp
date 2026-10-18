@@ -13,6 +13,7 @@
 #include <f-engine/ecs/systems/BoundarySystem.hpp>
 #include <f-engine/ecs/systems/MoveSystem.hpp>
 #include <iostream>
+#include <optional>
 #include <r-type/packets/Entity.hpp>
 #include <r-type/packets/Packet.hpp>
 #include <r-type/packets/Serialization.hpp>
@@ -34,7 +35,7 @@ rtype::server::Server::Server(std::uint32_t port)
       _udp(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler),
       // Enemy generation
       _spawnClock(std::chrono::steady_clock::now()),
-      _ennemyCounter(0) {
+      _enemyCounter(0) {
 
     _signals.async_wait([&](boost::system::error_code, int) {
         _io_context.stop();
@@ -53,35 +54,6 @@ rtype::server::Server::Server(std::uint32_t port)
     _world._registry.systemManager.addSystem<fengine::ecs::BehaviouralSystem>();
 
     _subscriberHandler.add(_world._registry);
-
-    // TODO: temporary monster spawning & moving mechanics
-    float posx = 0;
-    float posy = 0;
-    float vel_x = 8;
-    float vel_y = 7;
-    fengine::ecs::team team = fengine::ecs::team::MONSTERS;
-    for (int i = 0; i < 5; i++) {
-        fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
-        fengine::ecs::PositionComponent pos = {posx, posy, false};
-        fengine::ecs::VelocityComponent vel = {vel_x, vel_y};
-        fengine::ecs::BoundaryComponent bound = {10, 10, true, true, std::nullopt};
-        fengine::ecs::AttackComponent att = {{.team = team}, 10};
-        fengine::ecs::DefenseComponent def = {100, 0};
-
-        _world._registry.componentManager.addComponent(entity, std::move(pos));
-        _world._registry.componentManager.addComponent(entity, std::move(vel));
-        _world._registry.componentManager.addComponent(entity, std::move(bound));
-        _world._registry.componentManager.addComponent(entity, std::move(att));
-        _world._registry.componentManager.addComponent(entity, std::move(def));
-        posx += 0.1;
-        posy += 0.1;
-        if (vel_x > 0)
-            vel_x += 0.1;
-        vel_x *= -1;
-        if (vel_y > 0)
-            vel_y += 0.1;
-        vel_y *= -1;
-    }
 }
 
 rtype::server::Server::~Server() {
@@ -182,7 +154,7 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
     }
 }
 
-void rtype::server::Server::generateEnnemies() {
+void rtype::server::Server::generateEnemies() {
     std::chrono::steady_clock::time_point elapsedTime = std::chrono::steady_clock::now();
     std::chrono::duration<double> spawnTime = elapsedTime - _spawnClock;
     std::chrono::milliseconds var(10000);
@@ -194,12 +166,12 @@ void rtype::server::Server::generateEnnemies() {
 
     fengine::ecs::PositionComponent pos = {WINDOW_X, static_cast<float>(rand() % (WINDOW_Y - 100) + 100), false};
     fengine::ecs::VelocityComponent vel = {-10, 0};
-    fengine::ecs::BoundaryComponent bound = {125, 75, false, true};
+    fengine::ecs::BoundaryComponent bound = {125, 75, false, true, std::nullopt};
     fengine::ecs::AttackComponent atk = {{.team = fengine::ecs::team::MONSTERS}, 10};
     fengine::ecs::DefenseComponent def = {150, 0};
 
-    if (_ennemyCounter == 10) {
-        _ennemyCounter = 0;
+    if (_enemyCounter == 10) {
+        _enemyCounter = 0;
         vel = {-5, 2};
         atk.damage += 15;
         def = {300, 20};
@@ -209,7 +181,7 @@ void rtype::server::Server::generateEnnemies() {
     } else {
         // fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER, std::chrono::steady_clock::now()};
         // _world._registry.componentManager.addComponent(entity, std::move(behaviour));
-        _ennemyCounter++;
+        _enemyCounter++;
     }
 
     // envoyer un message de creation ici - vasy hugo, c'est pour toi
@@ -249,7 +221,7 @@ void rtype::server::Server::tickThreadRun() {
                 continue;
             }
         }
-        generateEnnemies();
+        generateEnemies();
         _clientHandler.verifyStatus();
         _world._registry.systemManager.update(_world._registry);
         _subscriberHandler.process();
