@@ -1,5 +1,6 @@
 #include "Server.hpp"
 #include <cstdint>
+#include <f-engine/ecs/Entity.hpp>
 #include <f-engine/ecs/components/AttackComponent.hpp>
 #include <f-engine/ecs/components/BoundaryComponent.hpp>
 #include <f-engine/ecs/components/DefenseComponent.hpp>
@@ -8,6 +9,7 @@
 #include <f-engine/ecs/systems/BoundarySystem.hpp>
 #include <f-engine/ecs/systems/MoveSystem.hpp>
 #include <iostream>
+#include <r-type/packets/Entity.hpp>
 #include <r-type/packets/Packet.hpp>
 #include <r-type/packets/Serialization.hpp>
 #include <sstream>
@@ -76,6 +78,80 @@ rtype::server::Server::Server(std::uint32_t port)
 rtype::server::Server::~Server() {
 }
 
+void rtype::server::Server::userLoginPacket(rtype::packets::PacketHeader &header) {
+    const std::vector<std::optional<fengine::ecs::Entity>> &entities = _world._registry.entityManager.getEntities();
+    auto &velocityComponents = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>();
+    auto &positionComponents = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>();
+    // auto &boundaryComponents =
+    //     _world._registry.componentManager.getComponents<fengine::ecs::BoundaryComponent>();
+    // auto &attackComponents = _world._registry.componentManager.getComponents<fengine::ecs::AttackComponent>();
+    // auto &defenseComponents = _world._registry.componentManager.getComponents<fengine::ecs::DefenseComponent>();
+
+    for (auto &entity : entities) {
+        const std::size_t entityId = entity->getId();
+
+        // Send a new entity
+        {
+            packets::EntitySpawn payload = {.entityId = entityId};
+
+            packets::PacketHeader newHeader = {
+                .type = packets::PacketType::EntitySpawn,
+                .size = sizeof(payload),
+                .playerUuid = "",
+            };
+            std::strncpy(newHeader.playerUuid, header.playerUuid, packets::UUID_SIZE);
+
+            std::stringstream ss;
+            packets::Serialization::serialize(ss, header, payload);
+            _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, ss.str());
+        }
+
+        // TODO: code cleaning would be appreciated here
+        if (velocityComponents.contains(entityId)) {
+            auto &velocity = velocityComponents[entityId];
+
+            {
+                packets::EntityVelocityChange payload = {
+                    .entityId = entityId,
+                    .velocity = packets::Vector2D(velocity->vel_x, velocity->vel_y),
+                };
+
+                packets::PacketHeader newHeader = {
+                    .type = packets::PacketType::EntityVelocityChange,
+                    .size = sizeof(payload),
+                    .playerUuid = "",
+                };
+                std::strncpy(newHeader.playerUuid, header.playerUuid, packets::UUID_SIZE);
+
+                std::stringstream ss;
+                packets::Serialization::serialize(ss, header, payload);
+                _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, ss.str());
+            }
+        }
+        if (positionComponents.contains(entityId)) {
+            auto &position = positionComponents[entityId];
+
+            {
+                packets::EntityMove payload = {
+                    .entityId = entityId,
+                    .coordinates = packets::Vector2D(position->pos_x, position->pos_y),
+                };
+
+                packets::PacketHeader newHeader = {
+                    .type = packets::PacketType::EntityVelocityChange,
+                    .size = sizeof(payload),
+                    .playerUuid = "",
+                };
+                std::strncpy(newHeader.playerUuid, header.playerUuid, packets::UUID_SIZE);
+
+                std::stringstream ss;
+                packets::Serialization::serialize(ss, header, payload);
+                _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, ss.str());
+            }
+        }
+    }
+}
+
 void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_archive &,
     packets::PacketHeader &header) {
     switch (header.type) {
@@ -85,10 +161,12 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
             break;
         }
         case packets::PacketType::LoginRequest: {
-            // TODO: send all the registry
+            userLoginPacket(header);
+            break;
         }
         // TODO: all types
         case rtype::packets::PacketType::InputPlayer: {
+            break;
         }
         default:
             break;

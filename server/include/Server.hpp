@@ -42,5 +42,7 @@ namespace rtype::server {
             ClientHandler _clientHandler;
 
             UDPProtocol _udp;
+
+            void userLoginPacket(rtype::packets::PacketHeader &header);
     };
 }
