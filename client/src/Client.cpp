@@ -3,6 +3,14 @@
 #include "boost/asio/error.hpp"
 #include "boost/system/detail/error_code.hpp"
 #include "f-engine/ecs/Registry.hpp"
+#include "f-engine/ecs/components/AnimationComponent.hpp"
+#include "f-engine/ecs/components/AttackComponent.hpp"
+#include "f-engine/ecs/components/BoundaryComponent.hpp"
+#include "f-engine/ecs/components/DeadComponent.hpp"
+#include "f-engine/ecs/components/DefenseComponent.hpp"
+#include "f-engine/ecs/components/DrawableComponent.hpp"
+#include "f-engine/ecs/components/PositionComponent.hpp"
+#include "f-engine/ecs/components/VelocityComponent.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventType.hpp"
@@ -22,6 +30,15 @@
 rtype::client::Client::Client()
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(), _writeThread(),
       _readThread(), _exit(false), _inputs(1024), _protocol(std::make_unique<UDPProtocol>(_inputs)) {
+
+    _registery.componentManager.registerComponent<fengine::ecs::PositionComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::AnimationComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::DrawableComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::DeadComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::AttackComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::BoundaryComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::DefenseComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
 }
 
 rtype::client::Client::~Client() {
