@@ -11,6 +11,7 @@ namespace rtype::packets {
             using deserialize_archive = boost::archive::binary_iarchive;
             using serialize_archive = boost::archive::binary_oarchive;
 
+            // TODO: simplify the serialization, do something similar to deserialization
             template <class Payload>
             static void serialize(std::ostream &s, PacketHeader header, Payload payload) {
                 serialize_archive a(s);
