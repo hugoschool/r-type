@@ -8,7 +8,7 @@ add_executable(${BINARY} ${src})
 if (MSVC)
     target_compile_options(${BINARY} PRIVATE /W4)
 else()
-    target_compile_options(${BINARY} PRIVATE -Wall -Wextra -g3)
+    target_compile_options(${BINARY} PRIVATE -Wall -Wextra)
 endif()
 
 target_include_directories(
