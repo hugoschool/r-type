@@ -57,6 +57,7 @@ export default defineConfig({
             {
                 text: "Server",
                 items: [
+                    { text: "Overview", link: "/server/overview" },
                     { text: "Architecture", link: "/server/architecture" },
                 ]
             }
