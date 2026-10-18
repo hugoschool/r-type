@@ -47,6 +47,6 @@ namespace rtype::server {
             short _enemyCounter;
 
             void generateEnemies();
-            void userLoginPacket(rtype::packets::PacketHeader &header);
+            void userLoginPacket(std::string uuid);
     };
 }

@@ -59,7 +59,7 @@ rtype::server::Server::Server(std::uint32_t port)
 rtype::server::Server::~Server() {
 }
 
-void rtype::server::Server::userLoginPacket(rtype::packets::PacketHeader &header) {
+void rtype::server::Server::userLoginPacket(std::string uuid) {
     const std::vector<std::optional<fengine::ecs::Entity>> &entities = _world._registry.entityManager.getEntities();
     auto &velocityComponents = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>();
     auto &positionComponents = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>();
@@ -80,11 +80,11 @@ void rtype::server::Server::userLoginPacket(rtype::packets::PacketHeader &header
                 .size = sizeof(payload),
                 .playerUuid = "",
             };
-            std::strncpy(newHeader.playerUuid, header.playerUuid, packets::UUID_SIZE);
+            std::strncpy(newHeader.playerUuid, uuid.c_str(), packets::UUID_SIZE);
 
             std::stringstream ss;
-            packets::Serialization::serialize(ss, header, payload);
-            _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, ss.str());
+            packets::Serialization::serialize(ss, newHeader, payload);
+            _clientHandler.getMessageQueueHandler().addMessage(uuid, ss.str());
         }
 
         // TODO: code cleaning would be appreciated here
@@ -102,11 +102,11 @@ void rtype::server::Server::userLoginPacket(rtype::packets::PacketHeader &header
                     .size = sizeof(payload),
                     .playerUuid = "",
                 };
-                std::strncpy(newHeader.playerUuid, header.playerUuid, packets::UUID_SIZE);
+                std::strncpy(newHeader.playerUuid, uuid.c_str(), packets::UUID_SIZE);
 
                 std::stringstream ss;
-                packets::Serialization::serialize(ss, header, payload);
-                _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, ss.str());
+                packets::Serialization::serialize(ss, newHeader, payload);
+                _clientHandler.getMessageQueueHandler().addMessage(uuid, ss.str());
             }
         }
         if (positionComponents.contains(entityId)) {
@@ -123,11 +123,11 @@ void rtype::server::Server::userLoginPacket(rtype::packets::PacketHeader &header
                     .size = sizeof(payload),
                     .playerUuid = "",
                 };
-                std::strncpy(newHeader.playerUuid, header.playerUuid, packets::UUID_SIZE);
+                std::strncpy(newHeader.playerUuid, uuid.c_str(), packets::UUID_SIZE);
 
                 std::stringstream ss;
-                packets::Serialization::serialize(ss, header, payload);
-                _clientHandler.getMessageQueueHandler().addMessage(header.playerUuid, ss.str());
+                packets::Serialization::serialize(ss, newHeader, payload);
+                _clientHandler.getMessageQueueHandler().addMessage(uuid, ss.str());
             }
         }
     }
@@ -142,7 +142,7 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
             break;
         }
         case packets::PacketType::LoginRequest: {
-            userLoginPacket(header);
+            userLoginPacket(header.playerUuid);
             break;
         }
         // TODO: all types
