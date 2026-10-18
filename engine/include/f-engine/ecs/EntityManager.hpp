@@ -19,7 +19,11 @@ namespace fengine::ecs {
             };
 
             Entity spawnEntity() {
-                std::optional<Entity> entity = std::make_optional<Entity>(Entity(_entities.size()));
+                return createEntity(_entities.size());
+            };
+
+            Entity createEntity(std::size_t id) {
+                std::optional<Entity> entity = std::make_optional<Entity>(Entity(id));
                 _entities.push_back(entity);
                 return entity.value();
             };

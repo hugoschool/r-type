@@ -174,8 +174,8 @@ void rtype::client::Client::removeEntity(packets::Serialization::deserialize_arc
 void rtype::client::Client::addEntity(packets::Serialization::deserialize_archive &ar) {
     packets::EntityIdOnly id;
     ar & id;
-    std::cout << "SPAWN" << id.entityId << std::endl;
-    fengine::ecs::Entity entity = _registery.entityManager.spawnEntity();
+
+    fengine::ecs::Entity entity = _registery.entityManager.createEntity(id.entityId);
     fengine::ecs::PositionComponent pos = {200, 200, false};
     fengine::ecs::VelocityComponent vel = {0, 0};
     fengine::ecs::BoundaryComponent bound = {40, 40, true, true,std::nullopt};
