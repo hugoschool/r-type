@@ -14,8 +14,11 @@ namespace rtype::client {
             std::uint16_t _port;
             rtype::client::CircularBuffer<EventKey> &_inputs;
 
+            std::string _uuid;
+
         public:
-            AProtocol(rtype::client::CircularBuffer<EventKey> &input) : _io_context(), _port(0), _inputs(input) {
+            AProtocol(rtype::client::CircularBuffer<EventKey> &input)
+                : _io_context(), _port(0), _inputs(input), _uuid() {
             }
             ~AProtocol() override = default;
     };
