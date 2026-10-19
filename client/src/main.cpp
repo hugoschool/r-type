@@ -1,6 +1,5 @@
 #include "Client.hpp"
 #include "ClientHelper.hpp"
-#include <f-engine/HelloWorld.hpp>
 #include <iostream>
 
 int main(int ac, char *av[]) {

@@ -19,6 +19,7 @@
 #include <r-type/packets/Packet.hpp>
 #include <r-type/packets/Serialization.hpp>
 #include <sstream>
+#include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include <thread>
 
 rtype::server::Server::Server(std::uint32_t port)
