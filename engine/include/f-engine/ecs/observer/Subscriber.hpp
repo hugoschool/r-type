@@ -6,22 +6,14 @@
 namespace fengine::ecs::observer {
     class Subscriber {
         public:
-            Subscriber() {};
-            ~Subscriber() {};
+            Subscriber();
+            ~Subscriber();
 
-            void send(SubscriberContent &content) {
-                _queue.push(content);
-            };
+            void send(SubscriberContent &content);
 
-            bool empty() const {
-                return _queue.empty();
-            };
+            bool empty() const;
 
-            SubscriberContent getContent() {
-                SubscriberContent content = _queue.front();
-                _queue.pop();
-                return content;
-            };
+            SubscriberContent getContent();
 
         private:
             std::queue<SubscriberContent> _queue;
