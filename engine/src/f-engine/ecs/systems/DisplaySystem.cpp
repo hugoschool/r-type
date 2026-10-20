@@ -1,10 +1,9 @@
 #include "f-engine/ecs/systems/DisplaySystem.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
-#include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 
 fengine::ecs::DisplaySystem::DisplaySystem(modules::display::IDisplayModule &displayModule, camera::Camera &camera)
-: _displayModule(displayModule), _camera(camera) {};
+    : _displayModule(displayModule), _camera(camera) {};
 
 fengine::ecs::DisplaySystem::~DisplaySystem() {};
 

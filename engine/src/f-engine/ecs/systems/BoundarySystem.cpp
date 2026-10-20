@@ -1,10 +1,10 @@
 #include "f-engine/ecs/systems/BoundarySystem.hpp"
 #include "f-engine/ecs/components/AttackComponent.hpp"
 #include "f-engine/ecs/components/BoundaryComponent.hpp"
+#include "f-engine/ecs/components/DeadComponent.hpp"
 #include "f-engine/ecs/components/DefenseComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
-#include "f-engine/ecs/components/DeadComponent.hpp"
 
 fengine::ecs::BoundarySystem::BoundarySystem() {};
 
@@ -50,8 +50,7 @@ void fengine::ecs::BoundarySystem::update(Registry &manager) {
             auto &att_other = attacks[j];
             auto &def_other = defenses[j];
 
-            std::chrono::time_point<std::chrono::steady_clock> elapsedTime =
-                std::chrono::steady_clock::now();
+            std::chrono::time_point<std::chrono::steady_clock> elapsedTime = std::chrono::steady_clock::now();
             std::chrono::duration<double> movementTime = elapsedTime
                 - (bound.value().can_be_hit.has_value() ? bound.value().can_be_hit.value()
                                                         : std::chrono::steady_clock::time_point{});

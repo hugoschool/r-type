@@ -4,7 +4,7 @@
 #include "f-engine/ecs/components/VelocityComponent.hpp"
 
 fengine::ecs::AnimationSystem::AnimationSystem(modules::display::IDisplayModule &displayModule, camera::Camera &camera)
-: _displayModule(displayModule), _camera(camera) {};
+    : _displayModule(displayModule), _camera(camera) {};
 
 fengine::ecs::AnimationSystem::~AnimationSystem() {};
 
@@ -22,8 +22,7 @@ void fengine::ecs::AnimationSystem::update(Registry &manager) {
         auto &anim = animations[i];
 
         if (vel.has_value() && drawable.has_value() && anim.has_value()) {
-            std::chrono::time_point<std::chrono::steady_clock> elapsedTime =
-                std::chrono::steady_clock::now();
+            std::chrono::time_point<std::chrono::steady_clock> elapsedTime = std::chrono::steady_clock::now();
             std::chrono::duration<double> movementTime = elapsedTime - anim.value().anim_clock;
             std::chrono::milliseconds var(150);
 

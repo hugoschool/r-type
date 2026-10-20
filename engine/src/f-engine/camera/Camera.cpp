@@ -1,9 +1,10 @@
 #include "f-engine/camera/Camera.hpp"
 
 fengine::camera::Camera::Camera(float baseVelocity, float maxLength)
-: _currentWorldIndex(0), _baseVelocity(baseVelocity), _maxLength(maxLength) {};
+    : _currentWorldIndex(0), _baseVelocity(baseVelocity), _maxLength(maxLength) {};
 
-fengine::camera::Camera::~Camera() {}
+fengine::camera::Camera::~Camera() {
+}
 
 fengine::ecs::PositionComponent fengine::camera::Camera::worldPosToCameraPos(ecs::PositionComponent &pos) {
     ecs::PositionComponent newPos = {pos.pos_x - _currentWorldIndex, pos.pos_y, pos.can_be_out_window};

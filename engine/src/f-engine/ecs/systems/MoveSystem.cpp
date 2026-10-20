@@ -1,11 +1,11 @@
 #include "f-engine/ecs/systems/MoveSystem.hpp"
 #include "f-engine/ecs/components/BoundaryComponent.hpp"
+#include "f-engine/ecs/components/DeadComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
-#include "f-engine/ecs/components/DeadComponent.hpp"
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
 
-fengine::ecs::MovementSystem::MovementSystem(camera::Camera &camera): _camera(camera) {};
+fengine::ecs::MovementSystem::MovementSystem(camera::Camera &camera) : _camera(camera) {};
 
 fengine::ecs::MovementSystem::~MovementSystem() {};
 
@@ -35,8 +35,8 @@ void fengine::ecs::MovementSystem::update(Registry &manager) {
             continue;
 
         if (bound.has_value()) {
-            boundary = {bound.value().size_x, bound.value().size_y, bound.value().bouncy,
-                bound.value().hittable, bound.value().can_be_hit};
+            boundary = {bound.value().size_x, bound.value().size_y, bound.value().bouncy, bound.value().hittable,
+                bound.value().can_be_hit};
         } else {
             boundary = {0, 0, false, false, std::nullopt};
         }

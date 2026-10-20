@@ -1,11 +1,11 @@
 #include "f-engine/ecs/systems/ControlSystem.hpp"
-#include "f-engine/ecs/components/VelocityComponent.hpp"
 #include "f-engine/ecs/components/ControllableComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
 
 fengine::ecs::ControlSystem::ControlSystem(std::queue<modules::display::EventKey> &pqueue,
     std::queue<modules::display::EventKey> &rqueue)
-    : _pressedQueue(pqueue), _releasedQueue(rqueue) {};;
+    : _pressedQueue(pqueue), _releasedQueue(rqueue) {};
+;
 
 fengine::ecs::ControlSystem::~ControlSystem() {};
 
