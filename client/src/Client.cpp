@@ -22,6 +22,7 @@
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventType.hpp"
 #include "f-engine/modules/display/events/IEvent.hpp"
+#include "f-engine/modules/display/shapes/SFMLCircle.hpp"
 #include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
 #include "f-engine/scene/GameScene.hpp"
 #include "r-type/packets/Entity.hpp"

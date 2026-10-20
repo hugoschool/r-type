@@ -7,33 +7,13 @@
 namespace fengine::modules::display {
     class SFMLCircle : public IShape {
         public:
-            SFMLCircle(float radius) {
-                shape = sf::CircleShape();
+            SFMLCircle(float radius);
+            ~SFMLCircle() override = default;
 
-                shape.setRadius(radius / 2);
-            };
-            ~SFMLCircle() override {};
-
-            void setPosition(ecs::PositionComponent &pos) override {
-                shape.setPosition(sf::Vector2f(pos.pos_x, pos.pos_y));
-            };
-            void setColor(std::tuple<int, int, int> &color) override {
-                int a = 255;
-                int r = std::get<0>(color);
-                int g = std::get<1>(color);
-                int b = std::get<2>(color);
-                sf::Color col = sf::Color(r, g, b, a);
-                shape.setFillColor(col);
-            };
-            void setTexture(std::any texture) override {
-                shape.setTexture(std::any_cast<sf::Texture *>(texture));
-            };
-            void setTextureRect(int offset_x, int offset_y, int length, int height) override {
-                sf::IntRect rect;
-                rect.position = sf::Vector2(offset_x, offset_y);
-                rect.size = sf::Vector2(length, height);
-                shape.setTextureRect(rect);
-            };
+            void setPosition(ecs::PositionComponent &pos) override;
+            void setColor(std::tuple<int, int, int> &color) override;
+            void setTexture(std::any texture) override;
+            void setTextureRect(int offset_x, int offset_y, int length, int height) override;
 
             sf::CircleShape shape;
     };
