@@ -15,8 +15,8 @@
 #include <f-engine/ecs/systems/MoveSystem.hpp>
 #include <iostream>
 #include <optional>
-#include <r-type/packets/Entity.hpp>
 #include <r-type/packets/Packet.hpp>
+#include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 #include <sstream>
 #include <thread>

@@ -24,8 +24,8 @@
 #include "f-engine/modules/display/events/IEvent.hpp"
 #include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
 #include "f-engine/scene/GameScene.hpp"
-#include "r-type/packets/Entity.hpp"
 #include "r-type/packets/Packet.hpp"
+#include "r-type/packets/Payload.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include <exception>
 #include <iostream>

@@ -3,8 +3,8 @@
 #include "protocols/AProtocol.hpp"
 #include <boost/asio/placeholders.hpp>
 #include <iostream>
-#include <r-type/packets/Entity.hpp>
 #include <r-type/packets/Packet.hpp>
+#include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 #include <sstream>
 #include <string>

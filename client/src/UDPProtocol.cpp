@@ -3,8 +3,8 @@
 #include "CircularBuffer.hpp"
 #include "boost/asio/socket_base.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
-#include "r-type/packets/Entity.hpp"
 #include "r-type/packets/Packet.hpp"
+#include "r-type/packets/Payload.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include <cstring>
 #include <iostream>

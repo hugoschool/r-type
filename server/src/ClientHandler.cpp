@@ -11,8 +11,8 @@
 #include <f-engine/ecs/components/PositionComponent.hpp>
 #include <f-engine/ecs/components/VelocityComponent.hpp>
 #include <iostream>
-#include <r-type/packets/Entity.hpp>
 #include <r-type/packets/Packet.hpp>
+#include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 
 rtype::server::ClientMessageQueueHandler::ClientMessageQueueHandler() : _map(), _mutex() {
