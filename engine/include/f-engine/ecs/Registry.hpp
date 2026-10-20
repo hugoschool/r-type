@@ -7,8 +7,8 @@
 namespace fengine::ecs {
     class Registry {
         public:
-            Registry() : systemManager(), entityManager(), componentManager() {};
-            ~Registry() {};
+            Registry();
+            ~Registry();
 
             SystemManager systemManager;
             EntityManager entityManager;

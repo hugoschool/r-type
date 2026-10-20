@@ -9,18 +9,12 @@
 namespace fengine::ecs {
     class ASystem : public ISystem {
         public:
-            ASystem() {};
-            ~ASystem() override {};
+            ASystem();
+            ~ASystem() override;
 
-            void addSubscriber(std::shared_ptr<observer::Subscriber> &sub) {
-                _subscribers.push_back(sub);
-            };
+            void addSubscriber(std::shared_ptr<observer::Subscriber> &sub);
 
-            void updateSubscribers(observer::SubscriberContent &content) {
-                for (auto &sub : _subscribers) {
-                    sub->send(content);
-                }
-            };
+            void updateSubscribers(observer::SubscriberContent &content);
 
         protected:
             std::vector<std::shared_ptr<observer::Subscriber>> _subscribers;

@@ -5,30 +5,18 @@
 namespace fengine::camera {
     class Camera {
         public:
-            Camera(float baseVelocity, float maxLength)
-                : _currentWorldIndex(0), _baseVelocity(baseVelocity), _maxLength(maxLength) {};
-            ~Camera() {};
+            Camera(float baseVelocity, float maxLength);
+            ~Camera();
 
-            ecs::PositionComponent worldPosToCameraPos(ecs::PositionComponent &pos) {
-                ecs::PositionComponent newPos = {pos.pos_x - _currentWorldIndex, pos.pos_y, pos.can_be_out_window};
-                return newPos;
-            };
+            ecs::PositionComponent worldPosToCameraPos(ecs::PositionComponent &pos);
 
-            void incrementWorldIndex() {
-                _currentWorldIndex += _baseVelocity;
-            };
+            void incrementWorldIndex();
 
-            float getWorldIndex() {
-                return _currentWorldIndex;
-            };
+            float getWorldIndex();
 
-            float getBaseVelocity() {
-                return _baseVelocity;
-            };
+            float getBaseVelocity();
 
-            float getMaxLength() {
-                return _maxLength;
-            };
+            float getMaxLength();
 
         private:
             float _currentWorldIndex;

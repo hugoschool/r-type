@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include <chrono>
 #include <cstdint>
 #include <f-engine/ecs/Entity.hpp>

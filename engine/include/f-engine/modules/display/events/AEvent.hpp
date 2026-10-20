@@ -13,28 +13,16 @@ namespace fengine::modules::display {
             EventMouseButton _mouseButton;
 
         public:
-            AEvent(EventType type) : _type(type) {};
-            ~AEvent() override {};
+            AEvent(EventType type);
+            ~AEvent() override = default;
 
-            EventMouseButton getMouseButton() override {
-                return _mouseButton;
-            };
-            void setMouseButton(EventMouseButton mouseButton) override {
-                _mouseButton = mouseButton;
-            };
+            EventMouseButton getMouseButton() override;
+            void setMouseButton(EventMouseButton mouseButton) override;
 
-            EventKey getKey() override {
-                return _key;
-            };
-            void setKey(EventKey key) override {
-                _key = key;
-            };
+            EventKey getKey() override;
+            void setKey(EventKey key) override;
 
-            EventType getType() override {
-                return _type;
-            };
-            void setType(EventType type) override {
-                _type = type;
-            };
+            EventType getType() override;
+            void setType(EventType type) override;
     };
 }

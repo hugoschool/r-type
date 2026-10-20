@@ -1,9 +1,6 @@
 #pragma once
 
-#include "f-engine/Exceptions.hpp"
 #include "f-engine/modules/display/shapes/IShape.hpp"
-#include "f-engine/modules/display/shapes/SFMLCircle.hpp"
-#include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
 #include "f-engine/modules/display/window/IWindow.hpp"
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -15,46 +12,15 @@ constexpr int WINDOW_Y = 800;
 namespace fengine::modules::display {
     class SFMLWindow : public IWindow {
         public:
-            SFMLWindow() : font(), _videoMode({WINDOW_X, WINDOW_Y}) {
-                try {
-                    _window = sf::RenderWindow(_videoMode, "R-Type");
-                    _window.setMaximumSize(_window.getSize());
-                    _window.setMinimumSize(_window.getSize());
-                } catch (std::exception &) { throw SfmlException("render window creation"); }
-                _window.setFramerateLimit(60);
-                // if (font.openFromFile("textures/fonts/" FONT) == false) { // ajouter une font
-                //     throw SfmlException("font creation");
-                // }
-            }
+            SFMLWindow();
+            ~SFMLWindow() override;
 
-            ~SFMLWindow() override {
-                _window.close();
-            };
+            void drawShape(std::shared_ptr<IShape> shape) override;
+            void draw(const sf::Drawable &drawable, const sf::RenderStates &states = sf::RenderStates::Default);
+            void display();
 
-            void drawShape(std::shared_ptr<IShape> shape) override {
-                if (auto rect = dynamic_cast<SFMLRectangle *>(shape.get())) {
-                    _window.draw(rect->shape);
-                }
-                if (auto circle = dynamic_cast<SFMLCircle *>(shape.get())) {
-                    _window.draw(circle->shape);
-                }
-            };
-
-            void draw(const sf::Drawable &drawable, const sf::RenderStates &states = sf::RenderStates::Default) {
-                _window.draw(drawable, states);
-            };
-
-            void display() {
-                _window.display();
-            };
-
-            void clear() {
-                _window.clear();
-            };
-
-            std::optional<sf::Event> pollEvent() {
-                return _window.pollEvent();
-            };
+            void clear();
+            std::optional<sf::Event> pollEvent();
 
             sf::Font font;
 

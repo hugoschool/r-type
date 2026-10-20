@@ -1,6 +1,5 @@
 #pragma once
 
-#include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include "f-engine/scene/IScene.hpp"
 #include "f-engine/scene/SceneObjects.hpp"
 #include <optional>
@@ -10,28 +9,14 @@ namespace fengine::scene {
     class GameScene : public IScene {
         public:
             GameScene(float cameraVelocity, std::optional<std::vector<Button>> buttons, std::string bgTexture,
-                bool paralax)
-                : _buttons(buttons), _background(), _cameraVelocity(cameraVelocity) {
-                _background.offset = 0;
-                _background.texture = bgTexture;
-                _background.paralax = paralax;
-            };
-            ~GameScene() override {};
+                bool paralax);
+            ~GameScene() override;
 
-            std::optional<std::vector<Button>> &getButtons() override {
-                return _buttons;
-            };
+            std::optional<std::vector<Button>> &getButtons() override;
 
-            Background &getBackground() override {
-                return _background;
-            };
+            Background &getBackground() override;
 
-            void update() override {
-                _background.offset += _cameraVelocity;
-                if (_background.offset > WINDOW_X) {
-                    _background.offset = 0;
-                }
-            };
+            void update() override;
 
         private:
             std::optional<std::vector<Button>> _buttons;
