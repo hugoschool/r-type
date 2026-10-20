@@ -1,4 +1,5 @@
 #include "f-engine/ecs/EntityManager.hpp"
+#include <algorithm>
 
 fengine::ecs::EntityManager::EntityManager(): _entities() {}
 

@@ -8,8 +8,8 @@
 namespace fengine::ecs::observer {
     class SubscriberContent {
         public:
-            SubscriberContent(std::size_t entityId) : _entityId(entityId), _content() {};
-            ~SubscriberContent() = default;
+            SubscriberContent(std::size_t entityId);
+            ~SubscriberContent();
 
             template <class T>
             void add(T &component) {
@@ -35,9 +35,7 @@ namespace fengine::ecs::observer {
                 return std::any_cast<T>(_content[typeid(T)]);
             }
 
-            std::size_t getEntityId() const {
-                return _entityId;
-            }
+            std::size_t getEntityId() const;
 
         private:
             std::size_t _entityId;
