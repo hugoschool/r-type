@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstddef>
+#include <cstring>
+#include <string>
 
 namespace rtype::packets {
     // Size of a UUID v4 string with dashes
@@ -29,6 +31,10 @@ namespace rtype::packets {
                 ar & type;
                 ar & size;
                 ar & playerUuid;
+            }
+
+            void setUuid(std::string uuid) {
+                std::memcpy(playerUuid, uuid.c_str(), sizeof(char) * UUID_SIZE + 1);
             }
     };
 }

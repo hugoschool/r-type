@@ -3,6 +3,7 @@
 #include "f-engine/modules/display/events/EventKey.hpp"
 #include "r-type/packets/Packet.hpp"
 #include <cstddef>
+#include <cstring>
 
 namespace rtype::packets {
     struct Vector2D {
@@ -24,6 +25,10 @@ namespace rtype::packets {
             template <class Archive>
             void serialize(Archive &ar, unsigned int) {
                 ar & uuid;
+            }
+
+            void setUuid(std::string newUuid) {
+                std::memcpy(uuid, newUuid.c_str(), sizeof(char) * UUID_SIZE + 1);
             }
     };
 

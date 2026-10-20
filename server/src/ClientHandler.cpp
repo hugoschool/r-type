@@ -110,14 +110,14 @@ std::string rtype::server::ClientHandler::newClient() {
     _registry.componentManager.addComponent(entity, std::move(control));
 
     packets::LoginAnswer payload;
-    std::strncpy(payload.uuid, uuid.c_str(), packets::UUID_SIZE);
+    payload.setUuid(uuid);
 
     packets::PacketHeader header = {
         .type = packets::PacketType::LoginAnswer,
         .size = sizeof(payload),
         .playerUuid = "",
     };
-    std::strncpy(header.playerUuid, uuid.c_str(), packets::UUID_SIZE);
+    header.setUuid(uuid);
 
     std::stringstream ss;
     auto ar = packets::Serialization::createSerializeArchive(ss);

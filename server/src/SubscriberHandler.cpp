@@ -72,7 +72,7 @@ void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observe
         .size = sizeof(packets::EntityDied),
         .playerUuid = "",
     };
-    strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
+    header.setUuid(DUMMY_UUID);
 
     std::stringstream ss;
     auto ar = packets::Serialization::createSerializeArchive(ss);
@@ -98,7 +98,7 @@ void rtype::server::SubscriberHandler::handleVelocityComponent(fengine::ecs::obs
         .size = sizeof(packets::EntityVelocityChange),
         .playerUuid = "",
     };
-    strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
+    header.setUuid(DUMMY_UUID);
 
     std::stringstream ss;
     auto ar = packets::Serialization::createSerializeArchive(ss);
@@ -124,7 +124,7 @@ void rtype::server::SubscriberHandler::handlePositionComponent(fengine::ecs::obs
         .size = sizeof(packets::EntityMove),
         .playerUuid = "",
     };
-    strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
+    header.setUuid(DUMMY_UUID);
 
     std::stringstream ss;
     auto ar = packets::Serialization::createSerializeArchive(ss);

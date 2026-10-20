@@ -78,7 +78,7 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::string uu
             .size = sizeof(payload),
             .playerUuid = "",
         };
-        std::strncpy(newHeader.playerUuid, uuid.c_str(), packets::UUID_SIZE);
+        newHeader.setUuid(uuid);
 
         std::stringstream ss;
         auto ar = packets::Serialization::createSerializeArchive(ss);
@@ -103,7 +103,7 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::string uu
                 .size = sizeof(payload),
                 .playerUuid = "",
             };
-            std::strncpy(newHeader.playerUuid, uuid.c_str(), packets::UUID_SIZE);
+            newHeader.setUuid(uuid);
 
             std::stringstream ss;
             auto ar = packets::Serialization::createSerializeArchive(ss);
@@ -127,7 +127,7 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::string uu
                 .size = sizeof(payload),
                 .playerUuid = "",
             };
-            std::strncpy(newHeader.playerUuid, uuid.c_str(), packets::UUID_SIZE);
+            newHeader.setUuid(uuid);
 
             std::stringstream ss;
             auto ar = packets::Serialization::createSerializeArchive(ss);
