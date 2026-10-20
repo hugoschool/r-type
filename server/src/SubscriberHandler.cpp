@@ -75,7 +75,9 @@ void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observe
     strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
 
     std::stringstream ss;
-    packets::Serialization::serialize(ss, header, payload);
+    auto ar = packets::Serialization::createSerializeArchive(ss);
+    packets::Serialization::serialize(ar, header);
+    packets::Serialization::serialize(ar, payload);
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
 }
@@ -99,7 +101,9 @@ void rtype::server::SubscriberHandler::handleVelocityComponent(fengine::ecs::obs
     strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
 
     std::stringstream ss;
-    packets::Serialization::serialize(ss, header, payload);
+    auto ar = packets::Serialization::createSerializeArchive(ss);
+    packets::Serialization::serialize(ar, header);
+    packets::Serialization::serialize(ar, payload);
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
 }
@@ -123,7 +127,9 @@ void rtype::server::SubscriberHandler::handlePositionComponent(fengine::ecs::obs
     strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
 
     std::stringstream ss;
-    packets::Serialization::serialize(ss, header, payload);
+    auto ar = packets::Serialization::createSerializeArchive(ss);
+    packets::Serialization::serialize(ar, header);
+    packets::Serialization::serialize(ar, payload);
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
 }

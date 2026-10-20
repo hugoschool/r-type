@@ -36,7 +36,8 @@ void rtype::client::UDPProtocol::connect(char *av[]) {
             .playerUuid = "",
         };
 
-        packets::Serialization::serialize(ss, header, packets::Empty{});
+        auto ar = packets::Serialization::createSerializeArchive(ss);
+        packets::Serialization::serialize(ar, header);
 
         std::string send = ss.str();
         _socket.send_to(boost::asio::buffer(send), _endpoint);
@@ -75,7 +76,11 @@ void rtype::client::UDPProtocol::sendMsg() {
 
             fengine::modules::display::EventKey input = _inputs.getElem();
             packets::Input newInput = {input};
-            packets::Serialization::serialize(ss, header, newInput);
+
+            auto ar = packets::Serialization::createSerializeArchive(ss);
+            packets::Serialization::serialize(ar, header);
+            packets::Serialization::serialize(ar, newInput);
+
             std::string buf = ss.str();
             _socket.send_to(boost::asio::buffer(buf), _endpoint);
         } else {
@@ -89,7 +94,9 @@ void rtype::client::UDPProtocol::sendMsg() {
             };
 
             std::strncpy(header.playerUuid, _uuid.c_str(), packets::UUID_SIZE);
-            packets::Serialization::serialize(ss, header, packets::Empty{});
+
+            auto ar = packets::Serialization::createSerializeArchive(ss);
+            packets::Serialization::serialize(ar, header);
 
             std::string buf = ss.str();
             _socket.send_to(boost::asio::buffer(buf), _endpoint);

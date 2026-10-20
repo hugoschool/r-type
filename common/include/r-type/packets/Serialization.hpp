@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Packet.hpp"
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <ostream>
@@ -11,13 +10,13 @@ namespace rtype::packets {
             using deserialize_archive = boost::archive::binary_iarchive;
             using serialize_archive = boost::archive::binary_oarchive;
 
-            // TODO: simplify the serialization, do something similar to deserialization
-            template <class Payload>
-            static void serialize(std::ostream &s, PacketHeader header, Payload payload) {
-                serialize_archive a(s);
+            static serialize_archive createSerializeArchive(std::ostream &s) {
+                return serialize_archive(s);
+            }
 
-                a & header;
-                a & payload;
+            template <class T>
+            static void serialize(serialize_archive &a, T &content) {
+                a & content;
             }
 
             static deserialize_archive createDeserializeArchive(std::istream &s) {

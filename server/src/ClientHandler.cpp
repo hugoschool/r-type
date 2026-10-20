@@ -120,7 +120,9 @@ std::string rtype::server::ClientHandler::newClient() {
     std::strncpy(header.playerUuid, uuid.c_str(), packets::UUID_SIZE);
 
     std::stringstream ss;
-    packets::Serialization::serialize(ss, header, payload);
+    auto ar = packets::Serialization::createSerializeArchive(ss);
+    packets::Serialization::serialize(ar, header);
+    packets::Serialization::serialize(ar, payload);
 
     _messageQueueHandler.addMessage(uuid, ss.str());
 

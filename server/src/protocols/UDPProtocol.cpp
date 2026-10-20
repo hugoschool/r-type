@@ -56,7 +56,8 @@ void rtype::server::UDPProtocol::handleReceive(const boost::system::error_code &
                     };
 
                     std::stringstream ss;
-                    packets::Serialization::serialize(ss, header, packets::Empty{});
+                    auto ar = packets::Serialization::createSerializeArchive(ss);
+                    packets::Serialization::serialize(ar, header);
                     instantQueue.push(ss.str());
 
                     addMessageToQueue = false;
@@ -92,7 +93,8 @@ void rtype::server::UDPProtocol::handleReceive(const boost::system::error_code &
                     };
 
                     std::stringstream ss;
-                    packets::Serialization::serialize(ss, header, packets::Empty{});
+                    auto ar = packets::Serialization::createSerializeArchive(ss);
+                    packets::Serialization::serialize(ar, header);
 
                     std::shared_ptr<std::string> message = std::make_shared<std::string>(ss.str());
 
