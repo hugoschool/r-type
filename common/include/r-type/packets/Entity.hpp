@@ -64,13 +64,6 @@ namespace rtype::packets {
             }
     };
 
-    struct Empty {
-        public:
-            template <class Archive>
-            void serialize(Archive &, unsigned int) {
-            }
-    };
-
     struct Input {
         public:
             fengine::modules::display::EventKey input;
