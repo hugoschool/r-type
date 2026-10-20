@@ -1,11 +1,14 @@
 #include "f-engine/ecs/SystemManager.hpp"
 
-fengine::ecs::SystemManager::SystemManager(): _systems(), _deltaTime(500), _clock(std::chrono::steady_clock::now()) {}
+fengine::ecs::SystemManager::SystemManager() : _systems(), _deltaTime(500), _clock(std::chrono::steady_clock::now()) {
+}
 
 fengine::ecs::SystemManager::SystemManager(int customTime)
-: _systems(), _deltaTime(customTime), _clock(std::chrono::steady_clock::now()) {}
+    : _systems(), _deltaTime(customTime), _clock(std::chrono::steady_clock::now()) {
+}
 
-fengine::ecs::SystemManager::~SystemManager() {}
+fengine::ecs::SystemManager::~SystemManager() {
+}
 
 void fengine::ecs::SystemManager::update(Registry &manager) {
     std::chrono::time_point<std::chrono::steady_clock> elapsedTime = std::chrono::steady_clock::now();

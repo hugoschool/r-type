@@ -1,9 +1,11 @@
 #include "f-engine/ecs/EntityManager.hpp"
 #include <algorithm>
 
-fengine::ecs::EntityManager::EntityManager(): _entities() {}
+fengine::ecs::EntityManager::EntityManager() : _entities() {
+}
 
-fengine::ecs::EntityManager::~EntityManager() {}
+fengine::ecs::EntityManager::~EntityManager() {
+}
 
 void fengine::ecs::EntityManager::killEntity(Entity const &e) {
     auto it = std::find(_entities.begin(), _entities.end(), std::make_optional<Entity>(e));

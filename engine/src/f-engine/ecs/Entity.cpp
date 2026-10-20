@@ -1,8 +1,10 @@
 #include "f-engine/ecs/Entity.hpp"
 
-fengine::ecs::Entity::Entity(std::size_t id): _id(id) {}
+fengine::ecs::Entity::Entity(std::size_t id) : _id(id) {
+}
 
-fengine::ecs::Entity::~Entity() {}
+fengine::ecs::Entity::~Entity() {
+}
 
 fengine::ecs::Entity::operator std::size_t() {
     return _id;

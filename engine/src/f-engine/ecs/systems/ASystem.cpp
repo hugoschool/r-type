@@ -1,8 +1,10 @@
 #include "f-engine/ecs/systems/ASystem.hpp"
 
-fengine::ecs::ASystem::ASystem() {}
+fengine::ecs::ASystem::ASystem() {
+}
 
-fengine::ecs::ASystem::~ASystem() {}
+fengine::ecs::ASystem::~ASystem() {
+}
 
 void fengine::ecs::ASystem::addSubscriber(std::shared_ptr<observer::Subscriber> &sub) {
     _subscribers.push_back(sub);
