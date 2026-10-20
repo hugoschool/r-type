@@ -5,20 +5,14 @@
 namespace fengine::ecs {
     class Entity {
         public:
-            explicit Entity(std::size_t id) : _id(id) {};
-            ~Entity() {};
+            Entity(std::size_t id);
+            ~Entity();
 
-            explicit operator std::size_t() {
-                return _id;
-            };
+            operator std::size_t();
 
-            std::size_t getId() const {
-                return _id;
-            };
+            std::size_t getId() const;
 
-            bool operator==(const Entity &other) const {
-                return _id == other._id;
-            }
+            bool operator==(const Entity &other) const;
 
         private:
             std::size_t _id;
