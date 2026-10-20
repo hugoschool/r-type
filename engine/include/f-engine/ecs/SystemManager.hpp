@@ -15,10 +15,9 @@ namespace fengine::ecs {
 
     class SystemManager {
         public:
-            SystemManager() : _systems(), _deltaTime(500), _clock(std::chrono::steady_clock::now()) {};
-            SystemManager(int customTime)
-                : _systems(), _deltaTime(customTime), _clock(std::chrono::steady_clock::now()) {};
-            ~SystemManager() {};
+            SystemManager();
+            SystemManager(int customTime);
+            ~SystemManager();
 
             template <is_system T, typename... Args>
             void addSystem(Args &&...args) {
@@ -40,21 +39,7 @@ namespace fengine::ecs {
                 _systems.erase(typeid(T));
             };
 
-            void update(Registry &manager) {
-                std::chrono::time_point<std::chrono::steady_clock> elapsedTime = std::chrono::steady_clock::now();
-                std::chrono::duration<double> time = elapsedTime - _clock;
-                std::chrono::milliseconds var(_deltaTime);
-
-                // TODO: replace the current time valuation system
-                // if (time < var) {
-                //     return;
-                // }
-
-                for (auto &[_, system] : _systems) {
-                    system->update(manager);
-                }
-                _clock = std::chrono::steady_clock::now();
-            };
+            void update(Registry &manager);
 
         private:
             std::unordered_map<std::type_index, std::shared_ptr<ISystem>> _systems;
