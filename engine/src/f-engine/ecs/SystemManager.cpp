@@ -22,10 +22,3 @@ void fengine::ecs::SystemManager::update(Registry &manager) {
     }
     _clock = std::chrono::steady_clock::now();
 }
-
-
-
-
-
-
-
