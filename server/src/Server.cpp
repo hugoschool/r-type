@@ -16,8 +16,8 @@
 #include <f-engine/ecs/systems/MoveSystem.hpp>
 #include <iostream>
 #include <optional>
-#include <r-type/packets/Entity.hpp>
 #include <r-type/packets/Packet.hpp>
+#include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 #include <sstream>
 #include <thread>
@@ -79,10 +79,13 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::string uu
             .size = sizeof(payload),
             .playerUuid = "",
         };
-        std::strncpy(newHeader.playerUuid, uuid.c_str(), packets::UUID_SIZE);
+        newHeader.setUuid(uuid);
 
         std::stringstream ss;
-        packets::Serialization::serialize(ss, newHeader, payload);
+        auto ar = packets::Serialization::createSerializeArchive(ss);
+        packets::Serialization::serialize(ar, newHeader);
+        packets::Serialization::serialize(ar, payload);
+
         _clientHandler.getMessageQueueHandler().addMessage(uuid, ss.str());
     }
 
@@ -101,10 +104,13 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::string uu
                 .size = sizeof(payload),
                 .playerUuid = "",
             };
-            std::strncpy(newHeader.playerUuid, uuid.c_str(), packets::UUID_SIZE);
+            newHeader.setUuid(uuid);
 
             std::stringstream ss;
-            packets::Serialization::serialize(ss, newHeader, payload);
+            auto ar = packets::Serialization::createSerializeArchive(ss);
+            packets::Serialization::serialize(ar, newHeader);
+            packets::Serialization::serialize(ar, payload);
+
             _clientHandler.getMessageQueueHandler().addMessage(uuid, ss.str());
         }
     }
@@ -122,10 +128,13 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::string uu
                 .size = sizeof(payload),
                 .playerUuid = "",
             };
-            std::strncpy(newHeader.playerUuid, uuid.c_str(), packets::UUID_SIZE);
+            newHeader.setUuid(uuid);
 
             std::stringstream ss;
-            packets::Serialization::serialize(ss, newHeader, payload);
+            auto ar = packets::Serialization::createSerializeArchive(ss);
+            packets::Serialization::serialize(ar, newHeader);
+            packets::Serialization::serialize(ar, payload);
+
             _clientHandler.getMessageQueueHandler().addMessage(uuid, ss.str());
         }
     }

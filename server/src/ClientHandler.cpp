@@ -11,8 +11,8 @@
 #include <f-engine/ecs/components/PositionComponent.hpp>
 #include <f-engine/ecs/components/VelocityComponent.hpp>
 #include <iostream>
-#include <r-type/packets/Entity.hpp>
 #include <r-type/packets/Packet.hpp>
+#include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 
 rtype::server::ClientMessageQueueHandler::ClientMessageQueueHandler() : _map(), _mutex() {
@@ -110,17 +110,19 @@ std::string rtype::server::ClientHandler::newClient() {
     _registry.componentManager.addComponent(entity, std::move(control));
 
     packets::LoginAnswer payload;
-    std::strncpy(payload.uuid, uuid.c_str(), packets::UUID_SIZE);
+    payload.setUuid(uuid);
 
     packets::PacketHeader header = {
         .type = packets::PacketType::LoginAnswer,
         .size = sizeof(payload),
         .playerUuid = "",
     };
-    std::strncpy(header.playerUuid, uuid.c_str(), packets::UUID_SIZE);
+    header.setUuid(uuid);
 
     std::stringstream ss;
-    packets::Serialization::serialize(ss, header, payload);
+    auto ar = packets::Serialization::createSerializeArchive(ss);
+    packets::Serialization::serialize(ar, header);
+    packets::Serialization::serialize(ar, payload);
 
     _messageQueueHandler.addMessage(uuid, ss.str());
 

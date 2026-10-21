@@ -8,8 +8,8 @@
 #include <f-engine/ecs/systems/MoveSystem.hpp>
 #include <functional>
 #include <memory>
-#include <r-type/packets/Entity.hpp>
 #include <r-type/packets/Packet.hpp>
+#include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 
 rtype::server::SubscriberHandler::SubscriberHandler(rtype::server::ClientHandler &clientHandler)
@@ -72,10 +72,12 @@ void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observe
         .size = sizeof(packets::EntityDied),
         .playerUuid = "",
     };
-    strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
+    header.setUuid(DUMMY_UUID);
 
     std::stringstream ss;
-    packets::Serialization::serialize(ss, header, payload);
+    auto ar = packets::Serialization::createSerializeArchive(ss);
+    packets::Serialization::serialize(ar, header);
+    packets::Serialization::serialize(ar, payload);
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
 }
@@ -96,10 +98,12 @@ void rtype::server::SubscriberHandler::handleVelocityComponent(fengine::ecs::obs
         .size = sizeof(packets::EntityVelocityChange),
         .playerUuid = "",
     };
-    strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
+    header.setUuid(DUMMY_UUID);
 
     std::stringstream ss;
-    packets::Serialization::serialize(ss, header, payload);
+    auto ar = packets::Serialization::createSerializeArchive(ss);
+    packets::Serialization::serialize(ar, header);
+    packets::Serialization::serialize(ar, payload);
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
 }
@@ -120,10 +124,12 @@ void rtype::server::SubscriberHandler::handlePositionComponent(fengine::ecs::obs
         .size = sizeof(packets::EntityMove),
         .playerUuid = "",
     };
-    strncpy(header.playerUuid, DUMMY_UUID, packets::UUID_SIZE + 1);
+    header.setUuid(DUMMY_UUID);
 
     std::stringstream ss;
-    packets::Serialization::serialize(ss, header, payload);
+    auto ar = packets::Serialization::createSerializeArchive(ss);
+    packets::Serialization::serialize(ar, header);
+    packets::Serialization::serialize(ar, payload);
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
 }

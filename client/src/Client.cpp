@@ -25,8 +25,8 @@
 #include "f-engine/modules/display/shapes/SFMLCircle.hpp"
 #include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
 #include "f-engine/scene/GameScene.hpp"
-#include "r-type/packets/Entity.hpp"
 #include "r-type/packets/Packet.hpp"
+#include "r-type/packets/Payload.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include <exception>
 #include <iostream>
@@ -170,22 +170,25 @@ void rtype::client::Client::loop() {
 }
 
 void rtype::client::Client::removeEntity(packets::Serialization::deserialize_archive &ar) {
-    packets::EntityIdOnly id;
-    ar & id;
+    packets::EntityDied payload;
+
+    packets::Serialization::deserialize(ar, payload);
+
     try {
-        auto &entity = _registery.entityManager.getEntities().at(id.entityId);
+        auto &entity = _registery.entityManager.getEntities().at(payload.entityId);
         _registery.entityManager.killEntity(entity.value());
     } catch (std::exception &) {}
 }
 
 void rtype::client::Client::addEntity(packets::Serialization::deserialize_archive &ar) {
-    packets::EntityIdOnly id;
-    ar & id;
+    packets::EntitySpawn payload;
+
+    packets::Serialization::deserialize(ar, payload);
 
     try {
-        auto &_ = _registery.entityManager.getEntities().at(id.entityId);
+        auto &_ = _registery.entityManager.getEntities().at(payload.entityId);
     } catch (std::exception &) {
-        fengine::ecs::Entity entity = _registery.entityManager.createEntity(id.entityId);
+        fengine::ecs::Entity entity = _registery.entityManager.createEntity(payload.entityId);
         fengine::ecs::PositionComponent pos = {200, 200, false};
         fengine::ecs::VelocityComponent vel = {0, 0};
         fengine::ecs::BoundaryComponent bound = {40, 40, true, true, std::nullopt};
@@ -204,29 +207,29 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
 }
 
 void rtype::client::Client::moveEntity(rtype::packets::Serialization::deserialize_archive &ar) {
-    packets::EntityIdOnly id;
-    packets::Vector2D pos;
-    ar & id;
-    ar & pos;
+    packets::EntityMove payload;
+
+    packets::Serialization::deserialize(ar, payload);
+
     try {
         auto &sparseArray = _registery.componentManager.getComponents<fengine::ecs::PositionComponent>();
 
-        auto &oldPos = sparseArray[id.entityId];
-        oldPos->pos_x = pos.x;
-        oldPos->pos_y = pos.y;
+        auto &oldPos = sparseArray[payload.entityId];
+        oldPos->pos_x = payload.coordinates.x;
+        oldPos->pos_y = payload.coordinates.y;
     } catch (std::exception &) {}
 }
 
 void rtype::client::Client::modifyVelocity(rtype::packets::Serialization::deserialize_archive &ar) {
-    packets::EntityIdOnly id;
-    packets::Vector2D vel;
-    ar & id;
-    ar & vel;
+    packets::EntityVelocityChange payload;
+
+    packets::Serialization::deserialize(ar, payload);
+
     try {
         auto &sparseArray = _registery.componentManager.getComponents<fengine::ecs::VelocityComponent>();
 
-        auto &oldVel = sparseArray[id.entityId];
-        oldVel->vel_x = vel.x;
-        oldVel->vel_y = vel.y;
+        auto &oldVel = sparseArray[payload.entityId];
+        oldVel->vel_x = payload.velocity.x;
+        oldVel->vel_y = payload.velocity.y;
     } catch (std::exception &) {}
 }
