@@ -1,5 +1,4 @@
 #include "Client.hpp"
-#include "UDPProtocol.hpp"
 #include "boost/asio/error.hpp"
 #include "boost/system/detail/error_code.hpp"
 #include "f-engine/camera/Camera.hpp"
@@ -38,11 +37,11 @@
 #include <string>
 #include <thread>
 
-rtype::client::Client::Client()
+rtype::client::Client::Client(std::string host, std::string port)
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(),
       _camera(0.0, 100000), _scene(3.0, std::nullopt, "./assets/test.png", true),
       _entity(_registery.entityManager.spawnEntity()), _writeThread(), _readThread(), _exit(false), _inputs(1024),
-      _protocol(std::make_unique<UDPProtocol>(_inputs)) {
+      _protocol(_inputs, host, port) {
 
     _registery.componentManager.registerComponent<fengine::ecs::PositionComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::AnimationComponent>();
@@ -85,11 +84,9 @@ rtype::client::Client::Client()
 rtype::client::Client::~Client() {
     _writeThread.join();
     _readThread.join();
-    _protocol->close();
 }
 
-void rtype::client::Client::run(char *av[]) {
-    _protocol->connect(av);
+void rtype::client::Client::run() {
     _writeThread = std::thread(&rtype::client::Client::sendLoop, this);
     _readThread = std::thread(&rtype::client::Client::readLoop, this);
     loop();
@@ -97,7 +94,7 @@ void rtype::client::Client::run(char *av[]) {
 
 void rtype::client::Client::sendLoop() {
     while (!_exit) {
-        _protocol->sendMsg();
+        _protocol.sendMessage();
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     std::cout << "BYE BYE" << std::endl;
@@ -105,11 +102,11 @@ void rtype::client::Client::sendLoop() {
 
 void rtype::client::Client::readLoop() {
     try {
-        _protocol->setSocketNonBlocking();
+        _protocol.setSocketNonBlocking();
         while (!_exit) {
             boost::system::error_code error = boost::asio::error::would_block;
             while (error == boost::asio::error::would_block && !_exit) {
-                std::string msg = _protocol->readMsg(error);
+                std::string msg = _protocol.read(error);
                 interpretMsg(msg);
             }
         }

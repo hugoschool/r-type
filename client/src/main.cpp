@@ -12,8 +12,8 @@ int main(int ac, char *av[]) {
 
         helper.verifyArgumentCount(ac);
 
-        rtype::client::Client client;
-        client.run(av);
+        rtype::client::Client client(av[1], av[2]);
+        client.run();
     } catch (std::exception &exception) {
         std::cerr << exception.what() << std::endl;
         return 1;

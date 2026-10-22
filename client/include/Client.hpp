@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CircularBuffer.hpp"
-#include "IProtocol.hpp"
+#include "ClientProtocol.hpp"
 #include "f-engine/camera/Camera.hpp"
 #include "f-engine/ecs/Entity.hpp"
 #include "f-engine/ecs/Registry.hpp"
@@ -33,7 +33,7 @@ namespace rtype::client {
             bool _exit;
             rtype::client::CircularBuffer<fengine::modules::display::EventKey> _inputs;
             std::string _uuid;
-            std::unique_ptr<IProtocol> _protocol;
+            ClientProtocol _protocol;
 
             void loop();
             void sendLoop();
@@ -46,9 +46,9 @@ namespace rtype::client {
             void modifyVelocity(packets::Serialization::deserialize_archive &ar);
 
         public:
-            Client();
+            Client(std::string host, std::string port);
             ~Client();
 
-            void run(char *av[]);
+            void run();
     };
 }
