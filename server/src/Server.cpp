@@ -34,7 +34,7 @@ rtype::server::Server::Server(std::uint32_t port)
       // Handlers
       _tickHandler(), _clientHandler(_world._registry),
       // Protocols
-      _udp(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler),
+      _protocol(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler),
       // Enemy generation
       _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0), _resendClock() {
 
@@ -274,7 +274,7 @@ void rtype::server::Server::tickThreadRun() {
 
 void rtype::server::Server::run() {
     for (unsigned int i = 0; i < _protocolThreadAmount; i++) {
-        boost::asio::post(_threadPool, [&]() { _udp.run(); });
+        boost::asio::post(_threadPool, [&]() { _protocol.run(); });
     }
     boost::asio::post(_threadPool, [&]() { this->tickThreadRun(); });
 
