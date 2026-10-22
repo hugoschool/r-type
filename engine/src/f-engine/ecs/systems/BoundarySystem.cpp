@@ -21,7 +21,8 @@ void fengine::ecs::BoundarySystem::update(Registry &manager) {
         auto &bound = boundaries[i];
         auto &collision = colliders[i];
 
-        if (!pos.has_value() || !bound.has_value() || !bound.value().hittable || (collision.has_value() && collision.value().set))
+        if (!pos.has_value() || !bound.has_value() || !bound.value().hittable
+            || (collision.has_value() && collision.value().set))
             continue;
 
         auto &vel = velocities[i];
@@ -62,7 +63,8 @@ void fengine::ecs::BoundarySystem::update(Registry &manager) {
             content.add<CollisionComponent>(col);
             content_other.add<CollisionComponent>(col_other);
             manager.componentManager.addComponent(manager.entityManager.entityFromIndex(i).value(), std::move(col));
-            manager.componentManager.addComponent(manager.entityManager.entityFromIndex(j).value(), std::move(col_other));
+            manager.componentManager.addComponent(manager.entityManager.entityFromIndex(j).value(),
+                std::move(col_other));
             if (vel.has_value() && bound.value().bouncy)
                 vel.value() = -vel.value();
             if (vel_other.has_value() && bound_other.value().bouncy)
