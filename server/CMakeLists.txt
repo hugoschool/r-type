@@ -18,4 +18,4 @@ target_include_directories(
     ${freaky-engine_SOURCE_DIR}/include
 )
 
-target_link_libraries(${BINARY} PUBLIC freaky-engine Boost::asio Boost::uuid Boost::serialization)
+target_link_libraries(${BINARY} PUBLIC freaky-engine r-type_common Boost::asio Boost::uuid Boost::serialization)
