@@ -1,14 +1,14 @@
 #pragma once
 
-#include "ISystem.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/systems/ASystem.hpp"
+#include "f-engine/ecs/systems/ISystem.hpp"
 
 namespace fengine::ecs {
-    class BehaviouralSystem : public ASystem {
+    class KillingSystem : public ASystem {
         public:
-            BehaviouralSystem();
-            ~BehaviouralSystem() override;
+            KillingSystem();
+            ~KillingSystem() override;
 
             void update(Registry &manager) override;
     };

@@ -1,20 +1,16 @@
 #pragma once
 
-#include "f-engine/scene/IScene.hpp"
+#include "f-engine/scene/AScene.hpp"
 #include "f-engine/scene/SceneObjects.hpp"
 #include <optional>
 #include <vector>
 
 namespace fengine::scene {
-    class GameScene : public IScene {
+    class GameScene : public AScene {
         public:
             GameScene(float cameraVelocity, std::optional<std::vector<Button>> buttons, std::string bgTexture,
                 bool paralax);
             ~GameScene() override;
-
-            std::optional<std::vector<Button>> &getButtons() override;
-
-            Background &getBackground() override;
 
             void update() override;
 

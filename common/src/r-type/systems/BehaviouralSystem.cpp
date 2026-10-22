@@ -1,10 +1,10 @@
-#include "f-engine/ecs/systems/BehaviouralSystem.hpp"
-#include "f-engine/ecs/components/AttackComponent.hpp"
-#include "f-engine/ecs/components/BehaviourComponent.hpp"
+#include "r-type/systems/BehaviouralSystem.hpp"
 #include "f-engine/ecs/components/BoundaryComponent.hpp"
-#include "f-engine/ecs/components/DefenseComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
+#include "r-type/components/AttackComponent.hpp"
+#include "r-type/components/BehaviourComponent.hpp"
+#include "r-type/components/DefenseComponent.hpp"
 
 fengine::ecs::BehaviouralSystem::BehaviouralSystem() {};
 
@@ -50,6 +50,7 @@ void fengine::ecs::BehaviouralSystem::update(Registry &manager) {
             content.add<BoundaryComponent>(newBound);
             content.add<AttackComponent>(newAtk);
             content.add<DefenseComponent>(newDef);
+            // creation component ?
             updateSubscribers(content);
         }
     }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <optional>
 
 namespace fengine::ecs {
     struct BoundaryComponent {
