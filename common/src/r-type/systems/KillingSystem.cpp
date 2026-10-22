@@ -1,6 +1,6 @@
-#include "../../common/include/r-type/systems/KillingSystem.hpp"
+#include "r-type/systems/KillingSystem.hpp"
 #include "f-engine/ecs/components/DeadComponent.hpp"
-#include "../../common/include/r-type/components/DefenseComponent.hpp"
+#include "r-type/components/DefenseComponent.hpp"
 
 fengine::ecs::KillingSystem::KillingSystem() {};
 

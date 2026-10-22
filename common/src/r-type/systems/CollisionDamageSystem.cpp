@@ -1,6 +1,6 @@
-#include "../../common/include/r-type/systems/CollisionDamageSystem.hpp"
-#include "../../common/include/r-type/components/AttackComponent.hpp"
-#include "../../common/include/r-type/components/DefenseComponent.hpp"
+#include "r-type/systems/CollisionDamageSystem.hpp"
+#include "r-type/components/AttackComponent.hpp"
+#include "r-type/components/DefenseComponent.hpp"
 #include "f-engine/ecs/components/CollisionComponent.hpp"
 
 fengine::ecs::CollisionDamageSystem::CollisionDamageSystem() {};

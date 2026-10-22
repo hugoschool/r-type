@@ -1,4 +1,4 @@
-#include "../../common/include/r-type/scene/ParamScene.hpp"
+#include "r-type/scene/ParamScene.hpp"
 #include "f-engine/scene/AScene.hpp"
 
 fengine::scene::ParamScene::ParamScene(std::optional<std::vector<Button>> buttons,

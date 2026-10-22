@@ -1,10 +1,10 @@
-#include "../../common/include/r-type/systems/BehaviouralSystem.hpp"
+#include "r-type/systems/BehaviouralSystem.hpp"
 #include "f-engine/ecs/components/BoundaryComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
-#include "../../common/include/r-type/components/AttackComponent.hpp"
-#include "../../common/include/r-type/components/BehaviourComponent.hpp"
-#include "../../common/include/r-type/components/DefenseComponent.hpp"
+#include "r-type/components/AttackComponent.hpp"
+#include "r-type/components/BehaviourComponent.hpp"
+#include "r-type/components/DefenseComponent.hpp"
 
 fengine::ecs::BehaviouralSystem::BehaviouralSystem() {};
 

@@ -7,7 +7,7 @@
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
-#include "../../common/include/r-type/scene/GameScene.hpp"
+#include "r-type/scene/GameScene.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>

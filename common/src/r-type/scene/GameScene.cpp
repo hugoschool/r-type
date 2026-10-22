@@ -1,4 +1,4 @@
-#include "../../common/include/r-type/scene/GameScene.hpp"
+#include "r-type/scene/GameScene.hpp"
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include "f-engine/scene/AScene.hpp"
 

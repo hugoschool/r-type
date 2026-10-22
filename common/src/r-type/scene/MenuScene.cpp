@@ -1,4 +1,4 @@
-#include "../../common/include/r-type/scene/MenuScene.hpp"
+#include "r-type/scene/MenuScene.hpp"
 #include "f-engine/scene/AScene.hpp"
 
 fengine::scene::MenuScene::MenuScene(std::optional<std::vector<Button>> buttons,
