@@ -10,8 +10,8 @@
 
 rtype::server::ServerProtocol::ServerProtocol(boost::asio::io_context &io_context, std::uint16_t port,
     SafeMessageQueue &SafeMessageQueue, ClientHandler &clientHandler)
-    : fnetwork::server::UDPProtocol(io_context, port),
-      _messageQueue(SafeMessageQueue), _clientHandler(clientHandler) {
+    : fnetwork::server::async::UDPProtocol(io_context, port), _messageQueue(SafeMessageQueue),
+      _clientHandler(clientHandler) {
 }
 
 void rtype::server::ServerProtocol::handleReceive(const boost::system::error_code &error, std::size_t) {

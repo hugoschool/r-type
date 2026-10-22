@@ -4,7 +4,7 @@
 #include <boost/asio/io_context.hpp>
 #include <cstdint>
 
-namespace fnetwork::server {
+namespace fnetwork::server::async {
     class AProtocol : public IProtocol {
         public:
             AProtocol(boost::asio::io_context &io_context, std::uint16_t port);

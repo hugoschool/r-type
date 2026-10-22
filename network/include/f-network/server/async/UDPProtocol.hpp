@@ -3,7 +3,7 @@
 #include "AProtocol.hpp"
 #include <boost/asio/ip/udp.hpp>
 
-namespace fnetwork::server {
+namespace fnetwork::server::async {
     class UDPProtocol : public AProtocol {
         public:
             using udp = boost::asio::ip::udp;

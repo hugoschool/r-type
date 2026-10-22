@@ -2,10 +2,10 @@
 
 #include "ClientHandler.hpp"
 #include "SafeQueue.hpp"
-#include "f-network/server/UDPProtocol.hpp"
+#include "f-network/server/async/UDPProtocol.hpp"
 
 namespace rtype::server {
-    class ServerProtocol : public fnetwork::server::UDPProtocol {
+    class ServerProtocol : public fnetwork::server::async::UDPProtocol {
         public:
             ServerProtocol(boost::asio::io_context &io_context, std::uint16_t port, SafeMessageQueue &SafeMessageQueue,
                 ClientHandler &clientHandler);
