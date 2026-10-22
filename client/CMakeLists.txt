@@ -16,6 +16,7 @@ target_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${r-type_common_SOURCE_DIR}/include
     ${freaky-engine_SOURCE_DIR}/include
+    ${freaky-network_SOURCE_DIR}/include
 )
 
-target_link_libraries(${BINARY} PUBLIC freaky-engine r-type_common Boost::asio Boost::serialization)
+target_link_libraries(${BINARY} PUBLIC freaky-engine freaky-network r-type_common Boost::asio Boost::serialization)
