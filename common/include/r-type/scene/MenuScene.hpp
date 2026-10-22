@@ -8,15 +8,10 @@
 namespace fengine::scene {
     class MenuScene : public AScene {
         public:
-            MenuScene(std::optional<std::vector<Button>> buttons, std::string bgTexture, bool paralax)  : fengine::scene::AScene(buttons, bgTexture, paralax) {
-                _background.offset = 0;
-                _background.texture = bgTexture;
-                _background.paralax = paralax;
-            }
-            ;
-            ~MenuScene() override {};
+            MenuScene(std::optional<std::vector<Button>> buttons, std::string bgTexture, bool paralax);
+            ~MenuScene() override;
 
-            void update() override {return;};
+            void update() override;
 
         private:
             std::optional<std::vector<Button>> _buttons;
