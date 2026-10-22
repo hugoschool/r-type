@@ -28,8 +28,8 @@ void fengine::ecs::MovementSystem::update(Registry &manager) {
         if (!pos.has_value())
             continue;
 
-        if (pos.value().pos_x + baseVel < maxLength)
-            pos.value().pos_x += baseVel;
+        // if (pos.value().pos_x + baseVel < maxLength) // enlever les commentaires quand il y aura le handling de la camera avec un camera.incrementworldindex qqpart
+        //     pos.value().pos_x += baseVel;
 
         if (!vel.has_value())
             continue;
