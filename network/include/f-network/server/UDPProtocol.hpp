@@ -17,7 +17,7 @@ namespace fnetwork::server {
             void handleSend(std::shared_ptr<std::string>, const boost::system::error_code &, std::size_t);
             void run() final;
 
-        private:
+        protected:
             udp::socket _socket;
             udp::endpoint _endpoint;
     };
