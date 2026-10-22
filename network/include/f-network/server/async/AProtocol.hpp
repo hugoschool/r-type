@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IProtocol.hpp"
+#include <array>
 #include <boost/asio/io_context.hpp>
 #include <cstdint>
 
