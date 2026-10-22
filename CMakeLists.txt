@@ -29,7 +29,7 @@ CPMAddPackage(
         "SFML_BUILD_EXAMPLES OFF"
 )
 
-add_subdirectory(common)
 add_subdirectory(engine)
+add_subdirectory(common)
 add_subdirectory(client)
 add_subdirectory(server)
