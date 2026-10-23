@@ -2,6 +2,7 @@
 #include "EventKey.hpp"
 #include "EventMouseButton.hpp"
 #include "EventType.hpp"
+#include <utility>
 
 namespace fengine::modules::display {
     class IEvent {
@@ -16,5 +17,8 @@ namespace fengine::modules::display {
 
             virtual EventType getType() = 0;
             virtual void setType(EventType type) = 0;
+
+            virtual std::pair<float, float> getClickCoordinates() = 0;
+            virtual void setClickCoordinates(float x, float y) = 0;
     };
 }

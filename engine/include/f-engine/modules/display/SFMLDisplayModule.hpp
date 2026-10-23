@@ -2,7 +2,7 @@
 
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
-#include "f-engine/modules/display/IDisplayModule.hpp"
+#include "f-engine/modules/display/ADisplayModule.hpp"
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include "f-engine/scene/IScene.hpp"
 #include <SFML/Graphics/Font.hpp>
@@ -14,7 +14,7 @@
 #include <map>
 
 namespace fengine::modules::display {
-    class SFMLDisplayModule : public IDisplayModule {
+    class SFMLDisplayModule : public ADisplayModule {
         public:
             SFMLDisplayModule();
             ~SFMLDisplayModule() override;

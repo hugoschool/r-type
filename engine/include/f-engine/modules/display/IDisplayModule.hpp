@@ -4,6 +4,7 @@
 #include "f-engine/ecs/components/AnimationComponent.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
+#include "f-engine/config/IConfig.hpp"
 #include "f-engine/scene/IScene.hpp"
 #include <memory>
 #include <optional>
@@ -21,5 +22,7 @@ namespace fengine::modules::display {
             virtual void drawScene(scene::IScene &) = 0;
 
             virtual std::optional<std::unique_ptr<IEvent>> pollEvent() = 0;
+
+            virtual void setConfig(std::shared_ptr<config::IConfig>) = 0;
     };
 }
