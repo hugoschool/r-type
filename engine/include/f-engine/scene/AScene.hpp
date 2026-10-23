@@ -1,6 +1,5 @@
 #pragma once
 
-#include "f-engine/modules/display/events/ClickEvent.hpp"
 #include "f-engine/scene/IScene.hpp"
 #include <queue>
 namespace fengine::scene {
@@ -13,8 +12,9 @@ namespace fengine::scene {
 
             Background &getBackground() override;
 
-            void updateButtons(modules::display::ClickEvent &) override;
+            void updateButtons(std::pair<float, float> &) override;
 
+            bool empty() override;
             int pollEvents() override;
 
         protected:

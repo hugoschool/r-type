@@ -18,7 +18,7 @@ namespace fengine::modules::display {
             virtual EventType getType() = 0;
             virtual void setType(EventType type) = 0;
 
-            virtual std::pair<float, float> getClickCoordinates() = 0;
+            virtual std::pair<float, float> &getClickCoordinates() = 0;
             virtual void setClickCoordinates(float x, float y) = 0;
     };
 }

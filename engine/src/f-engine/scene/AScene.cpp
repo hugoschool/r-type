@@ -1,5 +1,4 @@
 #include "f-engine/scene/AScene.hpp"
-#include "f-engine/modules/display/events/ClickEvent.hpp"
 #include "f-engine/scene/SceneObjects.hpp"
 
 fengine::scene::AScene::AScene(std::string bgTexture, bool paralax)
@@ -12,11 +11,9 @@ fengine::scene::AScene::AScene(std::string bgTexture, bool paralax)
 fengine::scene::AScene::~AScene() {
 }
 
-void fengine::scene::AScene::updateButtons(fengine::modules::display::ClickEvent &evt) {
+void fengine::scene::AScene::updateButtons(std::pair<float, float> &coords) {
     if (_buttons.empty())
         return;
-
-    auto coords = evt.getClickCoordinates();
 
     for (auto &[type, button]: _buttons) {
         if (button.isInBounds(coords.first, coords.second)) {
@@ -25,10 +22,11 @@ void fengine::scene::AScene::updateButtons(fengine::modules::display::ClickEvent
     }
 }
 
-int fengine::scene::AScene::pollEvents() {
-    if (_eventQueue.empty())
-        return -1;
+bool fengine::scene::AScene::empty() {
+    return _eventQueue.empty();
+}
 
+int fengine::scene::AScene::pollEvents() {
     int type = _eventQueue.front();
     _eventQueue.pop();
     return type;

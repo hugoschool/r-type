@@ -26,7 +26,7 @@ namespace fengine::modules::display {
             EventType getType() override;
             void setType(EventType type) override;
 
-            std::pair<float, float> getClickCoordinates() override;
+            std::pair<float, float> &getClickCoordinates() override;
             void setClickCoordinates(float x, float y) override;
     };
 }

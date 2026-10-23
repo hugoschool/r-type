@@ -47,6 +47,8 @@ namespace rtype::client {
             void moveEntity(packets::Serialization::deserialize_archive &ar);
             void modifyVelocity(packets::Serialization::deserialize_archive &ar);
 
+            void interpretButtonAction(int);
+
         public:
             Client(std::string host, std::string port);
             ~Client();

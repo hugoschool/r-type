@@ -167,6 +167,12 @@ void rtype::client::Client::loop() {
             if (event.value()->getType() == fengine::modules::display::EventType::KeyPressed) {
                 _inputs.addElement(event.value()->getKey());
             }
+            if (event.value()->getType() == fengine::modules::display::EventType::Click) {
+                _scenes.back()->updateButtons(event.value()->getClickCoordinates());
+            }
+        }
+        while (!_scenes.back()->empty()) {
+            interpretButtonAction(_scenes.back()->pollEvents());
         }
         _scenes.back()->update();
     }
@@ -235,4 +241,9 @@ void rtype::client::Client::modifyVelocity(rtype::packets::Serialization::deseri
         oldVel->vel_x = payload.velocity.x;
         oldVel->vel_y = payload.velocity.y;
     } catch (std::exception &) {}
+}
+
+void rtype::client::Client::interpretButtonAction(int button) {
+    static_cast<void>(button);
+    return;
 }
