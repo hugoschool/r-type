@@ -81,8 +81,6 @@ rtype::client::Client::Client(std::string host, std::string port)
     _pressqueue = std::queue<fengine::modules::display::EventKey>();
     _releasequeue = std::queue<fengine::modules::display::EventKey>();
 
-    _registery.systemManager.addSystem<fengine::ecs::MovementSystem>(_camera);
-    _registery.systemManager.addSystem<fengine::ecs::BoundarySystem>();
     _registery.systemManager.addSystem<fengine::ecs::ControlSystem>(_pressqueue, _releasequeue);
     _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule, _camera);
 }
