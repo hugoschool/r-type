@@ -10,9 +10,9 @@ fengine::modules::display::SFMLWindow::SFMLWindow() : font(), _videoMode({WINDOW
         _window.setMinimumSize(_window.getSize());
     } catch (std::exception &) { throw SfmlException("render window creation"); }
     _window.setFramerateLimit(60);
-    // if (font.openFromFile("textures/fonts/" FONT) == false) { // ajouter une font
-    //     throw SfmlException("font creation");
-    // }
+    if (font.openFromFile("./assets/fonts/PressStart2P.ttf") == false) {
+        throw SfmlException("font creation");
+    }
 }
 
 fengine::modules::display::SFMLWindow::~SFMLWindow() {
