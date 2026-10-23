@@ -204,3 +204,10 @@ void fengine::modules::display::SFMLDisplayModule::animateEntity(ecs::AnimationC
     ecs::DrawableComponent &drawable) {
     drawable.shape->setTextureRect(anim.offset_x, anim.offset_y, anim.length, anim.height);
 }
+
+void fengine::modules::display::SFMLDisplayModule::verifyConfig() {
+    if (_config->hasChanged()) {
+        _window.changeConfig(_config);
+        _config->resetChange();
+    }
+}

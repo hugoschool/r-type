@@ -44,9 +44,9 @@ rtype::client::Client::Client(std::string host, std::string port)
       _readThread(), _exit(false), _inputs(1024), _protocol(_inputs, host, port), _clientConfig() {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
-    _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));
-    _scenes.push_back(std::make_shared<fengine::scene::ParamScene>("./assets/test.png", false));
-    _scenes.push_back(std::make_shared<fengine::scene::GameScene>(3.0, "./assets/test.png", true));
+    _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./engine/EL_PRIMO_COURSE.png", false));
+    _scenes.push_back(std::make_shared<fengine::scene::ParamScene>("./engine/EL_PRIMO_COURSE.png", false));
+    _scenes.push_back(std::make_shared<fengine::scene::GameScene>(3.0, "./engine/EL_PRIMO_COURSE.png", true));
     _currentScene = _scenes.front();
     _displayModule->setConfig(_clientConfig);
     _registery.componentManager.registerComponent<fengine::ecs::PositionComponent>();
@@ -171,6 +171,7 @@ void rtype::client::Client::loop() {
         }
         while (!_currentScene->empty()) {
             interpretButtonAction(_currentScene->pollEvents());
+            _displayModule->verifyConfig();
         }
         _currentScene->update();
     }

@@ -24,5 +24,7 @@ namespace fengine::modules::display {
             virtual std::optional<std::unique_ptr<IEvent>> pollEvent() = 0;
 
             virtual void setConfig(std::shared_ptr<config::IConfig>) = 0;
+
+            virtual void verifyConfig() = 0;
     };
 }

@@ -28,6 +28,8 @@ namespace fengine::modules::display {
 
             std::optional<std::unique_ptr<IEvent>> pollEvent() override;
 
+            void verifyConfig() override;
+
         private:
             EventKey interpretKeyCode(sf::Keyboard::Key code) const;
 
