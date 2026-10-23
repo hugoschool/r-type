@@ -3,6 +3,7 @@
 #include "CircularBuffer.hpp"
 #include "ClientProtocol.hpp"
 #include "f-engine/camera/Camera.hpp"
+#include "f-engine/config/IConfig.hpp"
 #include "f-engine/ecs/Entity.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
@@ -33,7 +34,8 @@ namespace rtype::client {
             bool _exit;
             rtype::client::CircularBuffer<fengine::modules::display::EventKey> _inputs;
             std::string _uuid;
-            ClientProtocol _protocol;
+            std::unique_ptr<IProtocol> _protocol;
+            std::shared_ptr<fengine::config::IConfig> _clientConfig;
 
             void loop();
             void sendLoop();

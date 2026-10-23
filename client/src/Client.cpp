@@ -41,8 +41,9 @@ rtype::client::Client::Client(std::string host, std::string port)
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(),
       _camera(0.0, 100000), _scene(3.0, "./assets/test.png", true),
       _entity(_registery.entityManager.spawnEntity()), _writeThread(), _readThread(), _exit(false), _inputs(1024),
-      _protocol(_inputs, host, port) {
+      _protocol(std::make_unique<UDPProtocol>(_inputs)), _clientConfig() {
 
+    _displayModule->setConfig(_clientConfig);
     _registery.componentManager.registerComponent<fengine::ecs::PositionComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::AnimationComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::DrawableComponent>();
