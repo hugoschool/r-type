@@ -34,7 +34,7 @@ namespace rtype::client {
             bool _exit;
             rtype::client::CircularBuffer<fengine::modules::display::EventKey> _inputs;
             std::string _uuid;
-            std::unique_ptr<IProtocol> _protocol;
+            ClientProtocol _protocol;
             std::shared_ptr<fengine::config::IConfig> _clientConfig;
 
             void loop();

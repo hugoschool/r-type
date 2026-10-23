@@ -43,7 +43,7 @@ rtype::client::Client::Client(std::string host, std::string port)
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(),
       _camera(0.0, 100000), _scenes(),
       _entity(_registery.entityManager.spawnEntity()), _writeThread(), _readThread(), _exit(false), _inputs(1024),
-      _protocol(std::make_unique<UDPProtocol>(_inputs)), _clientConfig() {
+      _protocol(_inputs, host, port), _clientConfig() {
 
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", true));
     _scenes.push_back(std::make_shared<fengine::scene::ParamScene>("./assets/test.png", true));
