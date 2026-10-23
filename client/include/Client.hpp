@@ -28,6 +28,7 @@ namespace rtype::client {
             std::queue<fengine::modules::display::EventKey> _pressqueue;
             std::queue<fengine::modules::display::EventKey> _releasequeue;
             std::vector<std::shared_ptr<fengine::scene::IScene>> _scenes;
+            std::shared_ptr<fengine::scene::IScene> _currentScene;
             fengine::ecs::Entity _entity;
             std::thread _writeThread;
             std::thread _readThread;
