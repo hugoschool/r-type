@@ -63,7 +63,7 @@ fengine::modules::display::SFMLDisplayModule::pollEvent() {
                 default:
                     return std::nullopt;
             }
-            return std::make_unique<ClickEvent>(mouseButton);
+            return std::make_unique<ClickEvent>(mouseButton, mouse->position.x, mouse->position.y);
         }
     }
     return std::nullopt;
@@ -111,11 +111,11 @@ fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule
     }
 }
 
-void fengine::modules::display::SFMLDisplayModule::drawScene(fengine::scene::IScene &scene) {
-    std::optional<std::vector<scene::Button>> &buttons = scene.getButtons();
+void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fengine::scene::IScene> scene) {
+    std::map<int, scene::Button> &buttons = scene->getButtons();
     scene::Background &background =
         scene
-            .getBackground();// a voir comment definir cela, pour l'instant surement une shape rectangle de la taille de la window + un offset handle dans la scene elle meme
+            ->getBackground();// a voir comment definir cela, pour l'instant surement une shape rectangle de la taille de la window + un offset handle dans la scene elle meme
 
     // background (a changer aussi)
     sf::RectangleShape bg1 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
@@ -136,9 +136,7 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(fengine::scene::ISc
     }
 
     // boutons (a changer)
-    if (!buttons.has_value())
-        return;
-    for (auto &button : buttons.value()) {
+    for (auto &[type, button] : buttons) {
         sf::RectangleShape rect = sf::RectangleShape(sf::Vector2f(button.length, button.height));
         rect.setPosition(sf::Vector2f(button.pos_x, button.pos_y));
 
@@ -205,4 +203,11 @@ void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::Posi
 void fengine::modules::display::SFMLDisplayModule::animateEntity(ecs::AnimationComponent &anim,
     ecs::DrawableComponent &drawable) {
     drawable.shape->setTextureRect(anim.offset_x, anim.offset_y, anim.length, anim.height);
+}
+
+void fengine::modules::display::SFMLDisplayModule::verifyConfig() {
+    if (_config->hasChanged()) {
+        _window.changeConfig(_config);
+        _config->resetChange();
+    }
 }

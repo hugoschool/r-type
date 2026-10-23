@@ -11,10 +11,8 @@
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
-#include "f-engine/ecs/systems/BoundarySystem.hpp"
 #include "f-engine/ecs/systems/ControlSystem.hpp"
 #include "f-engine/ecs/systems/DisplaySystem.hpp"
-#include "f-engine/ecs/systems/MoveSystem.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventType.hpp"
@@ -23,10 +21,13 @@
 #include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
+#include "r-type/config/ClientConfig.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Payload.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include "r-type/scene/GameScene.hpp"
+#include "r-type/scene/MenuScene.hpp"
+#include "r-type/scene/ParamScene.hpp"
 #include <exception>
 #include <iostream>
 #include <memory>
@@ -39,10 +40,15 @@
 
 rtype::client::Client::Client(std::string host, std::string port)
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(),
-      _camera(0.0, 100000), _scene(3.0, std::nullopt, "./assets/test.png", true),
-      _entity(_registery.entityManager.spawnEntity()), _writeThread(), _readThread(), _exit(false), _inputs(1024),
-      _protocol(_inputs, host, port) {
+      _camera(0.0, 100000), _scenes(), _currentScene(), _entity(_registery.entityManager.spawnEntity()), _writeThread(),
+      _readThread(), _exit(false), _inputs(1024), _protocol(_inputs, host, port), _clientConfig() {
 
+    _clientConfig = std::make_shared<fengine::config::ClientConfig>();
+    _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));
+    _scenes.push_back(std::make_shared<fengine::scene::ParamScene>("./assets/test.png", false));
+    _scenes.push_back(std::make_shared<fengine::scene::GameScene>(3.0, "./assets/test.png", true));
+    _currentScene = _scenes.front();
+    _displayModule->setConfig(_clientConfig);
     _registery.componentManager.registerComponent<fengine::ecs::PositionComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::AnimationComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::DrawableComponent>();
@@ -75,8 +81,6 @@ rtype::client::Client::Client(std::string host, std::string port)
     _pressqueue = std::queue<fengine::modules::display::EventKey>();
     _releasequeue = std::queue<fengine::modules::display::EventKey>();
 
-    _registery.systemManager.addSystem<fengine::ecs::MovementSystem>(_camera);
-    _registery.systemManager.addSystem<fengine::ecs::BoundarySystem>();
     _registery.systemManager.addSystem<fengine::ecs::ControlSystem>(_pressqueue, _releasequeue);
     _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule, _camera);
 }
@@ -146,10 +150,10 @@ void rtype::client::Client::interpretMsg(std::string msg) {
 
 void rtype::client::Client::loop() {
 
-    while (true) {
+    while (!_exit) {
         _displayModule->clear();
 
-        _displayModule->drawScene(_scene);
+        _displayModule->drawScene(_currentScene);
         _registery.systemManager.update(_registery);
 
         std::optional<std::unique_ptr<fengine::modules::display::IEvent>> event = _displayModule->pollEvent();
@@ -161,8 +165,15 @@ void rtype::client::Client::loop() {
             if (event.value()->getType() == fengine::modules::display::EventType::KeyPressed) {
                 _inputs.addElement(event.value()->getKey());
             }
+            if (event.value()->getType() == fengine::modules::display::EventType::Click) {
+                (_currentScene)->updateButtons(event.value()->getClickCoordinates());
+            }
         }
-        _scene.update();
+        while (!_currentScene->empty()) {
+            interpretButtonAction(_currentScene->pollEvents());
+            _displayModule->verifyConfig();
+        }
+        _currentScene->update();
     }
 }
 
@@ -229,4 +240,31 @@ void rtype::client::Client::modifyVelocity(rtype::packets::Serialization::deseri
         oldVel->vel_x = payload.velocity.x;
         oldVel->vel_y = payload.velocity.y;
     } catch (std::exception &) {}
+}
+
+void rtype::client::Client::interpretButtonAction(int button) {
+    switch (button) {
+        case static_cast<int>(fengine::scene::MenuSceneButtons::PLAY):
+            _currentScene = _scenes.back();
+            break;
+        case static_cast<int>(fengine::scene::MenuSceneButtons::PARAMS):
+            _currentScene = *(_scenes.begin() + 1);
+            break;
+        case static_cast<int>(fengine::scene::MenuSceneButtons::QUIT):
+            _exit = true;
+            break;
+        case static_cast<int>(fengine::scene::ParamSceneButtons::MENU):
+            _currentScene = _scenes.front();
+            break;
+        case static_cast<int>(fengine::scene::ParamSceneButtons::COLORBLIND_1):
+            _clientConfig->set("colorblind", std::pair<bool, int>(true, 1));
+            break;
+        case static_cast<int>(fengine::scene::ParamSceneButtons::COLORBLIND_2):
+            _clientConfig->set("colorblind", std::pair<bool, int>(true, 2));
+            break;
+        case static_cast<int>(fengine::scene::ParamSceneButtons::COLORBLIND_3):
+            _clientConfig->set("colorblind", std::pair<bool, int>(true, 3));
+            break;
+    }
+    return;
 }

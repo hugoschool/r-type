@@ -2,7 +2,7 @@
 
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
-#include "f-engine/modules/display/IDisplayModule.hpp"
+#include "f-engine/modules/display/ADisplayModule.hpp"
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include "f-engine/scene/IScene.hpp"
 #include <SFML/Graphics/Font.hpp>
@@ -14,7 +14,7 @@
 #include <map>
 
 namespace fengine::modules::display {
-    class SFMLDisplayModule : public IDisplayModule {
+    class SFMLDisplayModule : public ADisplayModule {
         public:
             SFMLDisplayModule();
             ~SFMLDisplayModule() override;
@@ -24,9 +24,11 @@ namespace fengine::modules::display {
 
             void animateEntity(ecs::AnimationComponent &, ecs::DrawableComponent &) override;
 
-            void drawScene(scene::IScene &) override;
+            void drawScene(std::shared_ptr<scene::IScene>) override;
 
             std::optional<std::unique_ptr<IEvent>> pollEvent() override;
+
+            void verifyConfig() override;
 
         private:
             EventKey interpretKeyCode(sf::Keyboard::Key code) const;

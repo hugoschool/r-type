@@ -24,3 +24,11 @@ fengine::modules::display::EventType fengine::modules::display::AEvent::getType(
 void fengine::modules::display::AEvent::setType(EventType type) {
     _type = type;
 };
+
+std::pair<float, float> &fengine::modules::display::AEvent::getClickCoordinates() {
+    return _clickCoords;
+};
+void fengine::modules::display::AEvent::setClickCoordinates(float x, float y) {
+    _clickCoords.first = x;
+    _clickCoords.second = y;
+};
