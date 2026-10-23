@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "f-engine/ecs/components/CollisionComponent.hpp"
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/BehaviourComponent.hpp"
@@ -50,6 +51,7 @@ rtype::server::Server::Server(std::uint32_t port)
     _world._registry.componentManager.registerComponent<fengine::ecs::DefenseComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::BehaviourComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::ControllableComponent>();
+    _world._registry.componentManager.registerComponent<fengine::ecs::CollisionComponent>();
 
     _world._registry.systemManager.addSystem<fengine::ecs::MovementSystem>(_world._camera);
     _world._registry.systemManager.addSystem<fengine::ecs::BoundarySystem>();
