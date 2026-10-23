@@ -5,7 +5,7 @@
 namespace fengine::config {
     class ClientConfig: public AConfig {
         public:
-            ClientConfig();
-            ~ClientConfig() override;
+            ClientConfig() {};
+            ~ClientConfig() override {};
     };
 }
