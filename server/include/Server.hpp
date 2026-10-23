@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ClientHandler.hpp"
+#include "ServerProtocol.hpp"
 #include "SubscriberHandler.hpp"
 #include "TickHandler.hpp"
-#include "protocols/UDPProtocol.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/signal_set.hpp>
 #include <boost/asio/thread_pool.hpp>
@@ -42,7 +42,7 @@ namespace rtype::server {
             TickHandler _tickHandler;
             ClientHandler _clientHandler;
 
-            UDPProtocol _udp;
+            ServerProtocol _protocol;
 
             std::chrono::steady_clock::time_point _spawnClock;
             short _enemyCounter;

@@ -1,28 +1,24 @@
 #pragma once
 
-#include "protocols/AProtocol.hpp"
-#include <boost/asio/io_context.hpp>
+#include "AProtocol.hpp"
 #include <boost/asio/ip/udp.hpp>
-#include <cstdint>
 
-namespace rtype::server {
+namespace fnetwork::server::async {
     class UDPProtocol : public AProtocol {
         public:
             using udp = boost::asio::ip::udp;
 
-            UDPProtocol(boost::asio::io_context &io_context, std::uint16_t port, SafeMessageQueue &SafeMessageQueue,
-                ClientHandler &clientHandler);
+            UDPProtocol(boost::asio::io_context &io_context, std::uint16_t port);
             ~UDPProtocol() override = default;
 
             void startReceive();
-            void handleReceive(const boost::system::error_code &error, std::size_t);
+            virtual void handleReceive(const boost::system::error_code &error, std::size_t) = 0;
+
             void handleSend(std::shared_ptr<std::string>, const boost::system::error_code &, std::size_t);
             void run() final;
 
-        private:
+        protected:
             udp::socket _socket;
             udp::endpoint _endpoint;
-
-            std::array<char, 1024> _buffer;
     };
 }

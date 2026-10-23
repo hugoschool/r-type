@@ -12,7 +12,7 @@ fi
 echo "Processing client"
 clang-tidy $CLIENT_FILES -p $BASE_DIR/../build --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1
 
-echo "Processing client"
+echo "Processing common"
 clang-tidy $COMMON_FILES -p $BASE_DIR/../build --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1
 
 echo "Processing engine"
@@ -20,3 +20,6 @@ clang-tidy $ENGINE_FILES -p $BASE_DIR/../build --exclude-header-filter=".*build.
 
 echo "Processing server"
 clang-tidy $SERVER_FILES -p $BASE_DIR/../build --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1
+
+echo "Processing network"
+clang-tidy $NETWORK_FILES -p $BASE_DIR/../build --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1

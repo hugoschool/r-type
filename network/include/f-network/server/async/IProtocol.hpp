@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rtype::server {
+namespace fnetwork::server::async {
     class IProtocol {
         public:
             virtual ~IProtocol() = default;

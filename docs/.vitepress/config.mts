@@ -60,6 +60,12 @@ export default defineConfig({
                     { text: "Overview", link: "/server/overview" },
                     { text: "Architecture", link: "/server/architecture" },
                 ]
+            },
+            {
+                text: "Network",
+                items: [
+                    { text: "Usage", link: "/network/usage" },
+                ]
             }
         ],
 
