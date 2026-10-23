@@ -63,7 +63,7 @@ fengine::modules::display::SFMLDisplayModule::pollEvent() {
                 default:
                     return std::nullopt;
             }
-            return std::make_unique<ClickEvent>(mouseButton);
+            return std::make_unique<ClickEvent>(mouseButton, mouse->position.x, mouse->position.y);
         }
     }
     return std::nullopt;
@@ -112,7 +112,7 @@ fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule
 }
 
 void fengine::modules::display::SFMLDisplayModule::drawScene(fengine::scene::IScene &scene) {
-    std::optional<std::vector<scene::Button>> &buttons = scene.getButtons();
+   std::map<int, scene::Button> &buttons = scene.getButtons();
     scene::Background &background =
         scene
             .getBackground();// a voir comment definir cela, pour l'instant surement une shape rectangle de la taille de la window + un offset handle dans la scene elle meme
@@ -136,9 +136,7 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(fengine::scene::ISc
     }
 
     // boutons (a changer)
-    if (!buttons.has_value())
-        return;
-    for (auto &button : buttons.value()) {
+    for (auto &[type, button] : buttons) {
         sf::RectangleShape rect = sf::RectangleShape(sf::Vector2f(button.length, button.height));
         rect.setPosition(sf::Vector2f(button.pos_x, button.pos_y));
 

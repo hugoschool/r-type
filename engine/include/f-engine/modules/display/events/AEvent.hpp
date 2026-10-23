@@ -11,6 +11,7 @@ namespace fengine::modules::display {
             EventKey _key;
             EventType _type;
             EventMouseButton _mouseButton;
+            std::pair<float, float> _clickCoords;
 
         public:
             AEvent(EventType type);
@@ -24,5 +25,8 @@ namespace fengine::modules::display {
 
             EventType getType() override;
             void setType(EventType type) override;
+
+            std::pair<float, float> getClickCoordinates() override;
+            void setClickCoordinates(float x, float y) override;
     };
 }
