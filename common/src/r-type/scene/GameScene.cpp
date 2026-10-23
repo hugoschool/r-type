@@ -2,9 +2,9 @@
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include "f-engine/scene/AScene.hpp"
 
-fengine::scene::GameScene::GameScene(float cameraVelocity, std::optional<std::vector<Button>> buttons,
+fengine::scene::GameScene::GameScene(float cameraVelocity,
     std::string bgTexture, bool paralax)
-    : fengine::scene::AScene(buttons, bgTexture, paralax), _cameraVelocity(cameraVelocity) {
+    : fengine::scene::AScene(bgTexture, paralax), _cameraVelocity(cameraVelocity) {
     _background.offset = 0;
     _background.texture = bgTexture;
     _background.paralax = paralax;
