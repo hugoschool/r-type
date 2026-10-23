@@ -2,7 +2,7 @@
 #include <exception>
 #include <optional>
 
-fengine::config::AConfig::AConfig(): _configMap(), _changed(false) {
+fengine::config::AConfig::AConfig() : _configMap(), _changed(false) {
 }
 
 fengine::config::AConfig::~AConfig() {

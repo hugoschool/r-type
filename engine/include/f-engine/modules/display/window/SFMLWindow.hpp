@@ -4,8 +4,8 @@
 #include "f-engine/modules/display/shapes/IShape.hpp"
 #include "f-engine/modules/display/window/IWindow.hpp"
 #include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <memory>
 
