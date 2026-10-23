@@ -4,7 +4,7 @@
 #include <map>
 
 namespace fengine::config {
-    class AConfig: public IConfig {
+    class AConfig : public IConfig {
         public:
             AConfig();
             ~AConfig() override;

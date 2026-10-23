@@ -5,8 +5,7 @@
 namespace fengine::scene {
     class GameScene : public AScene {
         public:
-            GameScene(float cameraVelocity, std::string bgTexture,
-                bool paralax);
+            GameScene(float cameraVelocity, std::string bgTexture, bool paralax);
             ~GameScene() override;
 
             void update() override;

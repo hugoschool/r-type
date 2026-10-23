@@ -5,12 +5,13 @@
 #include <memory>
 
 namespace fengine::modules::display {
-    class ADisplayModule: public IDisplayModule {
+    class ADisplayModule : public IDisplayModule {
         public:
             ADisplayModule();
             ~ADisplayModule() override;
 
             void setConfig(std::shared_ptr<config::IConfig>) override;
+
         protected:
             std::shared_ptr<config::IConfig> _config;
     };

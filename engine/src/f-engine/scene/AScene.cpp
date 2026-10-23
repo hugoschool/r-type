@@ -1,8 +1,7 @@
 #include "f-engine/scene/AScene.hpp"
 #include "f-engine/scene/SceneObjects.hpp"
 
-fengine::scene::AScene::AScene(std::string bgTexture, bool paralax)
-    : _eventQueue(), _buttons(), _background() {
+fengine::scene::AScene::AScene(std::string bgTexture, bool paralax) : _eventQueue(), _buttons(), _background() {
     _background.offset = 0;
     _background.texture = bgTexture;
     _background.paralax = paralax;
@@ -15,7 +14,7 @@ void fengine::scene::AScene::updateButtons(std::pair<float, float> &coords) {
     if (_buttons.empty())
         return;
 
-    for (auto &[type, button]: _buttons) {
+    for (auto &[type, button] : _buttons) {
         if (button.isInBounds(coords.first, coords.second)) {
             _eventQueue.push(type);
         }

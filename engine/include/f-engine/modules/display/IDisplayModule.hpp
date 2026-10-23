@@ -1,10 +1,10 @@
 #pragma once
 
 #include "events/IEvent.hpp"
+#include "f-engine/config/IConfig.hpp"
 #include "f-engine/ecs/components/AnimationComponent.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
-#include "f-engine/config/IConfig.hpp"
 #include "f-engine/scene/IScene.hpp"
 #include <memory>
 #include <optional>
