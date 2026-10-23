@@ -5,10 +5,10 @@
 namespace fengine::scene {
 
     enum class ParamSceneButtons {
-        MENU,
-        COLORBLIND_1,
-        COLORBLIND_2,
-        COLORBLIND_3,
+        MENU = 3,
+        COLORBLIND_1 = 4,
+        COLORBLIND_2 = 5,
+        COLORBLIND_3 = 6,
     };
 
     class ParamScene : public AScene {
