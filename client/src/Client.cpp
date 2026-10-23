@@ -155,7 +155,7 @@ void rtype::client::Client::loop() {
     while (true) {
         _displayModule->clear();
 
-        _displayModule->drawScene(std::move(_scenes.back()));
+        _displayModule->drawScene(_scenes.back());
         _registery.systemManager.update(_registery);
 
         std::optional<std::unique_ptr<fengine::modules::display::IEvent>> event = _displayModule->pollEvent();
