@@ -27,6 +27,8 @@
 #include "r-type/packets/Payload.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include "r-type/scene/GameScene.hpp"
+#include "r-type/scene/MenuScene.hpp"
+#include "r-type/scene/ParamScene.hpp"
 #include <exception>
 #include <iostream>
 #include <memory>
@@ -39,10 +41,13 @@
 
 rtype::client::Client::Client(std::string host, std::string port)
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(),
-      _camera(0.0, 100000), _scene(3.0, "./assets/test.png", true),
+      _camera(0.0, 100000), _scenes(),
       _entity(_registery.entityManager.spawnEntity()), _writeThread(), _readThread(), _exit(false), _inputs(1024),
       _protocol(std::make_unique<UDPProtocol>(_inputs)), _clientConfig() {
 
+    _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", true));
+    _scenes.push_back(std::make_shared<fengine::scene::ParamScene>("./assets/test.png", true));
+    _scenes.push_back(std::make_shared<fengine::scene::GameScene>(3.0, "./assets/test.png", true));
     _displayModule->setConfig(_clientConfig);
     _registery.componentManager.registerComponent<fengine::ecs::PositionComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::AnimationComponent>();
@@ -150,7 +155,7 @@ void rtype::client::Client::loop() {
     while (true) {
         _displayModule->clear();
 
-        _displayModule->drawScene(_scene);
+        _displayModule->drawScene(std::move(_scenes.back()));
         _registery.systemManager.update(_registery);
 
         std::optional<std::unique_ptr<fengine::modules::display::IEvent>> event = _displayModule->pollEvent();
@@ -163,7 +168,7 @@ void rtype::client::Client::loop() {
                 _inputs.addElement(event.value()->getKey());
             }
         }
-        _scene.update();
+        _scenes.back()->update();
     }
 }
 

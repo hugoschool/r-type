@@ -8,8 +8,8 @@
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
+#include "f-engine/scene/IScene.hpp"
 #include "r-type/packets/Serialization.hpp"
-#include "r-type/scene/GameScene.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
 #include <memory>
@@ -27,7 +27,7 @@ namespace rtype::client {
             fengine::camera::Camera _camera;
             std::queue<fengine::modules::display::EventKey> _pressqueue;
             std::queue<fengine::modules::display::EventKey> _releasequeue;
-            fengine::scene::GameScene _scene;
+            std::vector<std::shared_ptr<fengine::scene::IScene>> _scenes;
             fengine::ecs::Entity _entity;
             std::thread _writeThread;
             std::thread _readThread;

@@ -19,7 +19,7 @@ namespace fengine::modules::display {
 
             virtual void animateEntity(ecs::AnimationComponent &, ecs::DrawableComponent &) = 0;
 
-            virtual void drawScene(scene::IScene &) = 0;
+            virtual void drawScene(std::shared_ptr<scene::IScene>) = 0;
 
             virtual std::optional<std::unique_ptr<IEvent>> pollEvent() = 0;
 

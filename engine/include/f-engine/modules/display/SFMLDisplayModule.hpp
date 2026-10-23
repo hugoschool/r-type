@@ -24,7 +24,7 @@ namespace fengine::modules::display {
 
             void animateEntity(ecs::AnimationComponent &, ecs::DrawableComponent &) override;
 
-            void drawScene(scene::IScene &) override;
+            void drawScene(std::shared_ptr<scene::IScene>) override;
 
             std::optional<std::unique_ptr<IEvent>> pollEvent() override;
 
