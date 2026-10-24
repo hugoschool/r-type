@@ -3,6 +3,7 @@
 #include "SafeQueue.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include <chrono>
+#include <cstddef>
 #include <map>
 #include <r-type/packets/Packet.hpp>
 #include <string>
@@ -55,7 +56,7 @@ namespace rtype::server {
 
     class ClientHandler {
         public:
-            explicit ClientHandler(fengine::ecs::Registry &registry);
+            explicit ClientHandler(fengine::ecs::Registry &registry, std::size_t &tick);
             ~ClientHandler() = default;
 
             static std::string generateUuid();
@@ -87,5 +88,7 @@ namespace rtype::server {
             fengine::ecs::Registry &_registry;
 
             ClientMessageQueueHandler _messageQueueHandler;
-    };
+
+            std::size_t &_tick;
+        };
 }

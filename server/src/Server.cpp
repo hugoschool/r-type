@@ -1,11 +1,13 @@
 #include "Server.hpp"
 #include "f-engine/ecs/components/CollisionComponent.hpp"
+#include "TickHandler.hpp"
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/BehaviourComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
 #include "r-type/systems/BehaviouralSystem.hpp"
 #include <chrono>
+#include <cstddef>
 #include <cstdint>
 #include <f-engine/ecs/Entity.hpp>
 #include <f-engine/ecs/components/BoundaryComponent.hpp>
@@ -33,7 +35,7 @@ rtype::server::Server::Server(std::uint32_t port)
       // Engine
       _subscriberHandler(_clientHandler), _world(1.0, 10000),
       // Handlers
-      _tickHandler(), _clientHandler(_world._registry),
+      _tickHandler(), _clientHandler(_world._registry, _tickHandler.getTickReference()),
       // Protocols
       _protocol(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler),
       // Enemy generation
@@ -64,7 +66,7 @@ rtype::server::Server::Server(std::uint32_t port)
 rtype::server::Server::~Server() {
 }
 
-void rtype::server::Server::newEntityPacket(std::size_t entityId, std::string uuid) {
+void rtype::server::Server::newEntityPacket(std::size_t entityId, std::size_t tick, std::string uuid) {
     auto &velocityComponents = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>();
     auto &positionComponents = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>();
     // auto &boundaryComponents =
@@ -73,12 +75,14 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::string uu
     // auto &defenseComponents = _world._registry.componentManager.getComponents<fengine::ecs::DefenseComponent>();
 
     // Send a new entity
+    std::cout << "new entity packet tick " << tick << std::endl;
     {
         packets::EntitySpawn payload = {.entityId = entityId};
 
         packets::PacketHeader newHeader = {
             .type = packets::PacketType::EntitySpawn,
             .size = sizeof(payload),
+            .tick = tick,
             .playerUuid = "",
         };
         newHeader.setUuid(uuid);
@@ -104,6 +108,7 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::string uu
             packets::PacketHeader newHeader = {
                 .type = packets::PacketType::EntityVelocityChange,
                 .size = sizeof(payload),
+                .tick = tick,
                 .playerUuid = "",
             };
             newHeader.setUuid(uuid);
@@ -128,6 +133,7 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::string uu
             packets::PacketHeader newHeader = {
                 .type = packets::PacketType::EntityVelocityChange,
                 .size = sizeof(payload),
+                .tick = tick,
                 .playerUuid = "",
             };
             newHeader.setUuid(uuid);
@@ -142,12 +148,13 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::string uu
     }
 }
 
-void rtype::server::Server::userLoginPacket(std::string uuid) {
+void rtype::server::Server::userLoginPacket(std::size_t tick, std::string uuid) {
     const std::vector<std::optional<fengine::ecs::Entity>> &entities = _world._registry.entityManager.getEntities();
 
+    std::cout << "user login packet tick " << tick << std::endl;
     for (auto &entity : entities) {
         const std::size_t entityId = entity->getId();
-        newEntityPacket(entityId, uuid);
+        newEntityPacket(entityId, tick, uuid);
     }
 }
 
@@ -160,7 +167,7 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
             break;
         }
         case packets::PacketType::LoginRequest: {
-            userLoginPacket(header.playerUuid);
+            userLoginPacket(_tickHandler.getTick(), header.playerUuid);
             break;
         }
         // TODO: all types
@@ -215,7 +222,7 @@ void rtype::server::Server::generateEnemies() {
     auto &clients = _clientHandler.getClients();
     const std::size_t entityId = entity.getId();
     for (auto &client : clients) {
-        newEntityPacket(entityId, client.first);
+        newEntityPacket(entityId, _tickHandler.getTick(), client.first);
     }
 
     _spawnClock = std::chrono::steady_clock::now();
@@ -236,7 +243,7 @@ void rtype::server::Server::checkResend() {
     for (auto &entity : entities) {
         const std::size_t entityId = entity->getId();
         for (auto &client : clients) {
-            newEntityPacket(entityId, client.first);
+            newEntityPacket(entityId, _tickHandler.getTick(), client.first);
         }
     }
 }

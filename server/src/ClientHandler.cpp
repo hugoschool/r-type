@@ -6,6 +6,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <chrono>
+#include <cstddef>
 #include <cstring>
 #include <f-engine/ecs/components/ControllableComponent.hpp>
 #include <f-engine/ecs/components/PositionComponent.hpp>
@@ -63,13 +64,13 @@ void rtype::server::ClientMessageQueueHandler::sendToAllClients(std::string cont
     }
 }
 
-rtype::server::ClientHandler::ClientHandler(fengine::ecs::Registry &registry)
+rtype::server::ClientHandler::ClientHandler(fengine::ecs::Registry &registry, std::size_t &tick)
     : _maxStatusSecondsMap({
           {ClientStatus::Disconnected, std::chrono::seconds(MAX_DISCONNECTED_SECONDS)},
           {ClientStatus::Connecting, std::chrono::seconds(MAX_CONNECTING_SECONDS)},
           {ClientStatus::Connected, std::chrono::seconds(MAX_CONNECTED_SECONDS)},
       }),
-      _clients(), _uuids(), _registry(registry) {
+      _clients(), _uuids(), _registry(registry), _tick(tick) {
     for (std::size_t i = 0; i < MAX_PLAYERS; i++) {
         _uuids.push(generateUuid());
     }
@@ -115,6 +116,8 @@ std::string rtype::server::ClientHandler::newClient() {
     packets::PacketHeader header = {
         .type = packets::PacketType::LoginAnswer,
         .size = sizeof(payload),
+        // .tick = _tick,
+        .tick = 20,
         .playerUuid = "",
     };
     header.setUuid(uuid);
