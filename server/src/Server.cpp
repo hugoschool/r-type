@@ -131,7 +131,7 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::size_t ti
             };
 
             packets::PacketHeader newHeader = {
-                .type = packets::PacketType::EntityVelocityChange,
+                .type = packets::PacketType::EntityMove,
                 .size = sizeof(payload),
                 .tick = tick,
                 .playerUuid = "",
