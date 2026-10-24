@@ -23,9 +23,8 @@ namespace rtype::server {
 
             SafeMessageQueue &getMessageQueue();
 
-            std::size_t getTick();
-
-            std::size_t &getTickReference();
+            std::size_t getTick() const;
+            std::size_t &getTick();
 
         private:
             std::chrono::steady_clock::time_point _clock;
