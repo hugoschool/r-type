@@ -2,6 +2,7 @@
 
 #include "SafeQueue.hpp"
 #include <chrono>
+#include <cstddef>
 #include <cstdint>
 
 namespace rtype::server {
@@ -22,11 +23,17 @@ namespace rtype::server {
 
             SafeMessageQueue &getMessageQueue();
 
+            std::size_t getTick();
+
+            std::size_t &getTickReference();
+
         private:
             std::chrono::steady_clock::time_point _clock;
 
             const std::chrono::milliseconds _delayBetweenTicks;
 
             SafeMessageQueue _messageQueue;
+
+            std::size_t _tick;
     };
 }

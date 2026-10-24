@@ -24,12 +24,14 @@ namespace rtype::packets {
         public:
             PacketType type;
             std::size_t size;
+            std::size_t tick;
             char playerUuid[UUID_SIZE + 1];
 
             template <class Archive>
             void serialize(Archive &ar, const unsigned int) {
                 ar & type;
                 ar & size;
+                ar & tick;
                 ar & playerUuid;
             }
 

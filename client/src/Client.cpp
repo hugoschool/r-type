@@ -30,6 +30,7 @@
 #include "r-type/scene/GameScene.hpp"
 #include "r-type/scene/MenuScene.hpp"
 #include "r-type/scene/ParamScene.hpp"
+#include <cstddef>
 #include <exception>
 #include <iostream>
 #include <memory>
@@ -128,22 +129,29 @@ void rtype::client::Client::interpretMsg(std::string msg) {
         std::stringstream ss(msg);
         packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
         packets::Serialization::deserialize(ar, header);
+        std::cout << header.tick << std::endl;
         switch (header.type) {
             // TODO: All packets
             case rtype::packets::PacketType::Ack:
+                std::cout << "rtype::packets::PacketType::Ack" << std::endl;
                 break;
             case rtype::packets::PacketType::InputPlayer:
+                std::cout << "rtype::packets::PacketType::InputPlayer" << std::endl;
                 break;
             case rtype::packets::PacketType::EntityDied:
+                std::cout << "rtype::packets::PacketType::EntityDied" << std::endl;
                 removeEntity(ar);
                 break;
             case rtype::packets::PacketType::EntitySpawn:
+                std::cout << "rtype::packets::PacketType::EntitySpawn" << std::endl;
                 addEntity(ar);
                 break;
             case rtype::packets::PacketType::EntityMove:
+                std::cout << "rtype::packets::PacketType::EntityMove" << std::endl;
                 moveEntity(ar);
                 break;
             case rtype::packets::PacketType::EntityVelocityChange:
+                std::cout << "rtype::packets::PacketType::EntityVelocityChange" << std::endl;
                 modifyVelocity(ar);
                 break;
             default:
@@ -153,6 +161,9 @@ void rtype::client::Client::interpretMsg(std::string msg) {
 }
 
 void rtype::client::Client::loop() {
+    // at the connection the client will wait a bit before starting the display
+    // it will wait until the _snapshotVector is partially fill
+    // when it is fill it will start display with some ticks of difference
 
     while (!_exit) {
         _displayModule->clear();

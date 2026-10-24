@@ -7,6 +7,7 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/signal_set.hpp>
 #include <boost/asio/thread_pool.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <f-engine/ecs/Registry.hpp>
 #include <f-engine/modules/display/events/EventKey.hpp>
@@ -51,8 +52,8 @@ namespace rtype::server {
 
             void generateEnemies();
 
-            void newEntityPacket(std::size_t entityId, std::string uuid);
-            void userLoginPacket(std::string uuid);
+            void newEntityPacket(std::size_t entityId, std::size_t tick, std::string uuid);
+            void userLoginPacket(std::size_t tick, std::string uuid);
 
             std::chrono::steady_clock::time_point _resendClock;
             void checkResend();
