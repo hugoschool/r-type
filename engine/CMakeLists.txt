@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Project is there to be used as a SOURCE_DIR anchor
-project(freaky-engine LANGUAGES CXX VERSION ${r-type_VERSION})
+set(version 1.0.0)
+project(freaky-engine LANGUAGES CXX VERSION ${version})
 
 file(GLOB_RECURSE src "src/*.cpp")
 add_library(freaky-engine ${src})
