@@ -7,13 +7,14 @@
 #include <f-engine/ecs/systems/BoundarySystem.hpp>
 #include <f-engine/ecs/systems/MoveSystem.hpp>
 #include <functional>
+#include <iostream>
 #include <memory>
 #include <r-type/packets/Packet.hpp>
 #include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 
-rtype::server::SubscriberHandler::SubscriberHandler(rtype::server::ClientHandler &clientHandler)
-    : _clientHandler(clientHandler) {
+rtype::server::SubscriberHandler::SubscriberHandler(rtype::server::ClientHandler &clientHandler, std::size_t &tick)
+    : _clientHandler(clientHandler), _tick(tick) {
     shared_subscriber movement = std::make_shared<fengine::ecs::observer::Subscriber>();
     shared_subscriber boundary = std::make_shared<fengine::ecs::observer::Subscriber>();
 
@@ -70,6 +71,7 @@ void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observe
     packets::PacketHeader header = {
         .type = packets::PacketType::EntityDied,
         .size = sizeof(packets::EntityDied),
+        .tick = _tick,
         .playerUuid = "",
     };
     header.setUuid(DUMMY_UUID);
@@ -96,6 +98,7 @@ void rtype::server::SubscriberHandler::handleVelocityComponent(fengine::ecs::obs
     packets::PacketHeader header = {
         .type = packets::PacketType::EntityVelocityChange,
         .size = sizeof(packets::EntityVelocityChange),
+        .tick = _tick,
         .playerUuid = "",
     };
     header.setUuid(DUMMY_UUID);
@@ -122,6 +125,7 @@ void rtype::server::SubscriberHandler::handlePositionComponent(fengine::ecs::obs
     packets::PacketHeader header = {
         .type = packets::PacketType::EntityMove,
         .size = sizeof(packets::EntityMove),
+        .tick = _tick,
         .playerUuid = "",
     };
     header.setUuid(DUMMY_UUID);

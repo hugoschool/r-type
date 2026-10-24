@@ -90,5 +90,5 @@ namespace rtype::server {
             ClientMessageQueueHandler _messageQueueHandler;
 
             std::size_t &_tick;
-        };
+    };
 }

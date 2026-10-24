@@ -37,11 +37,11 @@ namespace rtype::server {
             bool _stop;
             boost::asio::signal_set _signals;
 
-            SubscriberHandler _subscriberHandler;
             fengine::world::World _world;
 
             TickHandler _tickHandler;
             ClientHandler _clientHandler;
+            SubscriberHandler _subscriberHandler;
 
             ServerProtocol _protocol;
 

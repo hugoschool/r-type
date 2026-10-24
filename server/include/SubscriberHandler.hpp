@@ -9,7 +9,7 @@
 namespace rtype::server {
     class SubscriberHandler {
         public:
-            SubscriberHandler(ClientHandler &clientHandler);
+            SubscriberHandler(ClientHandler &clientHandler, std::size_t &tick);
             ~SubscriberHandler() = default;
 
             void add(fengine::ecs::Registry &registry);
@@ -27,5 +27,7 @@ namespace rtype::server {
             void handlePositionComponent(fengine::ecs::observer::SubscriberContent &content);
             void handleVelocityComponent(fengine::ecs::observer::SubscriberContent &content);
             void handleDeadComponent(fengine::ecs::observer::SubscriberContent &content);
+
+            std::size_t &_tick;
     };
 }

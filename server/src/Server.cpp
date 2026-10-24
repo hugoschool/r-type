@@ -1,6 +1,6 @@
 #include "Server.hpp"
-#include "f-engine/ecs/components/CollisionComponent.hpp"
 #include "TickHandler.hpp"
+#include "f-engine/ecs/components/CollisionComponent.hpp"
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/BehaviourComponent.hpp"
@@ -33,9 +33,10 @@ rtype::server::Server::Server(std::uint32_t port)
       // Signals handling
       _stop(false), _signals(_io_context, SIGINT, SIGTERM),
       // Engine
-      _subscriberHandler(_clientHandler), _world(1.0, 10000),
+      _world(1.0, 10000),
       // Handlers
-      _tickHandler(), _clientHandler(_world._registry, _tickHandler.getTickReference()),
+      _tickHandler(), _clientHandler(_world._registry, _tickHandler.getTick()),
+      _subscriberHandler(_clientHandler, _tickHandler.getTick()),
       // Protocols
       _protocol(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler),
       // Enemy generation
