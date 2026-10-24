@@ -29,8 +29,12 @@ CPMAddPackage(
         "SFML_BUILD_EXAMPLES OFF"
 )
 
-add_subdirectory(network)
-add_subdirectory(engine)
-add_subdirectory(common)
-add_subdirectory(client)
-add_subdirectory(server)
+if (ONLY_BUILD_ENGINE STREQUAL "ON")
+    add_subdirectory(engine)
+else()
+    add_subdirectory(network)
+    add_subdirectory(engine)
+    add_subdirectory(common)
+    add_subdirectory(client)
+    add_subdirectory(server)
+endif()
