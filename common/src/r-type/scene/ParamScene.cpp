@@ -9,9 +9,9 @@ fengine::scene::ParamScene::ParamScene(std::string bgTexture, bool paralax)
     _background.paralax = paralax;
 
     _buttons.insert({static_cast<int>(ParamSceneButtons::MENU), Button(200, 150, WINDOW_X - 250, 100, "MENU")});
-    _buttons.insert({static_cast<int>(ParamSceneButtons::COLORBLIND_1), Button(200, 150, 100, 100, "COLORBLIND 1")});
-    _buttons.insert({static_cast<int>(ParamSceneButtons::COLORBLIND_2), Button(200, 150, 100, 300, "COLORBLIND 2")});
-    _buttons.insert({static_cast<int>(ParamSceneButtons::COLORBLIND_3), Button(200, 150, 100, 500, "COLORBLIND 3")});
+    _buttons.insert({static_cast<int>(ParamSceneButtons::COLORBLIND_1), Button(200, 150, 100, 100, "Protanopia")});
+    _buttons.insert({static_cast<int>(ParamSceneButtons::COLORBLIND_2), Button(200, 150, 100, 300, "Deuteranopia")});
+    _buttons.insert({static_cast<int>(ParamSceneButtons::COLORBLIND_3), Button(200, 150, 100, 500, "Tritanopia")});
 }
 
 fengine::scene::ParamScene::~ParamScene() {
