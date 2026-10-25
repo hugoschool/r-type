@@ -5,6 +5,7 @@
 #include <chrono>
 #include <map>
 #include <r-type/packets/Packet.hpp>
+#include <set>
 #include <string>
 #include <unordered_map>
 
@@ -45,11 +46,14 @@ namespace rtype::server {
             void addMessage(std::string uuid, std::string content);
             std::string popMessage(std::string uuid);
             bool isClientEmpty(std::string uuid);
+            void disconnectClient(std::string uuid);
+
             void sendToAllClients(std::string content);
             std::map<std::string, SafeMessageQueue> &getMap();
 
         private:
             std::map<std::string, SafeMessageQueue> _map;
+            std::set<std::string> _disconnectedClients;
             std::mutex _mutex;
     };
 
