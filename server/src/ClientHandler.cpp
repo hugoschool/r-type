@@ -15,7 +15,7 @@
 #include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 
-rtype::server::ClientMessageQueueHandler::ClientMessageQueueHandler() : _map(), _mutex() {
+rtype::server::ClientMessageQueueHandler::ClientMessageQueueHandler() : _map(), _disconnectedClients(), _mutex() {
 }
 
 void rtype::server::ClientMessageQueueHandler::createClient(std::string uuid) {
@@ -27,6 +27,15 @@ void rtype::server::ClientMessageQueueHandler::createClient(std::string uuid) {
 }
 
 void rtype::server::ClientMessageQueueHandler::addMessage(std::string uuid, std::string content) {
+    if (uuid == "") {
+        return;
+    }
+    if (_disconnectedClients.contains(uuid)) {
+        return;
+    }
+
+    std::cout << "Adding a message to " << uuid << std::endl;
+
     createClient(uuid);
 
     {
@@ -60,6 +69,14 @@ std::map<std::string, rtype::server::SafeMessageQueue> &rtype::server::ClientMes
 void rtype::server::ClientMessageQueueHandler::sendToAllClients(std::string content) {
     for (auto &[uuid, _] : _map) {
         addMessage(uuid, content);
+    }
+}
+
+void rtype::server::ClientMessageQueueHandler::disconnectClient(std::string uuid) {
+    _disconnectedClients.insert(uuid);
+
+    while (!isClientEmpty(uuid)) {
+        popMessage(uuid);
     }
 }
 
@@ -167,6 +184,7 @@ void rtype::server::ClientHandler::verifyStatus() {
             case ClientStatus::Disconnected: {
                 const std::string uuidCopy = uuid;
                 data.status = ClientStatus::Removed;
+                _messageQueueHandler.disconnectClient(uuidCopy);
                 std::cout << "Client " << uuidCopy << " erased" << std::endl;
                 break;
             }
