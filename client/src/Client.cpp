@@ -19,12 +19,14 @@
 #include "f-engine/modules/display/events/IEvent.hpp"
 #include "f-engine/modules/display/shapes/SFMLCircle.hpp"
 #include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
+#include "f-engine/modules/sound/SFMLSoundModule.hpp"
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
 #include "r-type/config/ClientConfig.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Payload.hpp"
 #include "r-type/packets/Serialization.hpp"
+#include "r-type/presets/EntitiesPresets.hpp"
 #include "r-type/scene/GameScene.hpp"
 #include "r-type/scene/MenuScene.hpp"
 #include "r-type/scene/ParamScene.hpp"
@@ -39,7 +41,8 @@
 #include <thread>
 
 rtype::client::Client::Client(std::string host, std::string port)
-    : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()), _registery(),
+    : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()),
+      _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>()), _registery(),
       _camera(0.0, 100000), _scenes(), _currentScene(), _entity(_registery.entityManager.spawnEntity()), _writeThread(),
       _readThread(), _exit(false), _inputs(1024), _protocol(_inputs, host, port), _clientConfig() {
 
@@ -83,6 +86,7 @@ rtype::client::Client::Client(std::string host, std::string port)
 
     _registery.systemManager.addSystem<fengine::ecs::ControlSystem>(_pressqueue, _releasequeue);
     _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule, _camera);
+    _soundModule->playMusic("./assets/sounds/title.ogg");
 }
 
 rtype::client::Client::~Client() {
@@ -211,6 +215,7 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
         _registery.componentManager.addComponent(entity, std::move(bound));
         _registery.componentManager.addComponent(entity, std::move(att));
         _registery.componentManager.addComponent(entity, std::move(def));
+        // _soundModule->playSound(EntityPresets[static_cast<int>(payload.ENtityEnum (exemple : BULLET))].preset.apparition_sound); commented because not implemented
     }
 }
 
@@ -245,15 +250,18 @@ void rtype::client::Client::modifyVelocity(rtype::packets::Serialization::deseri
 void rtype::client::Client::interpretButtonAction(int button) {
     switch (button) {
         case static_cast<int>(fengine::scene::MenuSceneButtons::PLAY):
+            _soundModule->playMusic("./assets/sounds/game.ogg");
             _currentScene = _scenes.back();
             break;
         case static_cast<int>(fengine::scene::MenuSceneButtons::PARAMS):
+            _soundModule->playMusic("./assets/sounds/params.ogg");
             _currentScene = *(_scenes.begin() + 1);
             break;
         case static_cast<int>(fengine::scene::MenuSceneButtons::QUIT):
             _exit = true;
             break;
         case static_cast<int>(fengine::scene::ParamSceneButtons::MENU):
+            _soundModule->playMusic("./assets/sounds/title.ogg");
             _currentScene = _scenes.front();
             break;
         case static_cast<int>(fengine::scene::ParamSceneButtons::COLORBLIND_1):
