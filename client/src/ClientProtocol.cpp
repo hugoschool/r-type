@@ -42,9 +42,11 @@ void rtype::client::ClientProtocol::sendConnectionPackets() {
         auto ar = packets::Serialization::createDeserializeArchive(loginAnswerSs);
 
         packets::PacketHeader header;
+        packets::LoginAnswer payload;
 
         packets::Serialization::deserialize(ar, header);
-        _uuid = header.playerUuid;
+        packets::Serialization::deserialize(ar, payload);
+        _uuid = payload.uuid;
 
         std::cout << "UUID: " << _uuid << std::endl;
     }
