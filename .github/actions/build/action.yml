@@ -86,6 +86,7 @@ runs:
         FOLDER_NAME="r-type-${RUNNER_OS_LOWER}"
         mkdir $FOLDER_NAME
 
+        cp -r assets $FOLDER_NAME
         if [ "$RUNNER_OS" = "Windows" ]; then
           cp build/server/r-type_server.exe $FOLDER_NAME
           cp build/client/r-type_client.exe $FOLDER_NAME
