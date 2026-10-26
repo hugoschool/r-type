@@ -47,11 +47,17 @@ jobs:
       - name: Download libraries
         uses: ./.github/actions/download-libs
 
-      # TODO: get CPM cache instead of re-downloading it all
+      - name: Get CPM cache
+        id: get-cpm-cache
+        uses: actions/cache/restore@v6 # zizmor: ignore[unpinned-uses]
+        with:
+          path: ./.cpm-cache
+          # Debug cache is always fresher as it should almost always be built
+          key: ${{ runner.os }}-cpm-cache-Debug
 
       - name: Generate build folder and copy compile_commands.json
         run: |
-          cmake -B build . -DCMAKE_EXPORT_COMPILE_COMMANDS=true
+          cmake -B build . -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=true
           cp build/compile_commands.json ./
 
       - name: Execute clang-tidy script
