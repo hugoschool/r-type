@@ -12,6 +12,7 @@
 #include <f-engine/modules/display/events/EventKey.hpp>
 #include <f-engine/world/World.hpp>
 #include <r-type/packets/Packet.hpp>
+#include <r-type/packets/PacketBuilder.hpp>
 #include <r-type/packets/Serialization.hpp>
 
 namespace rtype::server {
@@ -43,6 +44,7 @@ namespace rtype::server {
             ClientHandler _clientHandler;
 
             ServerProtocol _protocol;
+            packets::PacketBuilder _packetBuilder;
 
             std::chrono::steady_clock::time_point _spawnClock;
             short _enemyCounter;

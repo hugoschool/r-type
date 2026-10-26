@@ -5,6 +5,7 @@
 #include <chrono>
 #include <map>
 #include <r-type/packets/Packet.hpp>
+#include <r-type/packets/PacketBuilder.hpp>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -59,7 +60,7 @@ namespace rtype::server {
 
     class ClientHandler {
         public:
-            explicit ClientHandler(fengine::ecs::Registry &registry);
+            explicit ClientHandler(fengine::ecs::Registry &registry, packets::PacketBuilder &packetBuilder);
             ~ClientHandler() = default;
 
             static std::string generateUuid();
@@ -89,6 +90,7 @@ namespace rtype::server {
             std::queue<std::string> _uuids;
 
             fengine::ecs::Registry &_registry;
+            packets::PacketBuilder &_packetBuilder;
 
             ClientMessageQueueHandler _messageQueueHandler;
     };

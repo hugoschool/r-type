@@ -12,6 +12,7 @@
 #include <f-engine/ecs/components/VelocityComponent.hpp>
 #include <iostream>
 #include <r-type/packets/Packet.hpp>
+#include <r-type/packets/PacketBuilder.hpp>
 #include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 
@@ -80,13 +81,13 @@ void rtype::server::ClientMessageQueueHandler::disconnectClient(std::string uuid
     }
 }
 
-rtype::server::ClientHandler::ClientHandler(fengine::ecs::Registry &registry)
+rtype::server::ClientHandler::ClientHandler(fengine::ecs::Registry &registry, packets::PacketBuilder &packetBuilder)
     : _maxStatusSecondsMap({
           {ClientStatus::Disconnected, std::chrono::seconds(MAX_DISCONNECTED_SECONDS)},
           {ClientStatus::Connecting, std::chrono::seconds(MAX_CONNECTING_SECONDS)},
           {ClientStatus::Connected, std::chrono::seconds(MAX_CONNECTED_SECONDS)},
       }),
-      _clients(), _uuids(), _registry(registry) {
+      _clients(), _uuids(), _registry(registry), _packetBuilder(packetBuilder) {
     for (std::size_t i = 0; i < MAX_PLAYERS; i++) {
         _uuids.push(generateUuid());
     }
@@ -129,19 +130,8 @@ std::string rtype::server::ClientHandler::newClient() {
     packets::LoginAnswer payload;
     payload.setUuid(uuid);
 
-    packets::PacketHeader header = {
-        .type = packets::PacketType::LoginAnswer,
-        .size = sizeof(payload),
-        .playerUuid = "",
-    };
-    header.setUuid(uuid);
-
-    std::stringstream ss;
-    auto ar = packets::Serialization::createSerializeArchive(ss);
-    packets::Serialization::serialize(ar, header);
-    packets::Serialization::serialize(ar, payload);
-
-    _messageQueueHandler.addMessage(uuid, ss.str());
+    std::string content = _packetBuilder.create(packets::PacketType::LoginAnswer).addHeader().addPayload(payload).get();
+    _messageQueueHandler.addMessage(uuid, content);
 
     return uuid;
 }
