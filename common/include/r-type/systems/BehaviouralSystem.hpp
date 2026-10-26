@@ -6,6 +6,7 @@
 
 namespace fengine::ecs {
     class BehaviouralSystem : public ASystem {
+        // Will be added here a reference to the sound module, for when we need to play sounds based on behaviour
         public:
             BehaviouralSystem();
             ~BehaviouralSystem() override;
