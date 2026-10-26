@@ -10,7 +10,7 @@
 #include <string>
 
 rtype::server::ServerProtocol::ServerProtocol(boost::asio::io_context &io_context, std::uint16_t port,
-    SafeMessageQueue &SafeMessageQueue, ClientHandler &clientHandler, packets::PacketBuilder &packetBuilder)
+    SafeMessageQueue &SafeMessageQueue, ClientHandler &clientHandler, ServerPacketBuilder &packetBuilder)
     : fnetwork::server::async::UDPProtocol(io_context, port), _messageQueue(SafeMessageQueue),
       _clientHandler(clientHandler), _packetBuilder(packetBuilder) {
 }

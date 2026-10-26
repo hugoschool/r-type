@@ -37,8 +37,7 @@ rtype::server::Server::Server(std::uint32_t port)
       // Handlers
       _tickHandler(), _clientHandler(_world._registry, _packetBuilder),
       // Protocols
-      _protocol(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler, _packetBuilder),
-      _packetBuilder(DUMMY_UUID),
+      _protocol(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler, _packetBuilder), _packetBuilder(),
       // Enemy generation
       _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0), _resendClock() {
 

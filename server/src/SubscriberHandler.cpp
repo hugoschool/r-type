@@ -14,7 +14,7 @@
 #include <r-type/packets/Serialization.hpp>
 
 rtype::server::SubscriberHandler::SubscriberHandler(rtype::server::ClientHandler &clientHandler,
-    packets::PacketBuilder &packetBuilder)
+    ServerPacketBuilder &packetBuilder)
     : _clientHandler(clientHandler), _packetBuilder(packetBuilder) {
     shared_subscriber movement = std::make_shared<fengine::ecs::observer::Subscriber>();
     shared_subscriber boundary = std::make_shared<fengine::ecs::observer::Subscriber>();

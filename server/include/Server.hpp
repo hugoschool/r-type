@@ -44,7 +44,7 @@ namespace rtype::server {
             ClientHandler _clientHandler;
 
             ServerProtocol _protocol;
-            packets::PacketBuilder _packetBuilder;
+            ServerPacketBuilder _packetBuilder;
 
             std::chrono::steady_clock::time_point _spawnClock;
             short _enemyCounter;

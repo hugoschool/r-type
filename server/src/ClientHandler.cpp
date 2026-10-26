@@ -81,7 +81,7 @@ void rtype::server::ClientMessageQueueHandler::disconnectClient(std::string uuid
     }
 }
 
-rtype::server::ClientHandler::ClientHandler(fengine::ecs::Registry &registry, packets::PacketBuilder &packetBuilder)
+rtype::server::ClientHandler::ClientHandler(fengine::ecs::Registry &registry, ServerPacketBuilder &packetBuilder)
     : _maxStatusSecondsMap({
           {ClientStatus::Disconnected, std::chrono::seconds(MAX_DISCONNECTED_SECONDS)},
           {ClientStatus::Connecting, std::chrono::seconds(MAX_CONNECTING_SECONDS)},

@@ -10,7 +10,7 @@
 namespace rtype::server {
     class SubscriberHandler {
         public:
-            SubscriberHandler(ClientHandler &clientHandler, packets::PacketBuilder &packetBuilder);
+            SubscriberHandler(ClientHandler &clientHandler, ServerPacketBuilder &packetBuilder);
             ~SubscriberHandler() = default;
 
             void add(fengine::ecs::Registry &registry);
@@ -19,7 +19,7 @@ namespace rtype::server {
         private:
             using shared_subscriber = std::shared_ptr<fengine::ecs::observer::Subscriber>;
             ClientHandler &_clientHandler;
-            packets::PacketBuilder &_packetBuilder;
+            ServerPacketBuilder &_packetBuilder;
 
             std::vector<std::pair<shared_subscriber, std::function<void(shared_subscriber &subscriber)>>> _subscribers;
 
