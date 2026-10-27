@@ -17,7 +17,7 @@ namespace rtype::packets {
         EntityVelocityChange,
         EntityDied,
         Ack,
-        InputPlayer
+        PlayerEvent
     };
 
     struct PacketHeader {

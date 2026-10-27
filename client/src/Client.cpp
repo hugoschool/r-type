@@ -64,31 +64,23 @@ rtype::client::Client::Client(std::string host, std::string port)
     _registery.componentManager.registerComponent<fengine::ecs::BoundaryComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::DefenseComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
-    _registery.componentManager.registerComponent<fengine::ecs::ControllableComponent>();
 
     fengine::ecs::BoundaryComponent bound = {100, 50, true, false, std::nullopt};
     fengine::ecs::PositionComponent pos = {0, 0, false};
     fengine::ecs::VelocityComponent vel = {0, 0};
     fengine::ecs::DrawableComponent draw = {std::nullopt,
         std::make_shared<fengine::modules::display::SFMLCircle>(bound.size_x), std::nullopt};
-    fengine::ecs::ControllableComponent control = {fengine::modules::display::EventKey::Z,
-        fengine::modules::display::EventKey::Q, fengine::modules::display::EventKey::S,
-        fengine::modules::display::EventKey::D};
     fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
     fengine::ecs::DefenseComponent def = {100, 0};
 
     _registery.componentManager.addComponent(_entity, std::move(pos));
     _registery.componentManager.addComponent(_entity, std::move(vel));
-    _registery.componentManager.addComponent(_entity, std::move(control));
     _registery.componentManager.addComponent(_entity, std::move(att));
     _registery.componentManager.addComponent(_entity, std::move(def));
     _registery.componentManager.addComponent(_entity, std::move(draw));
     _registery.componentManager.addComponent(_entity, std::move(bound));
 
-    _pressqueue = std::queue<fengine::modules::display::EventKey>();
-    _releasequeue = std::queue<fengine::modules::display::EventKey>();
 
-    _registery.systemManager.addSystem<fengine::ecs::ControlSystem>(_pressqueue, _releasequeue);
     _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule, _camera);
     _soundModule->playMusic("./assets/sounds/title.ogg");
 }
@@ -162,7 +154,7 @@ void rtype::client::Client::interpretMsg(std::string msg) {
             // TODO: All packets
             case rtype::packets::PacketType::Ack:
                 break;
-            case rtype::packets::PacketType::InputPlayer:
+            case rtype::packets::PacketType::PlayerEvent:
                 break;
             case rtype::packets::PacketType::EntityDied:
                 removeEntity(ar);

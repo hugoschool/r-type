@@ -2,13 +2,14 @@
 #include "CircularBuffer.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
 #include "f-network/client/UDPProtocol.hpp"
+#include "r-type/event/PlayerEvent.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Payload.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include <cstddef>
 #include <iostream>
 
-rtype::client::ClientProtocol::ClientProtocol(rtype::client::CircularBuffer<EventKey> &inputs, std::string host,
+rtype::client::ClientProtocol::ClientProtocol(rtype::client::CircularBuffer<PlayerEvent> &inputs, std::string host,
     std::string port, std::size_t &tick)
     : _inputs(inputs), _io_context(), _udp(_io_context, host, std::stoi(port)), _uuid(), _tick(tick) {
     _udp.connect();
@@ -64,15 +65,15 @@ void rtype::client::ClientProtocol::sendMessage() {
             std::stringstream ss;
 
             packets::PacketHeader header = {
-                .type = packets::PacketType::InputPlayer,
-                .size = sizeof(packets::Input),
+                .type = packets::PacketType::PlayerEvent,
+                .size = sizeof(packets::PlayerEvent),
                 .tick = _tick,
                 .playerUuid = "",
             };
             header.setUuid(_uuid);
 
-            fengine::modules::display::EventKey input = _inputs.getElem();
-            packets::Input newInput = {input};
+            rtype::event::Event input = _inputs.getElem();
+            packets::PlayerEvent newInput = {input};
 
             auto ar = packets::Serialization::createSerializeArchive(ss);
             packets::Serialization::serialize(ar, header);

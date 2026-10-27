@@ -11,6 +11,7 @@
 #include "f-engine/modules/sound/ISoundModule.hpp"
 #include "f-engine/scene/IScene.hpp"
 #include "r-type/packets/Packet.hpp"
+#include "r-type/event/PlayerEvent.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include "r-type/scene/GameScene.hpp"
 #include <array>
@@ -37,15 +38,13 @@ namespace rtype::client {
             std::unique_ptr<fengine::modules::sound::ISoundModule> _soundModule;
             fengine::ecs::Registry _registery;
             fengine::camera::Camera _camera;
-            std::queue<fengine::modules::display::EventKey> _pressqueue;
-            std::queue<fengine::modules::display::EventKey> _releasequeue;
             std::vector<std::shared_ptr<fengine::scene::IScene>> _scenes;
             std::shared_ptr<fengine::scene::IScene> _currentScene;
             fengine::ecs::Entity _entity;
             std::thread _writeThread;
             std::thread _readThread;
             bool _exit;
-            rtype::client::CircularBuffer<fengine::modules::display::EventKey> _inputs;
+            rtype::client::CircularBuffer<rtype::event::Event> _inputs;
             std::string _uuid;
             ClientProtocol _protocol;
             std::shared_ptr<fengine::config::IConfig> _clientConfig;

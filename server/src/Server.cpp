@@ -56,13 +56,11 @@ rtype::server::Server::Server(std::uint32_t port)
     _world._registry.componentManager.registerComponent<fengine::ecs::AttackComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::DefenseComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::BehaviourComponent>();
-    _world._registry.componentManager.registerComponent<fengine::ecs::ControllableComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::CollisionComponent>();
 
     _world._registry.systemManager.addSystem<fengine::ecs::MovementSystem>(_world._camera);
     _world._registry.systemManager.addSystem<fengine::ecs::BoundarySystem>();
     _world._registry.systemManager.addSystem<fengine::ecs::BehaviouralSystem>();
-    _world._registry.systemManager.addSystem<fengine::ecs::ControlSystem>(_pressedQueue, _releasedQueue);
 
     _subscriberHandler.add(_world._registry);
 }
@@ -144,11 +142,10 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
             break;
         }
         // TODO: all types
-        case rtype::packets::PacketType::InputPlayer: {
-            packets::Input input;
+        case rtype::packets::PacketType::PlayerEvent: {
+            packets::PlayerEvent input;
 
             packets::Serialization::deserialize(ar, input);
-            _pressedQueue.push(input.input);
             break;
         }
         default:

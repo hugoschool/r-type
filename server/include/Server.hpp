@@ -58,7 +58,5 @@ namespace rtype::server {
             std::chrono::steady_clock::time_point _resendClock;
             void checkResend();
 
-            std::queue<fengine::modules::display::EventKey> _pressedQueue;
-            std::queue<fengine::modules::display::EventKey> _releasedQueue;
     };
 }
