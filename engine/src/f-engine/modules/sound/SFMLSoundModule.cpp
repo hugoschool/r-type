@@ -2,9 +2,11 @@
 #include "SFML/Audio/SoundBuffer.hpp"
 #include <string>
 
-fengine::modules::sound::SFMLSoundModule::SFMLSoundModule(): _musicMap(), _soundBufferMap(), _soundMap() {}
+fengine::modules::sound::SFMLSoundModule::SFMLSoundModule() : _musicMap(), _soundBufferMap(), _soundMap() {
+}
 
-fengine::modules::sound::SFMLSoundModule::~SFMLSoundModule() {}
+fengine::modules::sound::SFMLSoundModule::~SFMLSoundModule() {
+}
 
 void fengine::modules::sound::SFMLSoundModule::playSound(std::string filepath) {
     // tempindex is a value allowing to play the same sound more than once at a time
@@ -46,7 +48,7 @@ void fengine::modules::sound::SFMLSoundModule::playMusic(std::string filepath) {
         }
     }
 
-    for (auto &[path, music]: _musicMap) {
+    for (auto &[path, music] : _musicMap) {
         if (path != filepath && music && (music->getStatus() == sf::Music::Status::Playing)) {
             music->stop();
         }

@@ -7,7 +7,7 @@
 #include <string>
 
 namespace fengine::modules::sound {
-    class SFMLSoundModule: public ISoundModule {
+    class SFMLSoundModule : public ISoundModule {
         public:
             SFMLSoundModule();
             ~SFMLSoundModule() override;
@@ -15,6 +15,7 @@ namespace fengine::modules::sound {
             void playSound(std::string) override;
             void playMusic(std::string) override;
             void stopMusic(std::string) override;
+
         private:
             std::map<std::string, std::unique_ptr<sf::Music>> _musicMap;
             std::map<std::string, std::optional<sf::SoundBuffer>> _soundBufferMap;

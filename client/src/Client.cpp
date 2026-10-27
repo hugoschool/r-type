@@ -42,9 +42,9 @@
 
 rtype::client::Client::Client(std::string host, std::string port)
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()),
-      _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>()), _registery(),
-      _camera(0.0, 100000), _scenes(), _currentScene(), _entity(_registery.entityManager.spawnEntity()), _writeThread(),
-      _readThread(), _exit(false), _inputs(1024), _protocol(_inputs, host, port), _clientConfig() {
+      _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>()), _registery(), _camera(0.0, 100000),
+      _scenes(), _currentScene(), _entity(_registery.entityManager.spawnEntity()), _writeThread(), _readThread(),
+      _exit(false), _inputs(1024), _protocol(_inputs, host, port), _clientConfig() {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));

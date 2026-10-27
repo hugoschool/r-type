@@ -10,14 +10,14 @@ namespace fengine::presets {
     };
 
     struct entity_preset {
-        char const *texture;
-        char const *apparition_sound;
-        char const *behaviour_sound;
+            char const *texture;
+            char const *apparition_sound;
+            char const *behaviour_sound;
     };
 
     struct presets {
-        entity_types type;
-        entity_preset preset;
+            entity_types type;
+            entity_preset preset;
     };
 
     // There will also be an Animation Component preset
