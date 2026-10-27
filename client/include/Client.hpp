@@ -10,15 +10,25 @@
 #include "f-engine/modules/display/events/EventKey.hpp"
 #include "f-engine/modules/sound/ISoundModule.hpp"
 #include "f-engine/scene/IScene.hpp"
+#include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
+#include "r-type/scene/GameScene.hpp"
+#include <array>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
+#include <cstddef>
+#include <map>
 #include <memory>
+#include <optional>
 #include <queue>
+#include <string>
 #include <thread>
+#include <utility>
+#include <vector>
+
+constexpr std::size_t INTERPOLATION_TICK = 5;
 
 namespace rtype::client {
-
     class Client {
             using udp = boost::asio::ip::udp;
 
@@ -39,18 +49,24 @@ namespace rtype::client {
             std::string _uuid;
             ClientProtocol _protocol;
             std::shared_ptr<fengine::config::IConfig> _clientConfig;
+            std::array<std::pair<std::size_t, std::queue<std::string>>, 10> _packetReceived;
+            // std::map<std::size_t, std::queue<std::string>> _packetReceived;
+            std::size_t _maxTick;
 
             void loop();
             void sendLoop();
             void readLoop();
 
             void interpretMsg(std::string msg);
+            void stockMsg(std::string msg);
             void removeEntity(packets::Serialization::deserialize_archive &ar);
             void addEntity(packets::Serialization::deserialize_archive &ar);
             void moveEntity(packets::Serialization::deserialize_archive &ar);
             void modifyVelocity(packets::Serialization::deserialize_archive &ar);
 
             void interpretButtonAction(int);
+
+            void applyReceivedPackets(void);
 
         public:
             Client(std::string host, std::string port);

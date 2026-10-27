@@ -8,7 +8,7 @@
 namespace rtype::packets {
     class PacketBuilderContent {
         public:
-            PacketBuilderContent(PacketType type, std::string uuid);
+            PacketBuilderContent(PacketType type, std::size_t tick, std::string uuid);
             ~PacketBuilderContent() = default;
 
             PacketBuilderContent &addHeader();
@@ -26,6 +26,7 @@ namespace rtype::packets {
             Serialization::serialize_archive _ar;
 
             PacketType _type;
+            std::size_t _tick;
             std::string _uuid;
     };
 
@@ -34,7 +35,7 @@ namespace rtype::packets {
             PacketBuilder(std::string uuid);
             ~PacketBuilder() = default;
 
-            PacketBuilderContent create(PacketType type);
+            PacketBuilderContent create(std::size_t tick, PacketType type);
 
         private:
             std::string _uuid;

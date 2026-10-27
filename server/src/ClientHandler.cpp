@@ -6,6 +6,7 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <chrono>
+#include <cstddef>
 #include <cstring>
 #include <f-engine/ecs/components/ControllableComponent.hpp>
 #include <f-engine/ecs/components/PositionComponent.hpp>

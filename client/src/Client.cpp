@@ -1,5 +1,6 @@
 #include "Client.hpp"
 #include "boost/asio/error.hpp"
+#include "boost/exception/exception.hpp"
 #include "boost/system/detail/error_code.hpp"
 #include "f-engine/camera/Camera.hpp"
 #include "f-engine/ecs/Entity.hpp"
@@ -30,6 +31,7 @@
 #include "r-type/scene/GameScene.hpp"
 #include "r-type/scene/MenuScene.hpp"
 #include "r-type/scene/ParamScene.hpp"
+#include <cstddef>
 #include <exception>
 #include <iostream>
 #include <memory>
@@ -39,12 +41,14 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <utility>
+#include <vector>
 
 rtype::client::Client::Client(std::string host, std::string port)
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()),
       _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>()), _registery(), _camera(0.0, 100000),
       _scenes(), _currentScene(), _entity(_registery.entityManager.spawnEntity()), _writeThread(), _readThread(),
-      _exit(false), _inputs(1024), _protocol(_inputs, host, port), _clientConfig() {
+      _exit(false), _inputs(1024), _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0) {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));
@@ -115,8 +119,33 @@ void rtype::client::Client::readLoop() {
             boost::system::error_code error = boost::asio::error::would_block;
             while (error == boost::asio::error::would_block && !_exit) {
                 std::string msg = _protocol.read(error);
-                interpretMsg(msg);
+                stockMsg(msg);
             }
+        }
+    } catch (std::exception &) {}
+}
+
+void rtype::client::Client::stockMsg(std::string msg) {
+    packets::PacketHeader header;
+
+    try {
+        std::stringstream ss(msg);
+        packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
+        packets::Serialization::deserialize(ar, header);
+
+        // TODO handle overflow
+        if (_maxTick < header.tick) {
+            _maxTick = header.tick;
+        }
+        if (_packetReceived[header.tick % 10].first == header.tick) {
+            _packetReceived[header.tick % 10].second.push(msg);
+        } else {
+            _packetReceived[header.tick % 10].first = header.tick;
+
+            while (!_packetReceived[header.tick % 10].second.empty()) {
+                _packetReceived[header.tick % 10].second.pop();
+            }
+            _packetReceived[header.tick % 10].second.push(msg);
         }
     } catch (std::exception &) {}
 }
@@ -128,6 +157,7 @@ void rtype::client::Client::interpretMsg(std::string msg) {
         std::stringstream ss(msg);
         packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
         packets::Serialization::deserialize(ar, header);
+
         switch (header.type) {
             // TODO: All packets
             case rtype::packets::PacketType::Ack:
@@ -153,9 +183,14 @@ void rtype::client::Client::interpretMsg(std::string msg) {
 }
 
 void rtype::client::Client::loop() {
+    // at the connection the client will wait a bit before starting the display
+    // it will wait until the _snapshotVector is partially fill
+    // when it is fill it will start display with some ticks of difference
 
     while (!_exit) {
         _displayModule->clear();
+
+        applyReceivedPackets();
 
         _displayModule->drawScene(_currentScene);
         _registery.systemManager.update(_registery);
@@ -178,6 +213,13 @@ void rtype::client::Client::loop() {
             _displayModule->verifyConfig();
         }
         _currentScene->update();
+    }
+}
+
+void rtype::client::Client::applyReceivedPackets() {
+    while (_packetReceived[(_maxTick - INTERPOLATION_TICK) % 10].second.size() > 0) {
+        interpretMsg(_packetReceived[(_maxTick - INTERPOLATION_TICK) % 10].second.front());
+        _packetReceived[(_maxTick - INTERPOLATION_TICK) % 10].second.pop();
     }
 }
 
