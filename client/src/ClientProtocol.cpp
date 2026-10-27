@@ -1,6 +1,5 @@
 #include "ClientProtocol.hpp"
 #include "CircularBuffer.hpp"
-#include "f-engine/modules/display/events/EventKey.hpp"
 #include "f-network/client/UDPProtocol.hpp"
 #include "r-type/event/PlayerEvent.hpp"
 #include "r-type/packets/Packet.hpp"

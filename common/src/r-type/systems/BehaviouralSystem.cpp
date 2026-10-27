@@ -34,7 +34,7 @@ void fengine::ecs::BehaviouralSystem::update(Registry &manager) {
 
             observer::SubscriberContent content(e.getId());
             PositionComponent newPos = {pos.value().pos_x, pos.value().pos_y, true};
-            VelocityComponent newVel = {-30, 0};
+            VelocityComponent newVel = {-30, 0, false};
             BoundaryComponent newBound = {10, 5, false, true, std::nullopt};
             AttackComponent newAtk = {atk.value().relation, atk.value().damage};
             DefenseComponent newDef = {1, 0};

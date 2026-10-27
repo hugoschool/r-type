@@ -7,7 +7,6 @@
 #include "f-engine/ecs/Entity.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
-#include "f-engine/modules/display/events/EventKey.hpp"
 #include "f-engine/modules/sound/ISoundModule.hpp"
 #include "f-engine/scene/IScene.hpp"
 #include "r-type/packets/Packet.hpp"

@@ -12,10 +12,11 @@
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
-#include "f-engine/ecs/systems/ControlSystem.hpp"
 #include "f-engine/ecs/systems/DisplaySystem.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
+#include "f-engine/modules/display/events/EventKey.hpp"
+#include "f-engine/modules/display/events/EventMouseButton.hpp"
 #include "f-engine/modules/display/events/EventType.hpp"
 #include "f-engine/modules/display/events/IEvent.hpp"
 #include "f-engine/modules/display/shapes/SFMLCircle.hpp"
@@ -24,6 +25,7 @@
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
 #include "r-type/config/ClientConfig.hpp"
+#include "r-type/event/PlayerEvent.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Payload.hpp"
 #include "r-type/packets/Serialization.hpp"
@@ -37,7 +39,6 @@
 #include <memory>
 #include <optional>
 #include <ostream>
-#include <queue>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -67,11 +68,12 @@ rtype::client::Client::Client(std::string host, std::string port)
 
     fengine::ecs::BoundaryComponent bound = {100, 50, true, false, std::nullopt};
     fengine::ecs::PositionComponent pos = {0, 0, false};
-    fengine::ecs::VelocityComponent vel = {0, 0};
+    fengine::ecs::VelocityComponent vel = {0, 0, true};
     fengine::ecs::DrawableComponent draw = {std::nullopt,
         std::make_shared<fengine::modules::display::SFMLCircle>(bound.size_x), std::nullopt};
     fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
     fengine::ecs::DefenseComponent def = {100, 0};
+    fengine::ecs::ControllableComponent control = {fengine::modules::display::EventKey::Z, fengine::modules::display::EventKey::Q, fengine::modules::display::EventKey::S, fengine::modules::display::EventKey::D};
 
     _registery.componentManager.addComponent(_entity, std::move(pos));
     _registery.componentManager.addComponent(_entity, std::move(vel));
@@ -83,6 +85,8 @@ rtype::client::Client::Client(std::string host, std::string port)
 
     _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule, _camera);
     _soundModule->playMusic("./assets/sounds/title.ogg");
+    _clientConfig->set("controls", fengine::ecs::ControllableComponent(control));
+    _clientConfig->resetChange();
 }
 
 rtype::client::Client::~Client() {
@@ -194,10 +198,29 @@ void rtype::client::Client::loop() {
                 break;
             }
             if (event.value()->getType() == fengine::modules::display::EventType::KeyPressed) {
-                _inputs.addElement(event.value()->getKey());
+                std::cout << "enter key" << std::endl;
+                auto control = _clientConfig->get("controls");
+                std::cout << "in key 1" << std::endl;
+                auto key = event.value()->getKey();
+                std::cout << "in key Z" << std::endl;
+
+                if (control->has_value()) {
+                    auto value = std::any_cast<fengine::ecs::ControllableComponent>(control.value());
+                    if (key == value.up)
+                        _inputs.addElement(event::Event::UP);
+                    else if (key == value.down)
+                        _inputs.addElement(event::Event::DOWN);
+                    else if (key == value.left)
+                        _inputs.addElement(event::Event::LEFT);
+                    else if (key == value.right)
+                        _inputs.addElement(event::Event::RIGHT);
+                }
+                std::cout << "quit key" << std::endl;
             }
             if (event.value()->getType() == fengine::modules::display::EventType::Click) {
-                (_currentScene)->updateButtons(event.value()->getClickCoordinates());
+                if (event.value()->getMouseButton() == fengine::modules::display::EventMouseButton::Left)
+                    _inputs.addElement(event::Event::SHOOT);
+                _currentScene->updateButtons(event.value()->getClickCoordinates());
             }
         }
         while (!_currentScene->empty()) {
@@ -236,7 +259,7 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
     } catch (std::exception &) {
         fengine::ecs::Entity entity = _registery.entityManager.createEntity(payload.entityId);
         fengine::ecs::PositionComponent pos = {200, 200, false};
-        fengine::ecs::VelocityComponent vel = {0, 0};
+        fengine::ecs::VelocityComponent vel = {0, 0, false};
         fengine::ecs::BoundaryComponent bound = {40, 40, true, true, std::nullopt};
         fengine::ecs::DrawableComponent draw = {std::nullopt,
             std::make_shared<fengine::modules::display::SFMLRectangle>(bound.size_x, bound.size_y), std::nullopt};

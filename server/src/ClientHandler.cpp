@@ -1,6 +1,8 @@
 #include "ClientHandler.hpp"
 #include "Exception.hpp"
 #include "SafeQueue.hpp"
+#include "r-type/components/AttackComponent.hpp"
+#include "r-type/components/DefenseComponent.hpp"
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/generators.hpp>
 #include <boost/uuid/uuid.hpp>
@@ -119,14 +121,14 @@ std::string rtype::server::ClientHandler::newClient() {
     _clients.insert({uuid, data});
 
     fengine::ecs::PositionComponent pos = {50, 50, false};
-    fengine::ecs::ControllableComponent control = {fengine::modules::display::EventKey::Z,
-        fengine::modules::display::EventKey::Q, fengine::modules::display::EventKey::S,
-        fengine::modules::display::EventKey::D};
-    fengine::ecs::VelocityComponent vel = {0, 0};
+    fengine::ecs::VelocityComponent vel = {0, 0, true};
+    fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
+    fengine::ecs::DefenseComponent def = {100, 0};
 
     _registry.componentManager.addComponent(entity, std::move(pos));
     _registry.componentManager.addComponent(entity, std::move(vel));
-    _registry.componentManager.addComponent(entity, std::move(control));
+    _registry.componentManager.addComponent(entity, std::move(att));
+    _registry.componentManager.addComponent(entity, std::move(def));
 
     packets::LoginAnswer payload;
     payload.setUuid(uuid);

@@ -6,6 +6,7 @@
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/BehaviourComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
+#include "r-type/event/PlayerEvent.hpp"
 #include "r-type/systems/BehaviouralSystem.hpp"
 #include <chrono>
 #include <cstddef>
@@ -143,9 +144,43 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
         }
         // TODO: all types
         case rtype::packets::PacketType::PlayerEvent: {
-            packets::PlayerEvent input;
+            packets::PlayerEvent event;
 
-            packets::Serialization::deserialize(ar, input);
+            packets::Serialization::deserialize(ar, event);
+            auto &data = _clientHandler.getClients().at(header.playerUuid);
+            auto &vel = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>()[data.entityId];
+            if (vel.has_value()) {
+                switch (event.event) {
+                    case event::Event::UP:
+                        vel.value().vel_y = -10;
+                        break;
+                    case event::Event::LEFT:
+                        vel.value().vel_x = -10;
+                        break;
+                    case event::Event::DOWN:
+                        vel.value().vel_y = 10;
+                        break;
+                    case event::Event::RIGHT:
+                        vel.value().vel_x = 10;
+                        break;
+                    case event::Event::SHOOT:
+                        fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
+                        fengine::ecs::PositionComponent &pos = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>()[data.entityId].value();
+                        fengine::ecs::AttackComponent &att = _world._registry.componentManager.getComponents<fengine::ecs::AttackComponent>()[data.entityId].value();
+                        _world._registry.componentManager.addComponent(entity, (fengine::ecs::PositionComponent){pos.pos_x, pos.pos_y, true});
+                        _world._registry.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent){30, 0, false});
+                        _world._registry.componentManager.addComponent(entity, (fengine::ecs::BoundaryComponent){10, 5, false, true});
+                        _world._registry.componentManager.addComponent(entity, (fengine::ecs::AttackComponent){{.team = fengine::ecs::team::ALLIES}, att.damage});
+                        _world._registry.componentManager.addComponent(entity, (fengine::ecs::DefenseComponent){1, 0});
+
+                        auto &clients = _clientHandler.getClients();
+                        const std::size_t entityId = entity.getId();
+                        for (auto &client : clients) {
+                            newEntityPacket(entityId, client.first);
+                        }
+                        break;
+                }
+            }
             break;
         }
         default:
@@ -164,14 +199,14 @@ void rtype::server::Server::generateEnemies() {
     fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
 
     fengine::ecs::PositionComponent pos = {WINDOW_X, static_cast<float>(rand() % (WINDOW_Y - 100) + 100), false};
-    fengine::ecs::VelocityComponent vel = {-10, 0};
+    fengine::ecs::VelocityComponent vel = {-10, 0, false};
     fengine::ecs::BoundaryComponent bound = {125, 75, false, true, std::nullopt};
     fengine::ecs::AttackComponent atk = {{.team = fengine::ecs::team::MONSTERS}, 10};
     fengine::ecs::DefenseComponent def = {150, 0};
 
     if (_enemyCounter == 10) {
         _enemyCounter = 0;
-        vel = {-5, 2};
+        vel = {-5, 2, false};
         atk.damage += 15;
         def = {300, 20};
         bound.size_x += 100;
