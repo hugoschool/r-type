@@ -14,10 +14,12 @@
 #include <f-engine/ecs/components/PositionComponent.hpp>
 #include <f-engine/ecs/components/VelocityComponent.hpp>
 #include <iostream>
+#include <r-type/components/EntityTypeComponent.hpp>
 #include <r-type/packets/Packet.hpp>
 #include <r-type/packets/PacketBuilder.hpp>
 #include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
+#include <r-type/presets/EntitiesPresets.hpp>
 
 rtype::server::ClientMessageQueueHandler::ClientMessageQueueHandler() : _map(), _disconnectedClients(), _mutex() {
 }
