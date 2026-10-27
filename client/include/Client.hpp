@@ -8,6 +8,7 @@
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/events/EventKey.hpp"
+#include "f-engine/modules/sound/ISoundModule.hpp"
 #include "f-engine/scene/IScene.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include <boost/asio/io_context.hpp>
@@ -23,6 +24,7 @@ namespace rtype::client {
 
         private:
             std::unique_ptr<fengine::modules::display::IDisplayModule> _displayModule;
+            std::unique_ptr<fengine::modules::sound::ISoundModule> _soundModule;
             fengine::ecs::Registry _registery;
             fengine::camera::Camera _camera;
             std::queue<fengine::modules::display::EventKey> _pressqueue;
