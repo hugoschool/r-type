@@ -9,17 +9,19 @@ if ! command -v clang-tidy >/dev/null 2>&1; then
     exit 1
 fi
 
+BUILD_FOLDER=$BASE_DIR/build
+
 echo "Processing client"
-clang-tidy $CLIENT_FILES -p $BASE_DIR/../build --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1
+clang-tidy $CLIENT_FILES -p $BUILD_FOLDER --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1
 
 echo "Processing common"
-clang-tidy $COMMON_FILES -p $BASE_DIR/../build --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1
+clang-tidy $COMMON_FILES -p $BUILD_FOLDER --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1
 
 echo "Processing engine"
-clang-tidy $ENGINE_FILES -p $BASE_DIR/../build --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1
+clang-tidy $ENGINE_FILES -p $BUILD_FOLDER --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1
 
 echo "Processing server"
-clang-tidy $SERVER_FILES -p $BASE_DIR/../build --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1
+clang-tidy $SERVER_FILES -p $BUILD_FOLDER --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1
 
 echo "Processing network"
-clang-tidy $NETWORK_FILES -p $BASE_DIR/../build --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1
+clang-tidy $NETWORK_FILES -p $BUILD_FOLDER --exclude-header-filter=".*build.*" --warnings-as-errors="*" || exit 1
