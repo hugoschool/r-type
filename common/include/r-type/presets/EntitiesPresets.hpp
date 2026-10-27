@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string_view>
+
 namespace fengine::presets {
 
     enum class entity_types {
@@ -10,9 +12,9 @@ namespace fengine::presets {
     };
 
     struct entity_preset {
-            char const *texture;
-            char const *apparition_sound;
-            char const *behaviour_sound;
+            std::string_view texture;
+            std::string_view apparition_sound;
+            std::string_view behaviour_sound;
     };
 
     struct presets {

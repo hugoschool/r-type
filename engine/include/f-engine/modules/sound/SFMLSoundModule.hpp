@@ -20,5 +20,7 @@ namespace fengine::modules::sound {
             std::map<std::string, std::unique_ptr<sf::Music>> _musicMap;
             std::map<std::string, std::optional<sf::SoundBuffer>> _soundBufferMap;
             std::map<std::string, std::optional<sf::Sound>> _soundMap;
+
+            std::size_t _tempindex;
     };
 }

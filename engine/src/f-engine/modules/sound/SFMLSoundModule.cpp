@@ -2,16 +2,14 @@
 #include "SFML/Audio/SoundBuffer.hpp"
 #include <string>
 
-fengine::modules::sound::SFMLSoundModule::SFMLSoundModule() : _musicMap(), _soundBufferMap(), _soundMap() {
+fengine::modules::sound::SFMLSoundModule::SFMLSoundModule()
+    : _musicMap(), _soundBufferMap(), _soundMap(), _tempindex(0) {
 }
 
 fengine::modules::sound::SFMLSoundModule::~SFMLSoundModule() {
 }
 
 void fengine::modules::sound::SFMLSoundModule::playSound(std::string filepath) {
-    // tempindex is a value allowing to play the same sound more than once at a time
-    static std::size_t tempindex = 0;
-
     if (!_soundBufferMap.contains(filepath)) {
         sf::SoundBuffer buffer;
         if (buffer.loadFromFile(filepath)) {
@@ -30,10 +28,10 @@ void fengine::modules::sound::SFMLSoundModule::playSound(std::string filepath) {
         auto status = _soundMap.at(filepath).value().getStatus();
         if (status == sf::Sound::Status::Playing) {
             sf::Sound sound(_soundMap.at(filepath).value().getBuffer());
-            _soundMap.insert({"temp" + std::to_string(tempindex), sound});
-            _soundMap["temp" + std::to_string(tempindex)].value().setBuffer(_soundBufferMap.at(filepath).value());
-            _soundMap["temp" + std::to_string(tempindex)].value().play();
-            tempindex++;
+            _soundMap.insert({"temp" + std::to_string(_tempindex), sound});
+            _soundMap["temp" + std::to_string(_tempindex)].value().setBuffer(_soundBufferMap.at(filepath).value());
+            _soundMap["temp" + std::to_string(_tempindex)].value().play();
+            _tempindex++;
         }
         _soundMap.at(filepath).value().play();
     }
