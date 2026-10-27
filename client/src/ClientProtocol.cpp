@@ -9,8 +9,9 @@
 
 rtype::client::ClientProtocol::ClientProtocol(rtype::client::CircularBuffer<EventKey> &inputs, std::string host,
     std::string port)
-    : _inputs(inputs), _io_context(), _udp(_io_context, host, std::stoi(port)), _uuid() {
+    : _inputs(inputs), _io_context(), _udp(_io_context, host, std::stoi(port)), _entityId(std::nullopt), _uuid() {
     _udp.connect();
+
     sendConnectionPackets();
 }
 
@@ -47,6 +48,7 @@ void rtype::client::ClientProtocol::sendConnectionPackets() {
         packets::Serialization::deserialize(ar, header);
         packets::Serialization::deserialize(ar, payload);
         _uuid = payload.uuid;
+        _entityId = payload.entityId;
 
         std::cout << "UUID: " << _uuid << std::endl;
     }
@@ -99,4 +101,8 @@ void rtype::client::ClientProtocol::sendMessage() {
 
 void rtype::client::ClientProtocol::setSocketNonBlocking() {
     _udp.setSocketNonBlocking();
+}
+
+std::optional<std::size_t> &rtype::client::ClientProtocol::getEntityId() {
+    return _entityId;
 }

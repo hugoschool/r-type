@@ -20,12 +20,14 @@ namespace rtype::client {
             void sendMessage();
 
             void setSocketNonBlocking();
+            std::optional<std::size_t> &getEntityId();
 
         private:
             rtype::client::CircularBuffer<EventKey> &_inputs;
             boost::asio::io_context _io_context;
             fnetwork::client::UDPProtocol _udp;
 
+            std::optional<std::size_t> _entityId;
             std::string _uuid;
     };
 }

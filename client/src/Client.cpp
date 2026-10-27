@@ -43,8 +43,8 @@
 rtype::client::Client::Client(std::string host, std::string port)
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()),
       _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>()), _registery(), _camera(0.0, 100000),
-      _scenes(), _currentScene(), _entity(_registery.entityManager.spawnEntity()), _writeThread(), _readThread(),
-      _exit(false), _inputs(1024), _protocol(_inputs, host, port), _clientConfig() {
+      _scenes(), _currentScene(), _entity(std::nullopt), _writeThread(), _readThread(), _exit(false), _inputs(1024),
+      _protocol(_inputs, host, port), _clientConfig() {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));
@@ -62,24 +62,7 @@ rtype::client::Client::Client(std::string host, std::string port)
     _registery.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::ControllableComponent>();
 
-    fengine::ecs::BoundaryComponent bound = {100, 50, true, false, std::nullopt};
-    fengine::ecs::PositionComponent pos = {0, 0, false};
-    fengine::ecs::VelocityComponent vel = {0, 0};
-    fengine::ecs::DrawableComponent draw = {std::nullopt,
-        std::make_shared<fengine::modules::display::SFMLCircle>(bound.size_x), std::nullopt};
-    fengine::ecs::ControllableComponent control = {fengine::modules::display::EventKey::Z,
-        fengine::modules::display::EventKey::Q, fengine::modules::display::EventKey::S,
-        fengine::modules::display::EventKey::D};
-    fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
-    fengine::ecs::DefenseComponent def = {100, 0};
-
-    _registery.componentManager.addComponent(_entity, std::move(pos));
-    _registery.componentManager.addComponent(_entity, std::move(vel));
-    _registery.componentManager.addComponent(_entity, std::move(control));
-    _registery.componentManager.addComponent(_entity, std::move(att));
-    _registery.componentManager.addComponent(_entity, std::move(def));
-    _registery.componentManager.addComponent(_entity, std::move(draw));
-    _registery.componentManager.addComponent(_entity, std::move(bound));
+    spawnEntity();
 
     _pressqueue = std::queue<fengine::modules::display::EventKey>();
     _releasequeue = std::queue<fengine::modules::display::EventKey>();
@@ -92,6 +75,38 @@ rtype::client::Client::Client(std::string host, std::string port)
 rtype::client::Client::~Client() {
     _writeThread.join();
     _readThread.join();
+}
+
+void rtype::client::Client::spawnEntity() {
+    if (_entity.has_value())
+        return;
+
+    if (!_protocol.getEntityId().has_value())
+        return;
+
+    std::cout << "found entity " << _protocol.getEntityId().value() << std::endl;
+
+    _entity = _registery.entityManager.createEntity(_protocol.getEntityId().value());
+    fengine::ecs::Entity &entity = _entity.value();
+
+    fengine::ecs::BoundaryComponent bound = {100, 50, true, false, std::nullopt};
+    fengine::ecs::PositionComponent pos = {0, 0, false};
+    fengine::ecs::VelocityComponent vel = {0, 0};
+    fengine::ecs::DrawableComponent draw = {std::nullopt,
+        std::make_shared<fengine::modules::display::SFMLCircle>(bound.size_x), std::nullopt};
+    fengine::ecs::ControllableComponent control = {fengine::modules::display::EventKey::Z,
+        fengine::modules::display::EventKey::Q, fengine::modules::display::EventKey::S,
+        fengine::modules::display::EventKey::D};
+    fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
+    fengine::ecs::DefenseComponent def = {100, 0};
+
+    _registery.componentManager.addComponent(entity, std::move(pos));
+    _registery.componentManager.addComponent(entity, std::move(vel));
+    _registery.componentManager.addComponent(entity, std::move(control));
+    _registery.componentManager.addComponent(entity, std::move(att));
+    _registery.componentManager.addComponent(entity, std::move(def));
+    _registery.componentManager.addComponent(entity, std::move(draw));
+    _registery.componentManager.addComponent(entity, std::move(bound));
 }
 
 void rtype::client::Client::run() {
