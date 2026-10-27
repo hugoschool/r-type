@@ -20,10 +20,12 @@ namespace rtype::packets {
 
     struct LoginAnswer {
         public:
+            std::size_t entityId;
             char uuid[UUID_SIZE + 1];
 
             template <class Archive>
             void serialize(Archive &ar, unsigned int) {
+                ar & entityId;
                 ar & uuid;
             }
 

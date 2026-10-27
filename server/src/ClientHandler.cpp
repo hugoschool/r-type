@@ -128,6 +128,7 @@ std::string rtype::server::ClientHandler::newClient() {
     _registry.componentManager.addComponent(entity, std::move(control));
 
     packets::LoginAnswer payload;
+    payload.entityId = entity.getId();
     payload.setUuid(uuid);
 
     std::string content = _packetBuilder.create(packets::PacketType::LoginAnswer).addHeader().addPayload(payload).get();
