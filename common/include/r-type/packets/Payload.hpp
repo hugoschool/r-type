@@ -48,11 +48,15 @@ namespace rtype::packets {
         public:
             std::size_t entityId;
             fengine::presets::EntityType entityType;
+            float width;
+            float height;
 
             template <class Archive>
             void serialize(Archive &ar, unsigned int) {
                 ar & entityId;
                 ar & entityType;
+                ar & width;
+                ar & height;
             }
     };
 

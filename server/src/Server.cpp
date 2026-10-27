@@ -86,14 +86,20 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
     std::size_t tick, std::string uuid) {
     auto &velocityComponents = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>();
     auto &positionComponents = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>();
-    // auto &boundaryComponents =
-    //     _world._registry.componentManager.getComponents<fengine::ecs::BoundaryComponent>();
+    auto &boundaryComponents = _world._registry.componentManager.getComponents<fengine::ecs::BoundaryComponent>();
     // auto &attackComponents = _world._registry.componentManager.getComponents<fengine::ecs::AttackComponent>();
     // auto &defenseComponents = _world._registry.componentManager.getComponents<fengine::ecs::DefenseComponent>();
 
     // Send a new entity
     {
-        packets::EntitySpawn payload = {.entityId = entityId, .entityType = entityType};
+        auto &boundary = boundaryComponents[entityId];
+
+        packets::EntitySpawn payload = {
+            .entityId = entityId,
+            .entityType = entityType,
+            .width = boundary->size_x,
+            .height = boundary->size_y,
+        };
         std::string content =
             _packetBuilder.create(packets::PacketType::EntitySpawn).addHeader().addPayload(payload).get();
 
