@@ -158,11 +158,6 @@ void rtype::client::Client::interpretMsg(std::string msg) {
         packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
         packets::Serialization::deserialize(ar, header);
 
-        // TODO
-        // when new tick is receive I should get the content of the previous tick and then apply the modifications
-        // all this data is stocked in an ordered map to witch we acces any element with the tick id as the key
-        // at each client frame I should do a kind of calculus to know if I need to pass to the next tick or not the server has 20 ticks per seconds but the client has 60 fps
-
         switch (header.type) {
             // TODO: All packets
             case rtype::packets::PacketType::Ack:
