@@ -6,7 +6,7 @@
 #include <cstdint>
 
 namespace rtype::server {
-    constexpr std::uint64_t TICKS_PER_SECOND = 20;
+    constexpr std::uint64_t TICKS_PER_SECOND = 60;
     constexpr std::uint64_t MAX_MESSAGE_PER_TICK = 2048;
 
     class TickHandler {
