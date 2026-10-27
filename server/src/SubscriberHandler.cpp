@@ -9,11 +9,13 @@
 #include <functional>
 #include <memory>
 #include <r-type/packets/Packet.hpp>
+#include <r-type/packets/PacketBuilder.hpp>
 #include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 
-rtype::server::SubscriberHandler::SubscriberHandler(rtype::server::ClientHandler &clientHandler)
-    : _clientHandler(clientHandler) {
+rtype::server::SubscriberHandler::SubscriberHandler(rtype::server::ClientHandler &clientHandler,
+    ServerPacketBuilder &packetBuilder)
+    : _clientHandler(clientHandler), _packetBuilder(packetBuilder) {
     shared_subscriber movement = std::make_shared<fengine::ecs::observer::Subscriber>();
     shared_subscriber boundary = std::make_shared<fengine::ecs::observer::Subscriber>();
 
@@ -66,20 +68,9 @@ void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observe
     packets::EntityDied payload = {
         .entityId = dead.entityId,
     };
+    std::string str = _packetBuilder.create(packets::PacketType::EntityDied).addHeader().addPayload(payload).get();
 
-    packets::PacketHeader header = {
-        .type = packets::PacketType::EntityDied,
-        .size = sizeof(packets::EntityDied),
-        .playerUuid = "",
-    };
-    header.setUuid(DUMMY_UUID);
-
-    std::stringstream ss;
-    auto ar = packets::Serialization::createSerializeArchive(ss);
-    packets::Serialization::serialize(ar, header);
-    packets::Serialization::serialize(ar, payload);
-
-    _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
+    _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
 
 void rtype::server::SubscriberHandler::handleVelocityComponent(fengine::ecs::observer::SubscriberContent &content) {
@@ -92,20 +83,10 @@ void rtype::server::SubscriberHandler::handleVelocityComponent(fengine::ecs::obs
         .entityId = content.getEntityId(),
         .velocity = packets::Vector2D(velocity.vel_x, velocity.vel_y),
     };
+    std::string str =
+        _packetBuilder.create(packets::PacketType::EntityVelocityChange).addHeader().addPayload(payload).get();
 
-    packets::PacketHeader header = {
-        .type = packets::PacketType::EntityVelocityChange,
-        .size = sizeof(packets::EntityVelocityChange),
-        .playerUuid = "",
-    };
-    header.setUuid(DUMMY_UUID);
-
-    std::stringstream ss;
-    auto ar = packets::Serialization::createSerializeArchive(ss);
-    packets::Serialization::serialize(ar, header);
-    packets::Serialization::serialize(ar, payload);
-
-    _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
+    _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
 
 void rtype::server::SubscriberHandler::handlePositionComponent(fengine::ecs::observer::SubscriberContent &content) {
@@ -119,17 +100,7 @@ void rtype::server::SubscriberHandler::handlePositionComponent(fengine::ecs::obs
         .coordinates = packets::Vector2D(position.pos_x, position.pos_y),
     };
 
-    packets::PacketHeader header = {
-        .type = packets::PacketType::EntityMove,
-        .size = sizeof(packets::EntityMove),
-        .playerUuid = "",
-    };
-    header.setUuid(DUMMY_UUID);
+    std::string str = _packetBuilder.create(packets::PacketType::EntityMove).addHeader().addPayload(payload).get();
 
-    std::stringstream ss;
-    auto ar = packets::Serialization::createSerializeArchive(ss);
-    packets::Serialization::serialize(ar, header);
-    packets::Serialization::serialize(ar, payload);
-
-    _clientHandler.getMessageQueueHandler().sendToAllClients(ss.str());
+    _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }

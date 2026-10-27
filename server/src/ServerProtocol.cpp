@@ -3,15 +3,16 @@
 #include <boost/asio/placeholders.hpp>
 #include <iostream>
 #include <r-type/packets/Packet.hpp>
+#include <r-type/packets/PacketBuilder.hpp>
 #include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 #include <sstream>
 #include <string>
 
 rtype::server::ServerProtocol::ServerProtocol(boost::asio::io_context &io_context, std::uint16_t port,
-    SafeMessageQueue &SafeMessageQueue, ClientHandler &clientHandler)
+    SafeMessageQueue &SafeMessageQueue, ClientHandler &clientHandler, ServerPacketBuilder &packetBuilder)
     : fnetwork::server::async::UDPProtocol(io_context, port), _messageQueue(SafeMessageQueue),
-      _clientHandler(clientHandler) {
+      _clientHandler(clientHandler), _packetBuilder(packetBuilder) {
 }
 
 void rtype::server::ServerProtocol::handleReceive(const boost::system::error_code &error, std::size_t) {
@@ -39,16 +40,7 @@ void rtype::server::ServerProtocol::handleReceive(const boost::system::error_cod
             if (header.type == packets::PacketType::LoginRequest && !_clientHandler.clientExists(playerUuid)) {
                 // TODO: handle a reconnecting player
                 if (_clientHandler.getClientsAmount() + 1 > MAX_PLAYERS) {
-                    packets::PacketHeader header = {
-                        .type = packets::PacketType::LoginFailed,
-                        .size = 0,
-                        .playerUuid = "",
-                    };
-
-                    std::stringstream ss;
-                    auto ar = packets::Serialization::createSerializeArchive(ss);
-                    packets::Serialization::serialize(ar, header);
-                    instantQueue.push(ss.str());
+                    instantQueue.push(_packetBuilder.create(packets::PacketType::LoginFailed).addHeader().get());
 
                     addMessageToQueue = false;
                 } else {
@@ -76,17 +68,8 @@ void rtype::server::ServerProtocol::handleReceive(const boost::system::error_cod
 
                 // Always respond even if the queue is empty as to not block the client
                 if (clientMessageQueue.isClientEmpty(playerUuid)) {
-                    packets::PacketHeader header = {
-                        .type = packets::PacketType::Ack,
-                        .size = 0,
-                        .playerUuid = "",
-                    };
-
-                    std::stringstream ss;
-                    auto ar = packets::Serialization::createSerializeArchive(ss);
-                    packets::Serialization::serialize(ar, header);
-
-                    std::shared_ptr<std::string> message = std::make_shared<std::string>(ss.str());
+                    std::shared_ptr<std::string> message = std::make_shared<std::string>(
+                        _packetBuilder.create(packets::PacketType::Ack).addHeader().get());
 
                     _socket.async_send_to(boost::asio::buffer(*message), _endpoint,
                         std::bind(&UDPProtocol::handleSend, this, message, boost::asio::placeholders::error,
