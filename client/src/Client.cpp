@@ -1,5 +1,6 @@
 #include "Client.hpp"
 #include "boost/asio/error.hpp"
+#include "boost/exception/exception.hpp"
 #include "boost/system/detail/error_code.hpp"
 #include "f-engine/camera/Camera.hpp"
 #include "f-engine/ecs/Entity.hpp"
@@ -40,12 +41,14 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <utility>
+#include <vector>
 
 rtype::client::Client::Client(std::string host, std::string port)
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()),
       _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>()), _registery(), _camera(0.0, 100000),
       _scenes(), _currentScene(), _entity(_registery.entityManager.spawnEntity()), _writeThread(), _readThread(),
-      _exit(false), _inputs(1024), _protocol(_inputs, host, port), _clientConfig() {
+      _exit(false), _inputs(1024), _protocol(_inputs, host, port), _packetReceived(), _maxTick(0) {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));
@@ -116,8 +119,33 @@ void rtype::client::Client::readLoop() {
             boost::system::error_code error = boost::asio::error::would_block;
             while (error == boost::asio::error::would_block && !_exit) {
                 std::string msg = _protocol.read(error);
-                interpretMsg(msg);
+                stockMsg(msg);
             }
+        }
+    } catch (std::exception &) {}
+}
+
+void rtype::client::Client::stockMsg(std::string msg) {
+    packets::PacketHeader header;
+
+    try {
+        std::stringstream ss(msg);
+        packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
+        packets::Serialization::deserialize(ar, header);
+
+        // TODO handle overflow
+        if (_maxTick < header.tick) {
+            _maxTick = header.tick;
+        }
+        if (_packetReceived[header.tick % 10].first == header.tick) {
+            _packetReceived[header.tick % 10].second.push(msg);
+        } else {
+            _packetReceived[header.tick % 10].first = header.tick;
+
+            while (!_packetReceived[header.tick % 10].second.empty()) {
+                _packetReceived[header.tick % 10].second.pop();
+            }
+            _packetReceived[header.tick % 10].second.push(msg);
         }
     } catch (std::exception &) {}
 }
@@ -129,29 +157,28 @@ void rtype::client::Client::interpretMsg(std::string msg) {
         std::stringstream ss(msg);
         packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
         packets::Serialization::deserialize(ar, header);
-        std::cout << header.tick << std::endl;
+
+        // TODO
+        // when new tick is receive I should get the content of the previous tick and then apply the modifications
+        // all this data is stocked in an ordered map to witch we acces any element with the tick id as the key
+        // at each client frame I should do a kind of calculus to know if I need to pass to the next tick or not the server has 20 ticks per seconds but the client has 60 fps
+
         switch (header.type) {
             // TODO: All packets
             case rtype::packets::PacketType::Ack:
-                std::cout << "rtype::packets::PacketType::Ack" << std::endl;
                 break;
             case rtype::packets::PacketType::InputPlayer:
-                std::cout << "rtype::packets::PacketType::InputPlayer" << std::endl;
                 break;
             case rtype::packets::PacketType::EntityDied:
-                std::cout << "rtype::packets::PacketType::EntityDied" << std::endl;
                 removeEntity(ar);
                 break;
             case rtype::packets::PacketType::EntitySpawn:
-                std::cout << "rtype::packets::PacketType::EntitySpawn" << std::endl;
                 addEntity(ar);
                 break;
             case rtype::packets::PacketType::EntityMove:
-                std::cout << "rtype::packets::PacketType::EntityMove" << std::endl;
                 moveEntity(ar);
                 break;
             case rtype::packets::PacketType::EntityVelocityChange:
-                std::cout << "rtype::packets::PacketType::EntityVelocityChange" << std::endl;
                 modifyVelocity(ar);
                 break;
             default:
@@ -167,6 +194,11 @@ void rtype::client::Client::loop() {
 
     while (!_exit) {
         _displayModule->clear();
+
+        while (_packetReceived[(_maxTick - INTERPOLATION_TICK) % 10].second.size() > 0) {
+            interpretMsg(_packetReceived[(_maxTick - INTERPOLATION_TICK) % 10].second.front());
+            _packetReceived[(_maxTick - INTERPOLATION_TICK) % 10].second.pop();
+        }
 
         _displayModule->drawScene(_currentScene);
         _registery.systemManager.update(_registery);
