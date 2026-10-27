@@ -66,6 +66,8 @@ namespace rtype::client {
 
             void interpretButtonAction(int);
 
+            void applyReceivedPackets(void);
+
         public:
             Client(std::string host, std::string port);
             ~Client();

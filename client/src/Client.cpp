@@ -195,10 +195,7 @@ void rtype::client::Client::loop() {
     while (!_exit) {
         _displayModule->clear();
 
-        while (_packetReceived[(_maxTick - INTERPOLATION_TICK) % 10].second.size() > 0) {
-            interpretMsg(_packetReceived[(_maxTick - INTERPOLATION_TICK) % 10].second.front());
-            _packetReceived[(_maxTick - INTERPOLATION_TICK) % 10].second.pop();
-        }
+        applyReceivedPackets();
 
         _displayModule->drawScene(_currentScene);
         _registery.systemManager.update(_registery);
@@ -221,6 +218,13 @@ void rtype::client::Client::loop() {
             _displayModule->verifyConfig();
         }
         _currentScene->update();
+    }
+}
+
+void rtype::client::Client::applyReceivedPackets() {
+    while (_packetReceived[(_maxTick - INTERPOLATION_TICK) % 10].second.size() > 0) {
+        interpretMsg(_packetReceived[(_maxTick - INTERPOLATION_TICK) % 10].second.front());
+        _packetReceived[(_maxTick - INTERPOLATION_TICK) % 10].second.pop();
     }
 }
 
