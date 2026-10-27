@@ -5,11 +5,12 @@
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Payload.hpp"
 #include "r-type/packets/Serialization.hpp"
+#include <cstddef>
 #include <iostream>
 
 rtype::client::ClientProtocol::ClientProtocol(rtype::client::CircularBuffer<EventKey> &inputs, std::string host,
-    std::string port)
-    : _inputs(inputs), _io_context(), _udp(_io_context, host, std::stoi(port)), _uuid() {
+    std::string port, std::size_t &tick)
+    : _inputs(inputs), _io_context(), _udp(_io_context, host, std::stoi(port)), _uuid(), _tick(tick) {
     _udp.connect();
     sendConnectionPackets();
 }
@@ -25,6 +26,7 @@ void rtype::client::ClientProtocol::sendConnectionPackets() {
         packets::PacketHeader header = {
             .type = packets::PacketType::LoginRequest,
             .size = 0,
+            .tick = _tick,
             .playerUuid = "",
         };
 
@@ -64,6 +66,7 @@ void rtype::client::ClientProtocol::sendMessage() {
             packets::PacketHeader header = {
                 .type = packets::PacketType::InputPlayer,
                 .size = sizeof(packets::Input),
+                .tick = _tick,
                 .playerUuid = "",
             };
             header.setUuid(_uuid);
@@ -84,6 +87,7 @@ void rtype::client::ClientProtocol::sendMessage() {
             packets::PacketHeader header = {
                 .type = packets::PacketType::Ack,
                 .size = 0,
+                .tick = _tick,
                 .playerUuid = "",
             };
             header.setUuid(_uuid);

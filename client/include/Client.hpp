@@ -10,7 +10,6 @@
 #include "f-engine/modules/display/events/EventKey.hpp"
 #include "f-engine/modules/sound/ISoundModule.hpp"
 #include "f-engine/scene/IScene.hpp"
-#include "r-type/packets/Serialization.hpp"
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include "r-type/scene/GameScene.hpp"
@@ -32,6 +31,7 @@ constexpr std::size_t INTERPOLATION_TICK = 5;
 namespace rtype::client {
     class Client {
             using udp = boost::asio::ip::udp;
+
         private:
             std::unique_ptr<fengine::modules::display::IDisplayModule> _displayModule;
             std::unique_ptr<fengine::modules::sound::ISoundModule> _soundModule;

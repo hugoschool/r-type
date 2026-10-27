@@ -94,5 +94,5 @@ namespace rtype::server {
             ServerPacketBuilder &_packetBuilder;
 
             ClientMessageQueueHandler _messageQueueHandler;
-        };
+    };
 }

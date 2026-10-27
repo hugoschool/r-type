@@ -3,6 +3,7 @@
 #include "CircularBuffer.hpp"
 #include "boost/system/detail/error_code.hpp"
 #include <boost/asio/io_context.hpp>
+#include <cstddef>
 #include <f-engine/modules/display/events/EventKey.hpp>
 #include <f-network/client/UDPProtocol.hpp>
 
@@ -11,7 +12,8 @@ namespace rtype::client {
         public:
             using EventKey = fengine::modules::display::EventKey;
 
-            ClientProtocol(rtype::client::CircularBuffer<EventKey> &inputs, std::string host, std::string port);
+            ClientProtocol(rtype::client::CircularBuffer<EventKey> &inputs, std::string host, std::string port,
+                std::size_t &tick);
             ~ClientProtocol();
 
             void sendConnectionPackets();
@@ -27,5 +29,6 @@ namespace rtype::client {
             fnetwork::client::UDPProtocol _udp;
 
             std::string _uuid;
+            std::size_t &_tick;
     };
 }
