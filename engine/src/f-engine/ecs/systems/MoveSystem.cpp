@@ -79,6 +79,17 @@ void fengine::ecs::MovementSystem::update(Registry &manager) {
         pos.value().pos_x += vel.value().vel_x;
         pos.value().pos_y += vel.value().vel_y;
 
+        if (vel.value().can_stop) {
+            if (vel.value().vel_x > 0)
+                vel.value().vel_x -= 1;
+            else if (vel.value().vel_x < 0)
+                vel.value().vel_x += 1;
+            if (vel.value().vel_y > 0)
+                vel.value().vel_y -= 1;
+            else if (vel.value().vel_y < 0)
+                vel.value().vel_y += 1;
+        }
+
         content.add<PositionComponent>(pos.value());
         content.add<VelocityComponent>(vel.value());
         updateSubscribers(content);
