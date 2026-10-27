@@ -176,7 +176,7 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
                         auto &clients = _clientHandler.getClients();
                         const std::size_t entityId = entity.getId();
                         for (auto &client : clients) {
-                            newEntityPacket(entityId, client.first);
+                            newEntityPacket(entityId, _tickHandler.getTick(), client.first);
                         }
                         break;
                 }
