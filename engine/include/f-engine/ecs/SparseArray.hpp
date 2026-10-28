@@ -47,6 +47,14 @@ namespace fengine::ecs {
                 return true;
             };
 
+            // Returns true if data exists & is not nullopt
+            bool containsAndHasValue(size_t idx) {
+                if (idx >= _data.capacity()) {
+                    return false;
+                }
+                return _data[idx].has_value();
+            };
+
             reference_type operator[](size_t idx) {
                 if (idx >= _data.capacity()) {
                     _data.resize((_data.capacity() + 1 + idx) * 2, std::nullopt);

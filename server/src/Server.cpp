@@ -88,7 +88,7 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::size_t, s
     }
 
     // TODO: code cleaning would be appreciated here
-    if (velocityComponents.contains(entityId)) {
+    if (velocityComponents.containsAndHasValue(entityId)) {
         auto &velocity = velocityComponents[entityId];
 
         {
@@ -103,7 +103,7 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::size_t, s
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
     }
-    if (positionComponents.contains(entityId)) {
+    if (positionComponents.containsAndHasValue(entityId)) {
         auto &position = positionComponents[entityId];
 
         {
