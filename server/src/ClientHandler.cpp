@@ -82,13 +82,14 @@ void rtype::server::ClientMessageQueueHandler::disconnectClient(std::string uuid
     }
 }
 
-rtype::server::ClientHandler::ClientHandler(fengine::ecs::Registry &registry, ServerPacketBuilder &packetBuilder)
+rtype::server::ClientHandler::ClientHandler(std::queue<std::size_t> entityIds, SafeQueue<std::size_t> &newClientQueue,
+    ServerPacketBuilder &packetBuilder)
     : _mutex(), _maxStatusSecondsMap({
                     {ClientStatus::Disconnected, std::chrono::seconds(MAX_DISCONNECTED_SECONDS)},
                     {ClientStatus::Connecting, std::chrono::seconds(MAX_CONNECTING_SECONDS)},
                     {ClientStatus::Connected, std::chrono::seconds(MAX_CONNECTED_SECONDS)},
                 }),
-      _clients(), _uuids(), _registry(registry), _packetBuilder(packetBuilder) {
+      _clients(), _entityIds(entityIds), _uuids(), _newClientQueue(newClientQueue), _packetBuilder(packetBuilder) {
     for (std::size_t i = 0; i < MAX_PLAYERS; i++) {
         _uuids.push(generateUuid());
     }
@@ -112,25 +113,18 @@ std::string rtype::server::ClientHandler::newClient() {
 
     _messageQueueHandler.createClient(uuid);
 
-    fengine::ecs::Entity entity = _registry.entityManager.spawnEntity();
+    std::size_t entityId = _entityIds.front();
+    _entityIds.pop();
 
     ClientData data = {
         .status = ClientStatus::Disconnected,
-        .entityId = entity.getId(),
+        .entityId = entityId,
         .timer = std::chrono::steady_clock::now(),
     };
 
     _clients.insert({uuid, data});
 
-    fengine::ecs::PositionComponent pos = {50, 50, false};
-    fengine::ecs::VelocityComponent vel = {0, 0, true};
-    fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
-    fengine::ecs::DefenseComponent def = {100, 0};
-
-    _registry.componentManager.addComponent(entity, std::move(pos));
-    _registry.componentManager.addComponent(entity, std::move(vel));
-    _registry.componentManager.addComponent(entity, std::move(att));
-    _registry.componentManager.addComponent(entity, std::move(def));
+    _newClientQueue.push(entityId);
 
     packets::LoginAnswer payload;
     payload.setUuid(uuid);

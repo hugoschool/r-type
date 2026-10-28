@@ -2,7 +2,6 @@
 
 #include "SafeQueue.hpp"
 #include "ServerPacketBuilder.hpp"
-#include "f-engine/ecs/Registry.hpp"
 #include <chrono>
 #include <map>
 #include <r-type/packets/Packet.hpp>
@@ -61,7 +60,8 @@ namespace rtype::server {
 
     class ClientHandler {
         public:
-            explicit ClientHandler(fengine::ecs::Registry &registry, ServerPacketBuilder &packetBuilder);
+            explicit ClientHandler(std::queue<std::size_t> entityIds, SafeQueue<std::size_t> &newClientQueue,
+                ServerPacketBuilder &packetBuilder);
             ~ClientHandler() = default;
 
             static std::string generateUuid();
@@ -89,10 +89,12 @@ namespace rtype::server {
             std::unordered_map<ClientStatus, std::chrono::seconds> _maxStatusSecondsMap;
             std::unordered_map<std::string, ClientData> _clients;
 
-            // Array of pregenerated UUIDs
+            // Queue of pregenerated entity IDs
+            std::queue<std::size_t> _entityIds;
+            // Queue of pregenerated UUIDs
             std::queue<std::string> _uuids;
 
-            fengine::ecs::Registry &_registry;
+            SafeQueue<std::size_t> &_newClientQueue;
             ServerPacketBuilder &_packetBuilder;
 
             ClientMessageQueueHandler _messageQueueHandler;

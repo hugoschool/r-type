@@ -37,9 +37,9 @@ rtype::server::Server::Server(std::uint32_t port)
       // Signals handling
       _stop(false), _signals(_io_context, SIGINT, SIGTERM),
       // Engine
-      _world(1.0, 10000),
+      _world(1.0, 10000), _newClientQueue(),
       // Handlers
-      _tickHandler(), _clientHandler(_world._registry, _packetBuilder),
+      _tickHandler(), _clientHandler(generateClientQueue(), _newClientQueue, _packetBuilder),
       _subscriberHandler(_clientHandler, _packetBuilder),
       // Protocols
       _protocol(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler, _packetBuilder),
@@ -68,6 +68,15 @@ rtype::server::Server::Server(std::uint32_t port)
 }
 
 rtype::server::Server::~Server() {
+}
+
+std::queue<std::size_t> rtype::server::Server::generateClientQueue() {
+    std::queue<std::size_t> clientQueue;
+
+    for (std::size_t i = 0; i < MAX_PLAYERS; i++) {
+        clientQueue.push(_world._registry.entityManager.spawnEntity());
+    }
+    return clientQueue;
 }
 
 void rtype::server::Server::newEntityPacket(std::size_t entityId, std::size_t, std::string uuid) {
@@ -277,6 +286,20 @@ void rtype::server::Server::tickThreadRun() {
             // Using 100% CPU isn't wise, let's wait a little...
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
             continue;
+        }
+        while (!_newClientQueue.empty()) {
+            std::size_t entityId = _newClientQueue.pop();
+            std::optional<fengine::ecs::Entity> &entity = _world._registry.entityManager.entityFromIndex(entityId);
+
+            fengine::ecs::PositionComponent pos = {50, 50, false};
+            fengine::ecs::VelocityComponent vel = {0, 0, true};
+            fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
+            fengine::ecs::DefenseComponent def = {100, 0};
+
+            _world._registry.componentManager.addComponent(entity.value(), std::move(pos));
+            _world._registry.componentManager.addComponent(entity.value(), std::move(vel));
+            _world._registry.componentManager.addComponent(entity.value(), std::move(att));
+            _world._registry.componentManager.addComponent(entity.value(), std::move(def));
         }
         while (!_tickHandler.getMessageQueue().empty()) {
             std::string msg = _tickHandler.getMessageQueue().pop();
