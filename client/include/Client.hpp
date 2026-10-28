@@ -9,17 +9,13 @@
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/sound/ISoundModule.hpp"
 #include "f-engine/scene/IScene.hpp"
-#include "r-type/packets/Packet.hpp"
 #include "r-type/event/PlayerEvent.hpp"
 #include "r-type/packets/Serialization.hpp"
-#include "r-type/scene/GameScene.hpp"
 #include <array>
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/udp.hpp>
 #include <cstddef>
-#include <map>
 #include <memory>
-#include <optional>
 #include <queue>
 #include <string>
 #include <thread>

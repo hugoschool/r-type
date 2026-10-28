@@ -1,6 +1,5 @@
 #include "Client.hpp"
 #include "boost/asio/error.hpp"
-#include "boost/exception/exception.hpp"
 #include "boost/system/detail/error_code.hpp"
 #include "f-engine/camera/Camera.hpp"
 #include "f-engine/ecs/Entity.hpp"
@@ -12,6 +11,7 @@
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
+#include "f-engine/ecs/systems/AnimationSystem.hpp"
 #include "f-engine/ecs/systems/DisplaySystem.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
@@ -19,7 +19,6 @@
 #include "f-engine/modules/display/events/EventMouseButton.hpp"
 #include "f-engine/modules/display/events/EventType.hpp"
 #include "f-engine/modules/display/events/IEvent.hpp"
-#include "f-engine/modules/display/shapes/SFMLCircle.hpp"
 #include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
 #include "f-engine/modules/sound/SFMLSoundModule.hpp"
 #include "r-type/components/AttackComponent.hpp"
@@ -33,7 +32,6 @@
 #include "r-type/scene/GameScene.hpp"
 #include "r-type/scene/MenuScene.hpp"
 #include "r-type/scene/ParamScene.hpp"
-#include <cstddef>
 #include <exception>
 #include <iostream>
 #include <memory>
@@ -69,11 +67,12 @@ rtype::client::Client::Client(std::string host, std::string port)
     fengine::ecs::BoundaryComponent bound = {100, 50, true, false, std::nullopt};
     fengine::ecs::PositionComponent pos = {0, 0, false};
     fengine::ecs::VelocityComponent vel = {0, 0, true};
-    fengine::ecs::DrawableComponent draw = {std::nullopt,
-        std::make_shared<fengine::modules::display::SFMLCircle>(bound.size_x), std::nullopt};
+    fengine::ecs::DrawableComponent draw = {"./assets/textures/ships.gif",
+        std::make_shared<fengine::modules::display::SFMLRectangle>(bound.size_x, bound.size_y), std::nullopt};
     fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
     fengine::ecs::DefenseComponent def = {100, 0};
     fengine::ecs::ControllableComponent control = {fengine::modules::display::EventKey::Z, fengine::modules::display::EventKey::Q, fengine::modules::display::EventKey::S, fengine::modules::display::EventKey::D};
+    fengine::ecs::AnimationComponent anim = {33, 17, 0, 0, 5, 1, false, std::chrono::steady_clock::now()};
 
     _registery.componentManager.addComponent(_entity, std::move(pos));
     _registery.componentManager.addComponent(_entity, std::move(vel));
@@ -81,9 +80,11 @@ rtype::client::Client::Client(std::string host, std::string port)
     _registery.componentManager.addComponent(_entity, std::move(def));
     _registery.componentManager.addComponent(_entity, std::move(draw));
     _registery.componentManager.addComponent(_entity, std::move(bound));
+    _registery.componentManager.addComponent(_entity, std::move(anim));
 
 
     _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule, _camera);
+    _registery.systemManager.addSystem<fengine::ecs::AnimationSystem>(*_displayModule, _camera);
     _soundModule->playMusic("./assets/sounds/title.ogg");
     _clientConfig->set("controls", fengine::ecs::ControllableComponent(control));
     _clientConfig->resetChange();
@@ -198,11 +199,8 @@ void rtype::client::Client::loop() {
                 break;
             }
             if (event.value()->getType() == fengine::modules::display::EventType::KeyPressed) {
-                std::cout << "enter key" << std::endl;
                 auto control = _clientConfig->get("controls");
-                std::cout << "in key 1" << std::endl;
                 auto key = event.value()->getKey();
-                std::cout << "in key Z" << std::endl;
 
                 if (control->has_value()) {
                     auto value = std::any_cast<fengine::ecs::ControllableComponent>(control.value());
@@ -215,7 +213,6 @@ void rtype::client::Client::loop() {
                     else if (key == value.right)
                         _inputs.addElement(event::Event::RIGHT);
                 }
-                std::cout << "quit key" << std::endl;
             }
             if (event.value()->getType() == fengine::modules::display::EventType::Click) {
                 if (event.value()->getMouseButton() == fengine::modules::display::EventMouseButton::Left)
