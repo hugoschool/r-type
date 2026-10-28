@@ -67,12 +67,12 @@ rtype::client::Client::Client(std::string host, std::string port)
     fengine::ecs::BoundaryComponent bound = {100, 50, true, false, std::nullopt};
     fengine::ecs::PositionComponent pos = {0, 0, false};
     fengine::ecs::VelocityComponent vel = {0, 0, true};
-    fengine::ecs::DrawableComponent draw = {"./assets/textures/ships.gif",
+    fengine::ecs::DrawableComponent draw = {std::nullopt,
         std::make_shared<fengine::modules::display::SFMLRectangle>(bound.size_x, bound.size_y), std::nullopt};
     fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
     fengine::ecs::DefenseComponent def = {100, 0};
     fengine::ecs::ControllableComponent control = {fengine::modules::display::EventKey::Z, fengine::modules::display::EventKey::Q, fengine::modules::display::EventKey::S, fengine::modules::display::EventKey::D};
-    fengine::ecs::AnimationComponent anim = {33, 17, 0, 0, 5, 1, false, std::chrono::steady_clock::now()};
+    // fengine::ecs::AnimationComponent anim = {33, 17, 0, 0, 5, 1, false, std::chrono::steady_clock::now()};
 
     _registery.componentManager.addComponent(_entity, std::move(pos));
     _registery.componentManager.addComponent(_entity, std::move(vel));
@@ -80,7 +80,7 @@ rtype::client::Client::Client(std::string host, std::string port)
     _registery.componentManager.addComponent(_entity, std::move(def));
     _registery.componentManager.addComponent(_entity, std::move(draw));
     _registery.componentManager.addComponent(_entity, std::move(bound));
-    _registery.componentManager.addComponent(_entity, std::move(anim));
+    // _registery.componentManager.addComponent(_entity, std::move(anim));
 
 
     _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule, _camera);
@@ -253,6 +253,7 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
 
     try {
         auto &_ = _registery.entityManager.getEntities().at(payload.entityId);
+        static_cast<void>(_);
     } catch (std::exception &) {
         fengine::ecs::Entity entity = _registery.entityManager.createEntity(payload.entityId);
         fengine::ecs::PositionComponent pos = {200, 200, false};
