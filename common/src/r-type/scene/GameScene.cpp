@@ -1,5 +1,5 @@
 #include "r-type/scene/GameScene.hpp"
-#include "f-engine/modules/display/window/SFMLWindow.hpp"
+#include "f-engine/modules/display/window/IWindow.hpp"
 #include "f-engine/scene/AScene.hpp"
 
 fengine::scene::GameScene::GameScene(float cameraVelocity, std::string bgTexture, bool paralax)

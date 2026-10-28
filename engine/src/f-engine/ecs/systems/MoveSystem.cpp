@@ -3,7 +3,7 @@
 #include "f-engine/ecs/components/DeadComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
-#include "f-engine/modules/display/window/SFMLWindow.hpp"
+#include "f-engine/modules/display/window/IWindow.hpp"
 
 fengine::ecs::MovementSystem::MovementSystem(camera::Camera &camera) : _camera(camera) {};
 

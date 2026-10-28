@@ -1,5 +1,5 @@
 #include "r-type/scene/MenuScene.hpp"
-#include "f-engine/modules/display/window/SFMLWindow.hpp"
+#include "f-engine/modules/display/window/IWindow.hpp"
 #include "f-engine/scene/AScene.hpp"
 
 fengine::scene::MenuScene::MenuScene(std::string bgTexture, bool paralax) : fengine::scene::AScene(bgTexture, paralax) {

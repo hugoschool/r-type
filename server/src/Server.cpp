@@ -1,7 +1,7 @@
 #include "Server.hpp"
 #include "ClientHandler.hpp"
 #include "f-engine/ecs/components/CollisionComponent.hpp"
-#include "f-engine/modules/display/window/SFMLWindow.hpp"
+#include "f-engine/modules/display/window/IWindow.hpp"
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/BehaviourComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
