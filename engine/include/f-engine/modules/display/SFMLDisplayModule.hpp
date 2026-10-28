@@ -12,6 +12,8 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
 #include <map>
+#include <queue>
+#include <set>
 
 namespace fengine::modules::display {
     class SFMLDisplayModule : public ADisplayModule {
@@ -26,7 +28,7 @@ namespace fengine::modules::display {
 
             void drawScene(std::shared_ptr<scene::IScene>) override;
 
-            std::optional<std::unique_ptr<IEvent>> pollEvent() override;
+            std::optional<std::queue<std::unique_ptr<IEvent>>> pollEvent() override;
 
             void verifyConfig() override;
 
@@ -36,5 +38,6 @@ namespace fengine::modules::display {
             SFMLWindow _window;
 
             std::map<std::string, std::optional<sf::Texture>> _textureMap;
+            std::set<sf::Keyboard::Key> _keyPressed;
     };
 }

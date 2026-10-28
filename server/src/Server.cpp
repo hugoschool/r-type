@@ -142,49 +142,62 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
             userLoginPacket(_tickHandler.getTick(), header.playerUuid);
             break;
         }
-        // TODO: all types
         case rtype::packets::PacketType::PlayerEvent: {
-            packets::PlayerEvent event;
-
-            packets::Serialization::deserialize(ar, event);
-            auto &data = _clientHandler.getClients().at(header.playerUuid);
-            auto &vel = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>()[data.entityId];
-            if (vel.has_value()) {
-                switch (event.event) {
-                    case event::Event::UP:
-                        vel.value().vel_y = -10;
-                        break;
-                    case event::Event::LEFT:
-                        vel.value().vel_x = -10;
-                        break;
-                    case event::Event::DOWN:
-                        vel.value().vel_y = 10;
-                        break;
-                    case event::Event::RIGHT:
-                        vel.value().vel_x = 10;
-                        break;
-                    case event::Event::SHOOT:
-                        fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
-                        fengine::ecs::PositionComponent &pos = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>()[data.entityId].value();
-                        fengine::ecs::AttackComponent &att = _world._registry.componentManager.getComponents<fengine::ecs::AttackComponent>()[data.entityId].value();
-                        _world._registry.componentManager.addComponent(entity, (fengine::ecs::PositionComponent){pos.pos_x, pos.pos_y, true});
-                        _world._registry.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent){30, 0, false});
-                        _world._registry.componentManager.addComponent(entity, (fengine::ecs::BoundaryComponent){10, 5, false, true});
-                        _world._registry.componentManager.addComponent(entity, (fengine::ecs::AttackComponent){{.team = fengine::ecs::team::ALLIES}, att.damage});
-                        _world._registry.componentManager.addComponent(entity, (fengine::ecs::DefenseComponent){1, 0});
-
-                        auto &clients = _clientHandler.getClients();
-                        const std::size_t entityId = entity.getId();
-                        for (auto &client : clients) {
-                            newEntityPacket(entityId, _tickHandler.getTick(), client.first);
-                        }
-                        break;
-                }
-            }
+            handlePlayerEvents(ar, header);
             break;
         }
         default:
             break;
+    }
+}
+
+void rtype::server::Server::handlePlayerEvents(packets::Serialization::deserialize_archive &ar,
+    packets::PacketHeader &header) {
+    // TODO: all types
+    packets::PlayerEvent event;
+
+    packets::Serialization::deserialize(ar, event);
+    auto &data = _clientHandler.getClients().at(header.playerUuid);
+    auto &vel = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>()[data.entityId];
+    if (vel.has_value()) {
+        switch (event.event) {
+            case event::Event::UP:
+                handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, -10);
+                break;
+            case event::Event::LEFT:
+                handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, -10);
+                break;
+            case event::Event::DOWN:
+                handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, 10);
+                break;
+            case event::Event::RIGHT:
+                handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, 10);
+                break;
+            case event::Event::SHOOT:
+                fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
+                fengine::ecs::PositionComponent &pos = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>()[data.entityId].value();
+                fengine::ecs::AttackComponent &att = _world._registry.componentManager.getComponents<fengine::ecs::AttackComponent>()[data.entityId].value();
+                _world._registry.componentManager.addComponent(entity, (fengine::ecs::PositionComponent){pos.pos_x, pos.pos_y, true});
+                _world._registry.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent){30, 0, false});
+                _world._registry.componentManager.addComponent(entity, (fengine::ecs::BoundaryComponent){10, 5, false, true});
+                _world._registry.componentManager.addComponent(entity, (fengine::ecs::AttackComponent){{.team = fengine::ecs::team::ALLIES}, att.damage});
+                _world._registry.componentManager.addComponent(entity, (fengine::ecs::DefenseComponent){1, 0});
+
+                auto &clients = _clientHandler.getClients();
+                const std::size_t entityId = entity.getId();
+                for (auto &client : clients) {
+                    newEntityPacket(entityId, _tickHandler.getTick(), client.first);
+                }
+                break;
+        }
+    }
+}
+
+void rtype::server::Server::handleVelocityChanges(float &velocity, float counterVelocity, float value) {
+    if (counterVelocity) {
+        velocity = value / 2;
+    } else {
+        velocity = value;
     }
 }
 

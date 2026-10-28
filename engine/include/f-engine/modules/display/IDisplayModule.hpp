@@ -8,6 +8,7 @@
 #include "f-engine/scene/IScene.hpp"
 #include <memory>
 #include <optional>
+#include <queue>
 
 namespace fengine::modules::display {
     class IDisplayModule {
@@ -21,7 +22,7 @@ namespace fengine::modules::display {
 
             virtual void drawScene(std::shared_ptr<scene::IScene>) = 0;
 
-            virtual std::optional<std::unique_ptr<IEvent>> pollEvent() = 0;
+            virtual std::optional<std::queue<std::unique_ptr<IEvent>>> pollEvent() = 0;
 
             virtual void setConfig(std::shared_ptr<config::IConfig>) = 0;
 

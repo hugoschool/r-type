@@ -58,5 +58,9 @@ namespace rtype::server {
             std::chrono::steady_clock::time_point _resendClock;
             void checkResend();
 
+            void handlePlayerEvents(packets::Serialization::deserialize_archive &ar, packets::PacketHeader &header);
+
+            void handleVelocityChanges(float &velocity, float counterVelocity, float value);
+
     };
 }

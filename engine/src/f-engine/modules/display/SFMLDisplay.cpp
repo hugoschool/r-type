@@ -1,3 +1,5 @@
+#include "SFML/Window/Event.hpp"
+#include "SFML/Window/Keyboard.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
@@ -16,8 +18,9 @@
 #include <any>
 #include <memory>
 #include <optional>
+#include <queue>
 
-fengine::modules::display::SFMLDisplayModule::SFMLDisplayModule() : _window(), _textureMap() {
+fengine::modules::display::SFMLDisplayModule::SFMLDisplayModule() : _window(), _textureMap(), _keyPressed() {
 }
 
 fengine::modules::display::SFMLDisplayModule::~SFMLDisplayModule() {
@@ -28,27 +31,24 @@ void fengine::modules::display::SFMLDisplayModule::clear() {
     _window.clear();
 }
 
-std::optional<std::unique_ptr<fengine::modules::display::IEvent>>
+std::optional<std::queue<std::unique_ptr<fengine::modules::display::IEvent>>>
 fengine::modules::display::SFMLDisplayModule::pollEvent() {
+    std::queue<std::unique_ptr<fengine::modules::display::IEvent>> eventQueue;
     while (std::optional event = _window.pollEvent()) {
         if (event.has_value() == false) {
             continue;
         }
         if (event->is<sf::Event::Closed>()) {
-            return std::make_unique<QuitEvent>();
+            eventQueue.push(std::make_unique<QuitEvent>());
         }
         if (const sf::Event::KeyPressed *key = event->getIf<sf::Event::KeyPressed>()) {
-            if (key->code >= sf::Keyboard::Key::A && key->code <= sf::Keyboard::Key::Z) {
-                return std::make_unique<KeyPressedEvent>(static_cast<EventKey>(static_cast<int>(key->code) + 1));
-            } else {
-                return std::make_unique<KeyPressedEvent>(interpretKeyCode(key->code));
+            if (_keyPressed.contains(key->code) == false) {
+                _keyPressed.insert(key->code);
             }
         }
         if (const sf::Event::KeyReleased *key = event->getIf<sf::Event::KeyReleased>()) {
-            if (key->code >= sf::Keyboard::Key::A && key->code <= sf::Keyboard::Key::Z) {
-                return std::make_unique<KeyReleasedEvent>(static_cast<EventKey>(static_cast<int>(key->code) + 1));
-            } else {
-                return std::make_unique<KeyReleasedEvent>(interpretKeyCode(key->code));
+            if (_keyPressed.contains(key->code) == true) {
+                _keyPressed.erase(key->code);
             }
         }
         if (const sf::Event::MouseButtonPressed *mouse = event->getIf<sf::Event::MouseButtonPressed>()) {
@@ -61,12 +61,23 @@ fengine::modules::display::SFMLDisplayModule::pollEvent() {
                     mouseButton = EventMouseButton::Right;
                     break;
                 default:
-                    return std::nullopt;
+                    break;
             }
-            return std::make_unique<ClickEvent>(mouseButton, mouse->position.x, mouse->position.y);
+            eventQueue.push(std::make_unique<ClickEvent>(mouseButton, mouse->position.x, mouse->position.y));
         }
     }
-    return std::nullopt;
+    for (auto keyCode: _keyPressed) {
+        if (keyCode >= sf::Keyboard::Key::A && keyCode <= sf::Keyboard::Key::Z) {
+            eventQueue.push(std::make_unique<KeyPressedEvent>(static_cast<EventKey>(static_cast<int>(keyCode) + 1)));
+        } else {
+            eventQueue.push(std::make_unique<KeyPressedEvent>(interpretKeyCode(keyCode)));
+        }
+    }
+    if (eventQueue.empty()) {
+        return std::nullopt;
+    } else {
+        return eventQueue;
+    }
 }
 
 fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule::interpretKeyCode(

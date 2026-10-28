@@ -37,6 +37,7 @@
 #include <memory>
 #include <optional>
 #include <ostream>
+#include <queue>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -192,32 +193,39 @@ void rtype::client::Client::loop() {
         _displayModule->drawScene(_currentScene);
         _registery.systemManager.update(_registery);
 
-        std::optional<std::unique_ptr<fengine::modules::display::IEvent>> event = _displayModule->pollEvent();
-        if (event.has_value()) {
-            if (event.value()->getType() == fengine::modules::display::EventType::Quit) {
-                _exit = true;
-                break;
-            }
-            if (event.value()->getType() == fengine::modules::display::EventType::KeyPressed) {
-                auto control = _clientConfig->get("controls");
-                auto key = event.value()->getKey();
+        std::optional<std::queue<std::unique_ptr<fengine::modules::display::IEvent>>> events = _displayModule->pollEvent();
+        if (events.has_value()) {
+            while (events.value().empty() == false) {
+                std::unique_ptr<fengine::modules::display::IEvent> event = std::move(events.value().front());
+                events.value().pop();
+                if (event->getType() == fengine::modules::display::EventType::Quit) {
+                    _exit = true;
+                    break;
+                }
+                if (event->getType() == fengine::modules::display::EventType::KeyPressed) {
+                    auto control = _clientConfig->get("controls");
+                    auto key = event->getKey();
 
-                if (control->has_value()) {
-                    auto value = std::any_cast<fengine::ecs::ControllableComponent>(control.value());
-                    if (key == value.up)
-                        _inputs.addElement(event::Event::UP);
-                    else if (key == value.down)
-                        _inputs.addElement(event::Event::DOWN);
-                    else if (key == value.left)
-                        _inputs.addElement(event::Event::LEFT);
-                    else if (key == value.right)
-                        _inputs.addElement(event::Event::RIGHT);
+                    if (control->has_value()) {
+                        auto value = std::any_cast<fengine::ecs::ControllableComponent>(control.value());
+                        if (key == value.up)
+                            _inputs.addElement(event::Event::UP);
+                        else if (key == value.down)
+                            _inputs.addElement(event::Event::DOWN);
+                        else if (key == value.left)
+                            _inputs.addElement(event::Event::LEFT);
+                        else if (key == value.right)
+                            _inputs.addElement(event::Event::RIGHT);
+                    }
+                }
+                if (event->getType() == fengine::modules::display::EventType::Click) {
+                    if (event->getMouseButton() == fengine::modules::display::EventMouseButton::Left)
+                        _inputs.addElement(event::Event::SHOOT);
+                    _currentScene->updateButtons(event->getClickCoordinates());
                 }
             }
-            if (event.value()->getType() == fengine::modules::display::EventType::Click) {
-                if (event.value()->getMouseButton() == fengine::modules::display::EventMouseButton::Left)
-                    _inputs.addElement(event::Event::SHOOT);
-                _currentScene->updateButtons(event.value()->getClickCoordinates());
+            if (_exit == true) {
+                break;
             }
         }
         while (!_currentScene->empty()) {
