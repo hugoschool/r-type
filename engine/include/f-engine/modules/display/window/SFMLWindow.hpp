@@ -9,9 +9,6 @@
 #include <SFML/Graphics/Shader.hpp>
 #include <memory>
 
-constexpr int WINDOW_X = 1000;
-constexpr int WINDOW_Y = 800;
-
 namespace fengine::modules::display {
     class SFMLWindow : public IWindow {
         public:

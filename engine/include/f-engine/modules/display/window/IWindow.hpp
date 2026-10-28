@@ -4,6 +4,9 @@
 #include "f-engine/modules/display/shapes/IShape.hpp"
 #include <memory>
 
+constexpr int WINDOW_X = 1000;
+constexpr int WINDOW_Y = 800;
+
 namespace fengine::modules::display {
     class IWindow {
         public:

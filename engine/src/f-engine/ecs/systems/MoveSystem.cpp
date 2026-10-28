@@ -3,7 +3,7 @@
 #include "f-engine/ecs/components/DeadComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/ecs/components/VelocityComponent.hpp"
-#include "f-engine/modules/display/window/SFMLWindow.hpp"
+#include "f-engine/modules/display/window/IWindow.hpp"
 
 fengine::ecs::MovementSystem::MovementSystem(camera::Camera &camera) : _camera(camera) {};
 
@@ -13,8 +13,8 @@ void fengine::ecs::MovementSystem::update(Registry &manager) {
     auto &positions = manager.componentManager.getComponents<PositionComponent>();
     auto &velocities = manager.componentManager.getComponents<VelocityComponent>();
     auto &boundaries = manager.componentManager.getComponents<BoundaryComponent>();
-    float baseVel = _camera.getBaseVelocity();
-    float maxLength = _camera.getMaxLength();
+    // float baseVel = _camera.getBaseVelocity();
+    // float maxLength = _camera.getMaxLength();
     float worldIndex = _camera.getWorldIndex();
     BoundaryComponent boundary = {0, 0, false, false, std::nullopt};
 
