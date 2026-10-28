@@ -66,7 +66,7 @@ fengine::modules::display::SFMLDisplayModule::pollEvent() {
             eventQueue.push(std::make_unique<ClickEvent>(mouseButton, mouse->position.x, mouse->position.y));
         }
     }
-    for (auto keyCode: _keyPressed) {
+    for (auto keyCode : _keyPressed) {
         if (keyCode >= sf::Keyboard::Key::A && keyCode <= sf::Keyboard::Key::Z) {
             eventQueue.push(std::make_unique<KeyPressedEvent>(static_cast<EventKey>(static_cast<int>(keyCode) + 1)));
         } else {

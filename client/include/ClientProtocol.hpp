@@ -6,7 +6,7 @@
 #include <boost/asio/io_context.hpp>
 #include <cstddef>
 #include <f-engine/modules/display/events/EventKey.hpp>
-#include "f-network/client/UDPProtocol.hpp"
+#include <f-network/client/UDPProtocol.hpp>
 
 namespace rtype::client {
     class ClientProtocol {

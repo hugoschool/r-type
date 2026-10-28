@@ -164,7 +164,6 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
 
 void rtype::server::Server::handlePlayerEvents(packets::Serialization::deserialize_archive &ar,
     packets::PacketHeader &header) {
-    // TODO: all types
     packets::PlayerEvent event;
 
     packets::Serialization::deserialize(ar, event);

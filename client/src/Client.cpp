@@ -72,7 +72,9 @@ rtype::client::Client::Client(std::string host, std::string port)
         std::make_shared<fengine::modules::display::SFMLRectangle>(bound.size_x, bound.size_y), std::nullopt};
     fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
     fengine::ecs::DefenseComponent def = {100, 0};
-    fengine::ecs::ControllableComponent control = {fengine::modules::display::EventKey::Z, fengine::modules::display::EventKey::Q, fengine::modules::display::EventKey::S, fengine::modules::display::EventKey::D};
+    fengine::ecs::ControllableComponent control = {fengine::modules::display::EventKey::Z,
+        fengine::modules::display::EventKey::Q, fengine::modules::display::EventKey::S,
+        fengine::modules::display::EventKey::D};
     // fengine::ecs::AnimationComponent anim = {33, 17, 0, 0, 5, 1, false, std::chrono::steady_clock::now()};
 
     _registery.componentManager.addComponent(_entity, std::move(pos));
@@ -82,7 +84,6 @@ rtype::client::Client::Client(std::string host, std::string port)
     _registery.componentManager.addComponent(_entity, std::move(draw));
     _registery.componentManager.addComponent(_entity, std::move(bound));
     // _registery.componentManager.addComponent(_entity, std::move(anim));
-
 
     _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule, _camera);
     _registery.systemManager.addSystem<fengine::ecs::AnimationSystem>(*_displayModule, _camera);
@@ -193,7 +194,8 @@ void rtype::client::Client::loop() {
         _displayModule->drawScene(_currentScene);
         _registery.systemManager.update(_registery);
 
-        std::optional<std::queue<std::unique_ptr<fengine::modules::display::IEvent>>> events = _displayModule->pollEvent();
+        std::optional<std::queue<std::unique_ptr<fengine::modules::display::IEvent>>> events =
+            _displayModule->pollEvent();
         if (events.has_value()) {
             while (events.value().empty() == false) {
                 std::unique_ptr<fengine::modules::display::IEvent> event = std::move(events.value().front());
