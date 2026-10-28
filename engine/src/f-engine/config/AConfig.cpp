@@ -17,7 +17,7 @@ std::optional<std::any> fengine::config::AConfig::get(std::string key) {
     try {
         std::any value = _configMap.at(key);
         return value;
-    } catch (std::exception) { return std::nullopt; }
+    } catch (std::exception &) { return std::nullopt; }
 }
 
 bool fengine::config::AConfig::hasChanged() {
