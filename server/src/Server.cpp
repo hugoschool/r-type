@@ -134,6 +134,8 @@ void rtype::server::Server::userLoginPacket(std::size_t tick, std::string uuid) 
 
     std::cout << "user login packet tick " << tick << std::endl;
     for (auto &entity : entities) {
+        if (!entity.has_value())
+            continue;
         const std::size_t entityId = entity->getId();
         newEntityPacket(entityId, tick, uuid);
     }
@@ -261,7 +263,7 @@ void rtype::server::Server::generateEnemies() {
 void rtype::server::Server::checkResend() {
     std::chrono::steady_clock::time_point elapsedTime = std::chrono::steady_clock::now();
     std::chrono::duration<double> spawnTime = elapsedTime - _resendClock;
-    std::chrono::seconds var(2);
+    std::chrono::milliseconds var(50);
 
     if (spawnTime < var) {
         return;
@@ -271,11 +273,15 @@ void rtype::server::Server::checkResend() {
     auto &entities = _world._registry.entityManager.getEntities();
 
     for (auto &entity : entities) {
+        if (!entity.has_value())
+            continue;
         const std::size_t entityId = entity->getId();
         for (auto &client : clients) {
             newEntityPacket(entityId, _tickHandler.getTick(), client.first);
         }
     }
+
+    _resendClock = elapsedTime;
 }
 
 void rtype::server::Server::tickThreadRun() {
