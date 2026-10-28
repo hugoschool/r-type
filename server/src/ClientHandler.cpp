@@ -38,8 +38,6 @@ void rtype::server::ClientMessageQueueHandler::addMessage(std::string uuid, std:
         return;
     }
 
-    std::cout << "Adding a message to " << uuid << std::endl;
-
     createClient(uuid);
 
     {
@@ -85,11 +83,11 @@ void rtype::server::ClientMessageQueueHandler::disconnectClient(std::string uuid
 }
 
 rtype::server::ClientHandler::ClientHandler(fengine::ecs::Registry &registry, ServerPacketBuilder &packetBuilder)
-    : _maxStatusSecondsMap({
-          {ClientStatus::Disconnected, std::chrono::seconds(MAX_DISCONNECTED_SECONDS)},
-          {ClientStatus::Connecting, std::chrono::seconds(MAX_CONNECTING_SECONDS)},
-          {ClientStatus::Connected, std::chrono::seconds(MAX_CONNECTED_SECONDS)},
-      }),
+    : _mutex(), _maxStatusSecondsMap({
+                    {ClientStatus::Disconnected, std::chrono::seconds(MAX_DISCONNECTED_SECONDS)},
+                    {ClientStatus::Connecting, std::chrono::seconds(MAX_CONNECTING_SECONDS)},
+                    {ClientStatus::Connected, std::chrono::seconds(MAX_CONNECTED_SECONDS)},
+                }),
       _clients(), _uuids(), _registry(registry), _packetBuilder(packetBuilder) {
     for (std::size_t i = 0; i < MAX_PLAYERS; i++) {
         _uuids.push(generateUuid());
@@ -101,10 +99,14 @@ std::string rtype::server::ClientHandler::generateUuid() {
 }
 
 std::unordered_map<std::string, rtype::server::ClientData> &rtype::server::ClientHandler::getClients() {
+    std::unique_lock lock(_mutex);
+
     return _clients;
 }
 
 std::string rtype::server::ClientHandler::newClient() {
+    std::unique_lock lock(_mutex);
+
     std::string uuid = _uuids.front();
     _uuids.pop();
 
@@ -140,6 +142,8 @@ std::string rtype::server::ClientHandler::newClient() {
 }
 
 void rtype::server::ClientHandler::setStatus(std::string &uuid, ClientStatus newStatus) {
+    std::unique_lock lock(_mutex);
+
     ClientData &data = _clients.at(uuid);
 
     data.status = newStatus;
@@ -149,20 +153,28 @@ void rtype::server::ClientHandler::setStatus(std::string &uuid, ClientStatus new
 }
 
 bool rtype::server::ClientHandler::clientExists(std::string &uuid) {
+    std::unique_lock lock(_mutex);
+
     return _clients.contains(uuid);
 }
 
 std::size_t rtype::server::ClientHandler::getClientsAmount() {
+    std::unique_lock lock(_mutex);
+
     return _clients.size();
 }
 
 void rtype::server::ClientHandler::setAlive(std::string &uuid) {
+    std::unique_lock lock(_mutex);
+
     ClientData &data = _clients.at(uuid);
     data.status = ClientStatus::Connected;
     data.timer = std::chrono::steady_clock::now();
 }
 
 void rtype::server::ClientHandler::verifyStatus() {
+    std::unique_lock lock(_mutex);
+
     for (auto &[uuid, data] : _clients) {
         auto currentTime = std::chrono::steady_clock::now();
         auto duration = currentTime - data.timer;

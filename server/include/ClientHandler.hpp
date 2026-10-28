@@ -84,6 +84,8 @@ namespace rtype::server {
             ClientMessageQueueHandler &getMessageQueueHandler();
 
         private:
+            std::mutex _mutex;
+
             std::unordered_map<ClientStatus, std::chrono::seconds> _maxStatusSecondsMap;
             std::unordered_map<std::string, ClientData> _clients;
 

@@ -1,6 +1,7 @@
 #include "Server.hpp"
 #include "ClientHandler.hpp"
 #include "TickHandler.hpp"
+#include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/CollisionComponent.hpp"
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include "r-type/components/AttackComponent.hpp"
@@ -42,7 +43,7 @@ rtype::server::Server::Server(std::uint32_t port)
       _subscriberHandler(_clientHandler, _packetBuilder),
       // Protocols
       _protocol(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler, _packetBuilder),
-      _packetBuilder(_tickHandler.getTick()),
+      _packetBuilder(_tickHandler),
       // Enemy generation
       _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0), _resendClock() {
 
@@ -69,7 +70,7 @@ rtype::server::Server::Server(std::uint32_t port)
 rtype::server::Server::~Server() {
 }
 
-void rtype::server::Server::newEntityPacket(std::size_t entityId, std::size_t tick, std::string uuid) {
+void rtype::server::Server::newEntityPacket(std::size_t entityId, std::size_t, std::string uuid) {
     auto &velocityComponents = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>();
     auto &positionComponents = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>();
     // auto &boundaryComponents =
@@ -78,7 +79,6 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::size_t ti
     // auto &defenseComponents = _world._registry.componentManager.getComponents<fengine::ecs::DefenseComponent>();
 
     // Send a new entity
-    std::cout << "new entity packet tick " << tick << std::endl;
     {
         packets::EntitySpawn payload = {.entityId = entityId};
         std::string content =
@@ -159,37 +159,40 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
     packets::Serialization::deserialize(ar, event);
     auto &data = _clientHandler.getClients().at(header.playerUuid);
     auto &vel = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>()[data.entityId];
-    if (vel.has_value()) {
-        switch (event.event) {
-            case event::Event::UP:
-                handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, -10);
-                break;
-            case event::Event::LEFT:
-                handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, -10);
-                break;
-            case event::Event::DOWN:
-                handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, 10);
-                break;
-            case event::Event::RIGHT:
-                handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, 10);
-                break;
-            case event::Event::SHOOT:
-                fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
-                fengine::ecs::PositionComponent &pos = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>()[data.entityId].value();
-                fengine::ecs::AttackComponent &att = _world._registry.componentManager.getComponents<fengine::ecs::AttackComponent>()[data.entityId].value();
-                _world._registry.componentManager.addComponent(entity, (fengine::ecs::PositionComponent){pos.pos_x, pos.pos_y, true});
-                _world._registry.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent){30, 0, false});
-                _world._registry.componentManager.addComponent(entity, (fengine::ecs::BoundaryComponent){10, 5, false, true});
-                _world._registry.componentManager.addComponent(entity, (fengine::ecs::AttackComponent){{.team = fengine::ecs::team::ALLIES}, att.damage});
-                _world._registry.componentManager.addComponent(entity, (fengine::ecs::DefenseComponent){1, 0});
 
-                auto &clients = _clientHandler.getClients();
-                const std::size_t entityId = entity.getId();
-                for (auto &client : clients) {
-                    newEntityPacket(entityId, _tickHandler.getTick(), client.first);
-                }
-                break;
-        }
+    if (!vel.has_value())
+        return;
+
+    switch (event.event) {
+        case event::Event::UP:
+            handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, -10);
+            break;
+        case event::Event::LEFT:
+            handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, -10);
+            break;
+        case event::Event::DOWN:
+            handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, 10);
+            break;
+        case event::Event::RIGHT:
+            handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, 10);
+            break;
+        case event::Event::SHOOT:
+            fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
+            fengine::ecs::PositionComponent &pos =
+                _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>()[data.entityId]
+                    .value();
+            fengine::ecs::AttackComponent &att =
+                _world._registry.componentManager.getComponents<fengine::ecs::AttackComponent>()[data.entityId].value();
+            _world._registry.componentManager.addComponent(entity,
+                (fengine::ecs::PositionComponent) {pos.pos_x, pos.pos_y, true});
+            _world._registry.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent) {30, 0, false});
+            _world._registry.componentManager.addComponent(entity,
+                (fengine::ecs::BoundaryComponent) {10, 5, false, true});
+            _world._registry.componentManager.addComponent(entity,
+                (fengine::ecs::AttackComponent) {{.team = fengine::ecs::team::ALLIES}, att.damage});
+            _world._registry.componentManager.addComponent(entity, (fengine::ecs::DefenseComponent) {1, 0});
+
+            break;
     }
 }
 
@@ -280,7 +283,6 @@ void rtype::server::Server::tickThreadRun() {
 
             packets::PacketHeader header;
             try {
-                std::cout << "Got message: " << msg << std::endl;
                 std::stringstream ss(msg);
                 packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
 
