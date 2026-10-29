@@ -197,7 +197,7 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
                 (fengine::ecs::PositionComponent) {pos.pos_x, pos.pos_y, true});
             _world._registry.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent) {30, 0, false});
             _world._registry.componentManager.addComponent(entity,
-                (fengine::ecs::BoundaryComponent) {10, 5, false, true});
+                (fengine::ecs::BoundaryComponent) {10, 5, false, true, std::nullopt});
             _world._registry.componentManager.addComponent(entity,
                 (fengine::ecs::AttackComponent) {{.team = fengine::ecs::team::ALLIES}, att.damage});
             _world._registry.componentManager.addComponent(entity, (fengine::ecs::DefenseComponent) {1, 0});
