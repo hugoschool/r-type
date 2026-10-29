@@ -4,7 +4,6 @@
 #include "ClientProtocol.hpp"
 #include "f-engine/camera/Camera.hpp"
 #include "f-engine/config/IConfig.hpp"
-#include "f-engine/ecs/Entity.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/sound/ISoundModule.hpp"
@@ -35,7 +34,6 @@ namespace rtype::client {
             fengine::camera::Camera _camera;
             std::vector<std::shared_ptr<fengine::scene::IScene>> _scenes;
             std::shared_ptr<fengine::scene::IScene> _currentScene;
-            fengine::ecs::Entity _entity;
             std::thread _writeThread;
             std::thread _readThread;
             bool _exit;

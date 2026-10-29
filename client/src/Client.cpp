@@ -5,7 +5,6 @@
 #include "f-engine/ecs/Entity.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/AnimationComponent.hpp"
-#include "f-engine/ecs/components/BoundaryComponent.hpp"
 #include "f-engine/ecs/components/ControllableComponent.hpp"
 #include "f-engine/ecs/components/DeadComponent.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
@@ -21,8 +20,7 @@
 #include "f-engine/modules/display/events/IEvent.hpp"
 #include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
 #include "f-engine/modules/sound/SFMLSoundModule.hpp"
-#include "r-type/components/AttackComponent.hpp"
-#include "r-type/components/DefenseComponent.hpp"
+#include "r-type/components/EntityTypeComponent.hpp"
 #include "r-type/config/ClientConfig.hpp"
 #include "r-type/event/PlayerEvent.hpp"
 #include "r-type/packets/Packet.hpp"
@@ -47,7 +45,7 @@
 rtype::client::Client::Client(std::string host, std::string port)
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()),
       _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>()), _registery(), _camera(0.0, 100000),
-      _scenes(), _currentScene(), _entity(_registery.entityManager.spawnEntity()), _writeThread(), _readThread(),
+      _scenes(), _currentScene(), _writeThread(), _readThread(),
       _exit(false), _inputs(1024), _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0) {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
@@ -60,30 +58,12 @@ rtype::client::Client::Client(std::string host, std::string port)
     _registery.componentManager.registerComponent<fengine::ecs::AnimationComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::DrawableComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::DeadComponent>();
-    _registery.componentManager.registerComponent<fengine::ecs::AttackComponent>();
-    _registery.componentManager.registerComponent<fengine::ecs::BoundaryComponent>();
-    _registery.componentManager.registerComponent<fengine::ecs::DefenseComponent>();
     _registery.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
+    _registery.componentManager.registerComponent<fengine::ecs::EntityTypeComponent>();
 
-    fengine::ecs::BoundaryComponent bound = {100, 50, true, false, std::nullopt};
-    fengine::ecs::PositionComponent pos = {0, 0, false};
-    fengine::ecs::VelocityComponent vel = {0, 0, true};
-    fengine::ecs::DrawableComponent draw = {std::nullopt,
-        std::make_shared<fengine::modules::display::SFMLRectangle>(bound.size_x, bound.size_y), std::nullopt};
-    fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
-    fengine::ecs::DefenseComponent def = {100, 0};
     fengine::ecs::ControllableComponent control = {fengine::modules::display::EventKey::Z,
         fengine::modules::display::EventKey::Q, fengine::modules::display::EventKey::S,
         fengine::modules::display::EventKey::D};
-    // fengine::ecs::AnimationComponent anim = {33, 17, 0, 0, 5, 1, false, std::chrono::steady_clock::now()};
-
-    _registery.componentManager.addComponent(_entity, std::move(pos));
-    _registery.componentManager.addComponent(_entity, std::move(vel));
-    _registery.componentManager.addComponent(_entity, std::move(att));
-    _registery.componentManager.addComponent(_entity, std::move(def));
-    _registery.componentManager.addComponent(_entity, std::move(draw));
-    _registery.componentManager.addComponent(_entity, std::move(bound));
-    // _registery.componentManager.addComponent(_entity, std::move(anim));
 
     _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule, _camera);
     _registery.systemManager.addSystem<fengine::ecs::AnimationSystem>(*_displayModule, _camera);
@@ -266,21 +246,16 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
         static_cast<void>(_);
     } catch (std::exception &) {
         fengine::ecs::Entity entity = _registery.entityManager.createEntity(payload.entityId);
-        fengine::ecs::PositionComponent pos = {200, 200, false};
-        fengine::ecs::VelocityComponent vel = {0, 0, false};
-        fengine::ecs::BoundaryComponent bound = {40, 40, true, true, std::nullopt};
-        fengine::ecs::DrawableComponent draw = {std::nullopt,
-            std::make_shared<fengine::modules::display::SFMLRectangle>(bound.size_x, bound.size_y), std::nullopt};
-        fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::MONSTERS}, 10};
-        fengine::ecs::DefenseComponent def = {100, 0};
+        struct fengine::presets::presets preset = fengine::presets::EntityPresets[static_cast<int>(payload.entityType)];
 
-        _registery.componentManager.addComponent(entity, std::move(pos));
-        _registery.componentManager.addComponent(entity, std::move(vel));
-        _registery.componentManager.addComponent(entity, std::move(draw));
-        _registery.componentManager.addComponent(entity, std::move(bound));
-        _registery.componentManager.addComponent(entity, std::move(att));
-        _registery.componentManager.addComponent(entity, std::move(def));
-        // _soundModule->playSound(EntityPresets[static_cast<int>(payload.ENtityEnum (exemple : BULLET))].preset.apparition_sound); commented because not implemented
+        _registery.componentManager.addComponent(entity, (fengine::ecs::EntityTypeComponent) {payload.entityType});
+        _registery.componentManager.addComponent(entity, (fengine::ecs::PositionComponent) {200, 200, false});
+        _registery.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent) {0, 0, false});
+        _registery.componentManager.addComponent(entity, (fengine::ecs::DrawableComponent) {std::string(preset.preset.texture),
+            std::make_shared<fengine::modules::display::SFMLRectangle>(payload.width, payload.height), std::nullopt});
+        _registery.componentManager.addComponent(entity, (fengine::ecs::AnimationComponent) {preset.values.length, preset.values.height, preset.values.offset_x, preset.values.offset_y,
+            preset.values.cols, preset.values.rows, false, std::chrono::steady_clock::now()});
+        _soundModule->playSound(std::string(preset.preset.apparition_sound));
     }
 }
 
