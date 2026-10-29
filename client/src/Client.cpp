@@ -46,7 +46,7 @@ rtype::client::Client::Client(std::string host, std::string port)
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()),
       _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>()), _registery(), _camera(0.0, 100000),
       _scenes(), _currentScene(), _writeThread(), _readThread(), _exit(false), _inputs(1024),
-      _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0) {
+      _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0), _startedPlaying(false) {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));
@@ -180,11 +180,12 @@ void rtype::client::Client::loop() {
             while (events.value().empty() == false) {
                 std::unique_ptr<fengine::modules::display::IEvent> event = std::move(events.value().front());
                 events.value().pop();
-                if (event->getType() == fengine::modules::display::EventType::Quit) {
+
+                if (_startedPlaying == true && event->getType() == fengine::modules::display::EventType::Quit) {
                     _exit = true;
                     break;
                 }
-                if (event->getType() == fengine::modules::display::EventType::KeyPressed) {
+                if (_startedPlaying == true && event->getType() == fengine::modules::display::EventType::KeyPressed) {
                     auto control = _clientConfig->get("controls");
                     auto key = event->getKey();
 
@@ -201,7 +202,7 @@ void rtype::client::Client::loop() {
                     }
                 }
                 if (event->getType() == fengine::modules::display::EventType::Click) {
-                    if (event->getMouseButton() == fengine::modules::display::EventMouseButton::Left)
+                    if (_startedPlaying == true && event->getMouseButton() == fengine::modules::display::EventMouseButton::Left)
                         _inputs.addElement(event::Event::SHOOT);
                     _currentScene->updateButtons(event->getClickCoordinates());
                 }
@@ -296,6 +297,8 @@ void rtype::client::Client::interpretButtonAction(int button) {
         case static_cast<int>(fengine::scene::MenuSceneButtons::PLAY):
             _soundModule->playMusic("./assets/sounds/game.ogg");
             _currentScene = _scenes.back();
+            _inputs.addElement(event::Event::PLAY);
+            _startedPlaying = true;
             break;
         case static_cast<int>(fengine::scene::MenuSceneButtons::PARAMS):
             _soundModule->playMusic("./assets/sounds/params.ogg");

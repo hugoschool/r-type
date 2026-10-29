@@ -42,8 +42,8 @@ namespace rtype::client {
             ClientProtocol _protocol;
             std::shared_ptr<fengine::config::IConfig> _clientConfig;
             std::array<std::pair<std::size_t, std::queue<std::string>>, 10> _packetReceived;
-            // std::map<std::size_t, std::queue<std::string>> _packetReceived;
             std::size_t _maxTick;
+            bool _startedPlaying;
 
             void loop();
             void sendLoop();
