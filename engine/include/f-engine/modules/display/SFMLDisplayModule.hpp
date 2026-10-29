@@ -24,7 +24,7 @@ namespace fengine::modules::display {
             void clear() override;
             void drawEntity(ecs::PositionComponent, ecs::DrawableComponent &) override;
 
-            void animateEntity(ecs::AnimationComponent &, ecs::DrawableComponent &) override;
+            void animateEntity(ecs::AnimationComponent &, ecs::DrawableComponent &, bool) override;
 
             void drawScene(std::shared_ptr<scene::IScene>) override;
 

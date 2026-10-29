@@ -13,6 +13,6 @@ namespace fengine::modules::display {
             virtual void setColor(std::tuple<int, int, int> &) = 0;
 
             virtual void setTexture(std::any) = 0;
-            virtual void setTextureRect(int, int, int, int) = 0;
+            virtual void setTextureRect(int, int, int, int, bool) = 0;
     };
 }
