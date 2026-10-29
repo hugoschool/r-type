@@ -292,9 +292,12 @@ void rtype::client::Client::moveEntity(rtype::packets::Serialization::deserializ
     try {
         auto &sparseArray = _registery.componentManager.getComponents<fengine::ecs::PositionComponent>();
 
-        auto &oldPos = sparseArray[payload.entityId];
-        oldPos->pos_x = payload.coordinates.x;
-        oldPos->pos_y = payload.coordinates.y;
+        if (sparseArray.containsAndHasValue(payload.entityId)) {
+            auto &oldPos = sparseArray[payload.entityId];
+
+            oldPos->pos_x = payload.coordinates.x;
+            oldPos->pos_y = payload.coordinates.y;
+        }
     } catch (std::exception &) {}
 }
 
@@ -306,9 +309,12 @@ void rtype::client::Client::modifyVelocity(rtype::packets::Serialization::deseri
     try {
         auto &sparseArray = _registery.componentManager.getComponents<fengine::ecs::VelocityComponent>();
 
-        auto &oldVel = sparseArray[payload.entityId];
-        oldVel->vel_x = payload.velocity.x;
-        oldVel->vel_y = payload.velocity.y;
+        if (sparseArray.containsAndHasValue(payload.entityId)) {
+            auto &oldVel = sparseArray[payload.entityId];
+
+            oldVel->vel_x = payload.velocity.x;
+            oldVel->vel_y = payload.velocity.y;
+        }
     } catch (std::exception &) {}
 }
 
