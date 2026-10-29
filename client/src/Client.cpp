@@ -51,7 +51,7 @@ rtype::client::Client::Client(std::string host, std::string port)
           std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager))),
       _registery(), _camera(0.0, 100000), _scenes(), _currentScene(), _writeThread(), _readThread(), _exit(false),
       _inputs(1024), _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0),
-      _navClock(std::chrono::steady_clock::now()) {
+      _startedPlaying(false), _navClock(std::chrono::steady_clock::now()) {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));
@@ -185,7 +185,8 @@ void rtype::client::Client::loop() {
             while (events.value().empty() == false) {
                 std::unique_ptr<fengine::modules::display::IEvent> event = std::move(events.value().front());
                 events.value().pop();
-                if (event->getType() == fengine::modules::display::EventType::Quit) {
+
+                if (_startedPlaying == true && event->getType() == fengine::modules::display::EventType::Quit) {
                     _exit = true;
                     break;
                 }
@@ -195,24 +196,33 @@ void rtype::client::Client::loop() {
 
                     if (control->has_value()) {
                         auto value = std::any_cast<fengine::ecs::ControllableComponent>(control.value());
-                        if (key == value.up)
+                        if (_startedPlaying == true && key == value.up)
                             _inputs.addElement(event::Event::UP);
                         else if (key == value.down)
                             _inputs.addElement(event::Event::DOWN);
                         else if (key == value.left) {
-                            moveButtonSelection(true);
-                            _inputs.addElement(event::Event::LEFT);
+                            if (_startedPlaying == true) {
+                                _inputs.addElement(event::Event::LEFT);
+                            } else {
+                                moveButtonSelection(true);
+                            }
                         } else if (key == value.right) {
-                            moveButtonSelection(false);
-                            _inputs.addElement(event::Event::RIGHT);
+                            if (_startedPlaying == true) {
+                                _inputs.addElement(event::Event::RIGHT);
+                            } else {
+                                moveButtonSelection(false);
+                            }
                         } else if (key == fengine::modules::display::EventKey::Enter) {
-                            activateSelectedButton();
-                            _inputs.addElement(event::Event::SHOOT);
+                            if (_startedPlaying == true) {
+                                _inputs.addElement(event::Event::SHOOT);
+                            } else {
+                                activateSelectedButton();
+                            }
                         }
                     }
                 }
                 if (event->getType() == fengine::modules::display::EventType::Click) {
-                    if (event->getMouseButton() == fengine::modules::display::EventMouseButton::Left)
+                    if (_startedPlaying == true && event->getMouseButton() == fengine::modules::display::EventMouseButton::Left)
                         _inputs.addElement(event::Event::SHOOT);
                     _currentScene->updateButtons(event->getClickCoordinates());
                 }
@@ -311,6 +321,8 @@ void rtype::client::Client::interpretButtonAction(int button) {
         case static_cast<int>(fengine::scene::MenuSceneButtons::PLAY):
             _soundModule->playMusic("./assets/sounds/game.ogg");
             _currentScene = _scenes.back();
+            _inputs.addElement(event::Event::PLAY);
+            _startedPlaying = true;
             break;
         case static_cast<int>(fengine::scene::MenuSceneButtons::PARAMS):
             _soundModule->playMusic("./assets/sounds/params.ogg");

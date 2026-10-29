@@ -65,5 +65,8 @@ namespace rtype::server {
 
             std::chrono::steady_clock::time_point _resendClock;
             void checkResend();
+
+            bool _gameStarted;
+            std::size_t _level;
     };
 }
