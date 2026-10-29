@@ -7,8 +7,8 @@
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/BehaviourComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
-#include "r-type/event/PlayerEvent.hpp"
 #include "r-type/components/EntityTypeComponent.hpp"
+#include "r-type/event/PlayerEvent.hpp"
 #include "r-type/presets/EntitiesPresets.hpp"
 #include "r-type/systems/BehaviouralSystem.hpp"
 #include <chrono>
@@ -82,8 +82,8 @@ std::queue<std::size_t> rtype::server::Server::generateClientQueue() {
     return clientQueue;
 }
 
-void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::presets::EntityType entityType,
-    std::size_t, std::string uuid) {
+void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::presets::EntityType entityType, std::size_t,
+    std::string uuid) {
     auto &velocityComponents = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>();
     auto &positionComponents = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>();
     auto &boundaryComponents = _world._registry.componentManager.getComponents<fengine::ecs::BoundaryComponent>();
@@ -217,7 +217,8 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
             _world._registry.componentManager.addComponent(entity,
                 (fengine::ecs::AttackComponent) {{.team = fengine::ecs::team::ALLIES}, att.damage});
             _world._registry.componentManager.addComponent(entity, (fengine::ecs::DefenseComponent) {1, 0});
-            _world._registry.componentManager.addComponent(entity, (fengine::ecs::EntityTypeComponent) {fengine::presets::EntityType::BULLETS});
+            _world._registry.componentManager.addComponent(entity,
+                (fengine::ecs::EntityTypeComponent) {fengine::presets::EntityType::BULLETS});
 
             break;
     }

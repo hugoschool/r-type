@@ -45,8 +45,8 @@
 rtype::client::Client::Client(std::string host, std::string port)
     : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()),
       _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>()), _registery(), _camera(0.0, 100000),
-      _scenes(), _currentScene(), _writeThread(), _readThread(),
-      _exit(false), _inputs(1024), _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0) {
+      _scenes(), _currentScene(), _writeThread(), _readThread(), _exit(false), _inputs(1024),
+      _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0) {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));
@@ -251,10 +251,14 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
         _registery.componentManager.addComponent(entity, (fengine::ecs::EntityTypeComponent) {payload.entityType});
         _registery.componentManager.addComponent(entity, (fengine::ecs::PositionComponent) {200, 200, false});
         _registery.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent) {0, 0, false});
-        _registery.componentManager.addComponent(entity, (fengine::ecs::DrawableComponent) {std::string(preset.preset.texture),
-            std::make_shared<fengine::modules::display::SFMLRectangle>(payload.width, payload.height), std::nullopt});
-        _registery.componentManager.addComponent(entity, (fengine::ecs::AnimationComponent) {preset.values.length, preset.values.height, preset.values.offset_x, preset.values.offset_y,
-            preset.values.cols, preset.values.rows, false, std::chrono::steady_clock::now()});
+        _registery.componentManager.addComponent(entity,
+            (fengine::ecs::DrawableComponent) {std::string(preset.preset.texture),
+                std::make_shared<fengine::modules::display::SFMLRectangle>(payload.width, payload.height),
+                std::nullopt});
+        _registery.componentManager.addComponent(entity,
+            (fengine::ecs::AnimationComponent) {preset.values.length, preset.values.height, preset.values.offset_x,
+                preset.values.offset_y, preset.values.cols, preset.values.rows, false,
+                std::chrono::steady_clock::now()});
         _soundModule->playSound(std::string(preset.preset.apparition_sound));
     }
 }

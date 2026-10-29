@@ -23,9 +23,8 @@ void fengine::modules::display::SFMLRectangle::setTexture(std::any texture) {
     shape.setTexture(std::any_cast<sf::Texture *>(texture));
 };
 
-void fengine::modules::display::SFMLRectangle::setTextureRect(
-    int offset_x, int offset_y, int length, int height, bool reversed)
-{
+void fengine::modules::display::SFMLRectangle::setTextureRect(int offset_x, int offset_y, int length, int height,
+    bool reversed) {
     sf::IntRect rect;
     rect.position = sf::Vector2i(offset_x, offset_y);
     rect.size = sf::Vector2i(length, height);
