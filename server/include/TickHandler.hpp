@@ -9,6 +9,19 @@ namespace rtype::server {
     constexpr std::uint64_t TICKS_PER_SECOND = 60;
     constexpr std::uint64_t MAX_MESSAGE_PER_TICK = 2048;
 
+    class TickCountHolder {
+        public:
+            TickCountHolder();
+            ~TickCountHolder() = default;
+
+            void update();
+            std::size_t get();
+
+        private:
+            std::mutex _mutex;
+            std::size_t _tick;
+    };
+
     class TickHandler {
         public:
             explicit TickHandler();
@@ -23,8 +36,7 @@ namespace rtype::server {
 
             SafeMessageQueue &getMessageQueue();
 
-            std::size_t getTick() const;
-            std::size_t &getTick();
+            std::size_t getTick();
 
         private:
             std::chrono::steady_clock::time_point _clock;
@@ -33,6 +45,6 @@ namespace rtype::server {
 
             SafeMessageQueue _messageQueue;
 
-            std::size_t _tick;
+            TickCountHolder _tick;
     };
 }

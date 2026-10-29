@@ -2,6 +2,7 @@
 
 #include "CircularBuffer.hpp"
 #include "boost/system/detail/error_code.hpp"
+#include "r-type/event/PlayerEvent.hpp"
 #include <boost/asio/io_context.hpp>
 #include <cstddef>
 #include <f-engine/modules/display/events/EventKey.hpp>
@@ -10,9 +11,9 @@
 namespace rtype::client {
     class ClientProtocol {
         public:
-            using EventKey = fengine::modules::display::EventKey;
+            using PlayerEvent = rtype::event::Event;
 
-            ClientProtocol(rtype::client::CircularBuffer<EventKey> &inputs, std::string host, std::string port,
+            ClientProtocol(rtype::client::CircularBuffer<PlayerEvent> &inputs, std::string host, std::string port,
                 std::size_t &tick);
             ~ClientProtocol();
 
@@ -24,7 +25,7 @@ namespace rtype::client {
             void setSocketNonBlocking();
 
         private:
-            rtype::client::CircularBuffer<EventKey> &_inputs;
+            rtype::client::CircularBuffer<PlayerEvent> &_inputs;
             boost::asio::io_context _io_context;
             fnetwork::client::UDPProtocol _udp;
 

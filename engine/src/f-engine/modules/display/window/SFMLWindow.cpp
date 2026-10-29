@@ -10,6 +10,7 @@ fengine::modules::display::SFMLWindow::SFMLWindow() : font(), _videoMode({WINDOW
         _window = sf::RenderWindow(_videoMode, "R-Type");
         _window.setMaximumSize(_window.getSize());
         _window.setMinimumSize(_window.getSize());
+        _window.setKeyRepeatEnabled(false);
     } catch (std::exception &) { throw SfmlException("render window creation"); }
     _window.setFramerateLimit(60);
     if (font.openFromFile("./assets/fonts/PressStart2P.ttf") == false) {

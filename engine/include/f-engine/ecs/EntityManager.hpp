@@ -15,7 +15,8 @@ namespace fengine::ecs {
 
             Entity createEntity(std::size_t id);
 
-            std::optional<Entity> entityFromIndex(std::size_t idx);
+            std::optional<Entity> entityFromIndex(std::size_t idx) const;
+            std::optional<Entity> &entityFromIndex(std::size_t idx);
 
             std::size_t size();
 

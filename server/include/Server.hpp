@@ -40,6 +40,8 @@ namespace rtype::server {
 
             fengine::world::World _world;
 
+            SafeQueue<std::size_t> _newClientQueue;
+
             TickHandler _tickHandler;
             ClientHandler _clientHandler;
             SubscriberHandler _subscriberHandler;
@@ -52,13 +54,14 @@ namespace rtype::server {
 
             void generateEnemies();
 
+            std::queue<std::size_t> generateClientQueue();
+
             void newEntityPacket(std::size_t entityId, std::size_t tick, std::string uuid);
             void userLoginPacket(std::size_t tick, std::string uuid);
+            void handlePlayerEvents(packets::Serialization::deserialize_archive &ar, packets::PacketHeader &header);
+            void handleVelocityChanges(float &velocity, float counterVelocity, float value);
 
             std::chrono::steady_clock::time_point _resendClock;
             void checkResend();
-
-            std::queue<fengine::modules::display::EventKey> _pressedQueue;
-            std::queue<fengine::modules::display::EventKey> _releasedQueue;
     };
 }

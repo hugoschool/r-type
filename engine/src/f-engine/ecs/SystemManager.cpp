@@ -15,11 +15,6 @@ void fengine::ecs::SystemManager::update(Registry &manager) {
     std::chrono::duration<double> time = elapsedTime - _clock;
     std::chrono::milliseconds var(_deltaTime);
 
-    // TODO: replace the current time valuation system
-    // if (time < var) {
-    //     return;
-    // }
-
     for (auto &[_, system] : _systems) {
         system->update(manager);
     }
