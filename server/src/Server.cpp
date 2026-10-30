@@ -189,6 +189,11 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
 
     packets::Serialization::deserialize(ar, event);
     auto &data = _clientHandler.getClients().at(header.playerUuid);
+    auto &entity = _world._registry.entityManager.entityFromIndex(data.entityId);
+
+    if (!entity.has_value())
+        return;
+
     auto &vel = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>()[data.entityId];
 
     if (!vel.has_value())
