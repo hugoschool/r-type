@@ -11,8 +11,8 @@
 #include "r-type/event/PlayerEvent.hpp"
 #include "r-type/presets/EntitiesPresets.hpp"
 #include "r-type/systems/BehaviouralSystem.hpp"
-#include "r-type/systems/CollisionProcessorSystem.hpp"
 #include "r-type/systems/CollisionDetectionSystem.hpp"
+#include "r-type/systems/CollisionProcessorSystem.hpp"
 #include "r-type/systems/KillingSystem.hpp"
 #include <chrono>
 #include <cstddef>

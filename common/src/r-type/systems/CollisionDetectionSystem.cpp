@@ -22,8 +22,8 @@ void fengine::ecs::CollisionDetectionSystem::update(Registry &manager) {
         auto &collision = colliders[i];
         auto &att = attacks[i];
 
-        if (!pos.has_value() || !bound.has_value() || !bound.value().hittable
-            || !att.has_value() || (collision.has_value() && collision.value().set))
+        if (!pos.has_value() || !bound.has_value() || !bound.value().hittable || !att.has_value()
+            || (collision.has_value() && collision.value().set))
             continue;
 
         for (std::size_t j = i + 1; j < manager.entityManager.size(); j++) {
@@ -67,6 +67,5 @@ void fengine::ecs::CollisionDetectionSystem::update(Registry &manager) {
 
             break;
         }
-
     }
 }
