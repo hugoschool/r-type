@@ -15,6 +15,7 @@
 #include <r-type/packets/Packet.hpp>
 #include <r-type/packets/PacketBuilder.hpp>
 #include <r-type/packets/Serialization.hpp>
+#include <r-type/presets/EntitiesPresets.hpp>
 
 namespace rtype::server {
     class Server {
@@ -56,7 +57,8 @@ namespace rtype::server {
 
             std::queue<std::size_t> generateClientQueue();
 
-            void newEntityPacket(std::size_t entityId, std::size_t tick, std::string uuid);
+            void newEntityPacket(std::size_t entityId, fengine::presets::EntityType entityType, std::size_t tick,
+                std::string uuid);
             void userLoginPacket(std::size_t tick, std::string uuid);
             void handlePlayerEvents(packets::Serialization::deserialize_archive &ar, packets::PacketHeader &header);
             void handleVelocityChanges(float &velocity, float counterVelocity, float value);

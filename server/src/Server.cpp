@@ -7,7 +7,9 @@
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/BehaviourComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
+#include "r-type/components/EntityTypeComponent.hpp"
 #include "r-type/event/PlayerEvent.hpp"
+#include "r-type/presets/EntitiesPresets.hpp"
 #include "r-type/systems/BehaviouralSystem.hpp"
 #include <chrono>
 #include <cstddef>
@@ -59,6 +61,7 @@ rtype::server::Server::Server(std::uint32_t port)
     _world._registry.componentManager.registerComponent<fengine::ecs::DefenseComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::BehaviourComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::CollisionComponent>();
+    _world._registry.componentManager.registerComponent<fengine::ecs::EntityTypeComponent>();
 
     _world._registry.systemManager.addSystem<fengine::ecs::MovementSystem>(_world._camera);
     _world._registry.systemManager.addSystem<fengine::ecs::BoundarySystem>();
@@ -79,21 +82,29 @@ std::queue<std::size_t> rtype::server::Server::generateClientQueue() {
     return clientQueue;
 }
 
-void rtype::server::Server::newEntityPacket(std::size_t entityId, std::size_t, std::string uuid) {
+void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::presets::EntityType entityType, std::size_t,
+    std::string uuid) {
     auto &velocityComponents = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>();
     auto &positionComponents = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>();
-    // auto &boundaryComponents =
-    //     _world._registry.componentManager.getComponents<fengine::ecs::BoundaryComponent>();
-    // auto &attackComponents = _world._registry.componentManager.getComponents<fengine::ecs::AttackComponent>();
-    // auto &defenseComponents = _world._registry.componentManager.getComponents<fengine::ecs::DefenseComponent>();
+    auto &boundaryComponents = _world._registry.componentManager.getComponents<fengine::ecs::BoundaryComponent>();
 
     // Send a new entity
-    {
-        packets::EntitySpawn payload = {.entityId = entityId};
-        std::string content =
-            _packetBuilder.create(packets::PacketType::EntitySpawn).addHeader().addPayload(payload).get();
+    if (boundaryComponents.containsAndHasValue(entityId)) {
+        auto &boundary = boundaryComponents[entityId];
 
-        _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
+        {
+            packets::EntitySpawn payload = {
+                .entityId = entityId,
+                .entityType = entityType,
+                .width = boundary->size_x,
+                .height = boundary->size_y,
+            };
+
+            std::string content =
+                _packetBuilder.create(packets::PacketType::EntitySpawn).addHeader().addPayload(payload).get();
+
+            _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
+        }
     }
 
     // TODO: code cleaning would be appreciated here
@@ -131,13 +142,18 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, std::size_t, s
 
 void rtype::server::Server::userLoginPacket(std::size_t tick, std::string uuid) {
     const std::vector<std::optional<fengine::ecs::Entity>> &entities = _world._registry.entityManager.getEntities();
+    auto &typeComponents = _world._registry.componentManager.getComponents<fengine::ecs::EntityTypeComponent>();
 
     std::cout << "user login packet tick " << tick << std::endl;
     for (auto &entity : entities) {
         if (!entity.has_value())
             continue;
         const std::size_t entityId = entity->getId();
-        newEntityPacket(entityId, tick, uuid);
+
+        if (typeComponents[entityId].has_value()) {
+            newEntityPacket(entityId, typeComponents[entityId].value().type, tick, uuid);
+            continue;
+        }
     }
 }
 
@@ -201,6 +217,8 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
             _world._registry.componentManager.addComponent(entity,
                 (fengine::ecs::AttackComponent) {{.team = fengine::ecs::team::ALLIES}, att.damage});
             _world._registry.componentManager.addComponent(entity, (fengine::ecs::DefenseComponent) {1, 0});
+            _world._registry.componentManager.addComponent(entity,
+                (fengine::ecs::EntityTypeComponent) {fengine::presets::EntityType::BULLETS});
 
             break;
     }
@@ -230,6 +248,9 @@ void rtype::server::Server::generateEnemies() {
     fengine::ecs::AttackComponent atk = {{.team = fengine::ecs::team::MONSTERS}, 10};
     fengine::ecs::DefenseComponent def = {150, 0};
 
+    fengine::presets::EntityType type = fengine::presets::EntityType::E_SHOOTER;
+    fengine::ecs::EntityTypeComponent typeComponent = {.type = type};
+
     if (_enemyCounter == 10) {
         _enemyCounter = 0;
         vel = {-5, 2, false};
@@ -238,6 +259,7 @@ void rtype::server::Server::generateEnemies() {
         bound.size_x += 100;
         bound.size_y += 50;
         bound.bouncy = true;
+        type = fengine::presets::EntityType::E_BOSS;
     } else {
         // fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER, std::chrono::steady_clock::now()};
         // _world._registry.componentManager.addComponent(entity, std::move(behaviour));
@@ -249,11 +271,12 @@ void rtype::server::Server::generateEnemies() {
     _world._registry.componentManager.addComponent(entity, std::move(bound));
     _world._registry.componentManager.addComponent(entity, std::move(atk));
     _world._registry.componentManager.addComponent(entity, std::move(def));
+    _world._registry.componentManager.addComponent(entity, std::move(typeComponent));
 
     auto &clients = _clientHandler.getClients();
     const std::size_t entityId = entity.getId();
     for (auto &client : clients) {
-        newEntityPacket(entityId, _tickHandler.getTick(), client.first);
+        newEntityPacket(entityId, type, _tickHandler.getTick(), client.first);
     }
 
     _spawnClock = std::chrono::steady_clock::now();
@@ -270,13 +293,17 @@ void rtype::server::Server::checkResend() {
 
     auto &clients = _clientHandler.getClients();
     auto &entities = _world._registry.entityManager.getEntities();
+    auto &typeComponents = _world._registry.componentManager.getComponents<fengine::ecs::EntityTypeComponent>();
 
     for (auto &entity : entities) {
         if (!entity.has_value())
             continue;
         const std::size_t entityId = entity->getId();
         for (auto &client : clients) {
-            newEntityPacket(entityId, _tickHandler.getTick(), client.first);
+            if (typeComponents[entityId].has_value()) {
+                newEntityPacket(entityId, typeComponents[entityId].value().type, _tickHandler.getTick(), client.first);
+                continue;
+            }
         }
     }
 
@@ -300,11 +327,15 @@ void rtype::server::Server::tickThreadRun() {
             fengine::ecs::VelocityComponent vel = {0, 0, true};
             fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
             fengine::ecs::DefenseComponent def = {100, 0};
+            fengine::ecs::BoundaryComponent bound = {100, 50, true, false, std::nullopt};
+            fengine::ecs::EntityTypeComponent type = {fengine::presets::EntityType::PLAYERS};
 
             _world._registry.componentManager.addComponent(entity.value(), std::move(pos));
             _world._registry.componentManager.addComponent(entity.value(), std::move(vel));
             _world._registry.componentManager.addComponent(entity.value(), std::move(att));
             _world._registry.componentManager.addComponent(entity.value(), std::move(def));
+            _world._registry.componentManager.addComponent(entity.value(), std::move(bound));
+            _world._registry.componentManager.addComponent(entity.value(), std::move(type));
         }
         while (!_tickHandler.getMessageQueue().empty()) {
             std::string msg = _tickHandler.getMessageQueue().pop();

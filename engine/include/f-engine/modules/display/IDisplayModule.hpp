@@ -18,7 +18,7 @@ namespace fengine::modules::display {
             virtual void clear() = 0;
             virtual void drawEntity(ecs::PositionComponent, ecs::DrawableComponent &) = 0;
 
-            virtual void animateEntity(ecs::AnimationComponent &, ecs::DrawableComponent &) = 0;
+            virtual void animateEntity(ecs::AnimationComponent &, ecs::DrawableComponent &, bool) = 0;
 
             virtual void drawScene(std::shared_ptr<scene::IScene>) = 0;
 

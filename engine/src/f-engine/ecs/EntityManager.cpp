@@ -20,9 +20,11 @@ fengine::ecs::Entity fengine::ecs::EntityManager::spawnEntity() {
 };
 
 fengine::ecs::Entity fengine::ecs::EntityManager::createEntity(std::size_t id) {
-    std::optional<Entity> entity = std::make_optional<Entity>(Entity(id));
-    _entities.push_back(entity);
-    return entity.value();
+    for (auto i = _entities.size(); i <= id; i++) {
+        _entities.push_back(std::nullopt);
+    }
+    _entities[id] = std::make_optional<Entity>(Entity(id));
+    return _entities[id].value();
 };
 
 std::optional<fengine::ecs::Entity> fengine::ecs::EntityManager::entityFromIndex(std::size_t idx) const {

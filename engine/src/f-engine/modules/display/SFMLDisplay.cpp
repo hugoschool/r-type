@@ -6,7 +6,6 @@
 #include "f-engine/modules/display/events/ClickEvent.hpp"
 #include "f-engine/modules/display/events/IEvent.hpp"
 #include "f-engine/modules/display/events/KeyPressedEvent.hpp"
-#include "f-engine/modules/display/events/KeyReleasedEvent.hpp"
 #include "f-engine/modules/display/events/QuitEvent.hpp"
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include "f-engine/scene/IScene.hpp"
@@ -182,16 +181,6 @@ void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::Posi
     if (!drawable.shape)
         return;
 
-    std::optional<sf::Color> color = std::nullopt;
-
-    if (drawable.color.has_value()) {
-        int a = 255;
-        int r = std::get<0>(drawable.color.value());
-        int g = std::get<1>(drawable.color.value());
-        int b = std::get<2>(drawable.color.value());
-        color = sf::Color(r, g, b, a);
-    }
-
     if (drawable.texture_filepath.has_value()) {
         if (_textureMap.contains(drawable.texture_filepath.value()) == false) {
             sf::Texture texture;
@@ -202,7 +191,10 @@ void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::Posi
                 _textureMap.insert({drawable.texture_filepath.value(), std::nullopt});
             }
         }
-        drawable.shape->setTexture(&_textureMap.at(drawable.texture_filepath.value()).value());
+        auto &t = _textureMap.at(drawable.texture_filepath.value());
+        if (t.has_value()) {
+            drawable.shape->setTexture(&t.value());
+        }
     }
     if (drawable.color.has_value()) {
         drawable.shape->setColor(drawable.color.value());
@@ -212,8 +204,13 @@ void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::Posi
 }
 
 void fengine::modules::display::SFMLDisplayModule::animateEntity(ecs::AnimationComponent &anim,
-    ecs::DrawableComponent &drawable) {
-    drawable.shape->setTextureRect(anim.offset_x, anim.offset_y, anim.length, anim.height);
+    ecs::DrawableComponent &drawable, bool reversed) {
+    if (drawable.texture_filepath.has_value()) {
+        auto &t = _textureMap.at(drawable.texture_filepath.value());
+        if (t.has_value()) {
+            drawable.shape->setTextureRect(anim.offset_x, anim.offset_y, anim.length, anim.height, reversed);
+        }
+    }
 }
 
 void fengine::modules::display::SFMLDisplayModule::verifyConfig() {

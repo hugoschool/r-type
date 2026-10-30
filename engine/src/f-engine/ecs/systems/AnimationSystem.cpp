@@ -42,7 +42,8 @@ void fengine::ecs::AnimationSystem::update(Registry &manager) {
                         anim.value().offset_x = 0;
                     }
                 }
-                _displayModule.animateEntity(anim.value(), drawable.value());
+                bool reversed = (vel.value().vel_x < 0);
+                _displayModule.animateEntity(anim.value(), drawable.value(), reversed);
             }
             anim.value().anim_clock = std::chrono::steady_clock::now();
         }

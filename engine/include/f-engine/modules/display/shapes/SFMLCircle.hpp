@@ -13,7 +13,7 @@ namespace fengine::modules::display {
             void setPosition(ecs::PositionComponent &pos) override;
             void setColor(std::tuple<int, int, int> &color) override;
             void setTexture(std::any texture) override;
-            void setTextureRect(int offset_x, int offset_y, int length, int height) override;
+            void setTextureRect(int offset_x, int offset_y, int length, int height, bool reversed) override;
 
             sf::CircleShape shape;
     };
