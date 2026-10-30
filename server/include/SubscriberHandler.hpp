@@ -24,7 +24,8 @@ namespace rtype::server {
             std::vector<std::pair<shared_subscriber, std::function<void(shared_subscriber &subscriber)>>> _subscribers;
 
             void processMovement(shared_subscriber &subscriber);
-            void processBoundary(shared_subscriber &subscriber);
+            void processKillingSystem(shared_subscriber &subscriber);
+            void processCollision(shared_subscriber &subscriber);
 
             void handlePositionComponent(fengine::ecs::observer::SubscriberContent &content);
             void handleVelocityComponent(fengine::ecs::observer::SubscriberContent &content);
