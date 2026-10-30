@@ -11,6 +11,9 @@
 #include "r-type/event/PlayerEvent.hpp"
 #include "r-type/presets/EntitiesPresets.hpp"
 #include "r-type/systems/BehaviouralSystem.hpp"
+#include "r-type/systems/CollisionProcessorSystem.hpp"
+#include "r-type/systems/CollisionDetectionSystem.hpp"
+#include "r-type/systems/KillingSystem.hpp"
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
@@ -64,7 +67,9 @@ rtype::server::Server::Server(std::uint32_t port)
     _world._registry.componentManager.registerComponent<fengine::ecs::EntityTypeComponent>();
 
     _world._registry.systemManager.addSystem<fengine::ecs::MovementSystem>(_world._camera);
-    _world._registry.systemManager.addSystem<fengine::ecs::BoundarySystem>();
+    _world._registry.systemManager.addSystem<fengine::ecs::CollisionDetectionSystem>();
+    _world._registry.systemManager.addSystem<fengine::ecs::CollisionProcessorSystem>();
+    _world._registry.systemManager.addSystem<fengine::ecs::KillingSystem>();
     _world._registry.systemManager.addSystem<fengine::ecs::BehaviouralSystem>();
 
     _subscriberHandler.add(_world._registry);
@@ -235,7 +240,7 @@ void rtype::server::Server::handleVelocityChanges(float &velocity, float counter
 void rtype::server::Server::generateEnemies() {
     std::chrono::steady_clock::time_point elapsedTime = std::chrono::steady_clock::now();
     std::chrono::duration<double> spawnTime = elapsedTime - _spawnClock;
-    std::chrono::milliseconds var(2000);
+    std::chrono::milliseconds var(4000);
 
     if (spawnTime < var)
         return;
@@ -243,15 +248,15 @@ void rtype::server::Server::generateEnemies() {
     fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
 
     fengine::ecs::PositionComponent pos = {WINDOW_X, static_cast<float>(rand() % (WINDOW_Y - 100) + 100), false};
-    fengine::ecs::VelocityComponent vel = {-10, 0, false};
-    fengine::ecs::BoundaryComponent bound = {125, 75, false, true, std::nullopt};
+    fengine::ecs::VelocityComponent vel = {-5, 0, false};
+    fengine::ecs::BoundaryComponent bound = {100, 50, false, true, std::nullopt};
     fengine::ecs::AttackComponent atk = {{.team = fengine::ecs::team::MONSTERS}, 10};
     fengine::ecs::DefenseComponent def = {150, 0};
 
     fengine::presets::EntityType type = fengine::presets::EntityType::E_SHOOTER;
     fengine::ecs::EntityTypeComponent typeComponent = {.type = type};
 
-    if (_enemyCounter == 10) {
+    if (_enemyCounter == 5) {
         _enemyCounter = 0;
         vel = {-5, 2, false};
         atk.damage += 15;
@@ -327,7 +332,7 @@ void rtype::server::Server::tickThreadRun() {
             fengine::ecs::VelocityComponent vel = {0, 0, true};
             fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
             fengine::ecs::DefenseComponent def = {100, 0};
-            fengine::ecs::BoundaryComponent bound = {100, 50, true, false, std::nullopt};
+            fengine::ecs::BoundaryComponent bound = {100, 50, false, true, std::nullopt};
             fengine::ecs::EntityTypeComponent type = {fengine::presets::EntityType::PLAYERS};
 
             _world._registry.componentManager.addComponent(entity.value(), std::move(pos));
