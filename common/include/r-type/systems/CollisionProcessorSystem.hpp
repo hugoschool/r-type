@@ -5,10 +5,10 @@
 #include "f-engine/ecs/systems/ISystem.hpp"
 
 namespace fengine::ecs {
-    class CollisionDamageSystem : public ASystem {
+    class CollisionProcessorSystem : public ASystem {
         public:
-            CollisionDamageSystem();
-            ~CollisionDamageSystem() override;
+            CollisionProcessorSystem();
+            ~CollisionProcessorSystem() override;
 
             void update(Registry &manager) override;
     };
