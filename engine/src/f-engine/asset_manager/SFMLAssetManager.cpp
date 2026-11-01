@@ -1,8 +1,11 @@
 #include "f-engine/asset_manager/SFMLAssetManager.hpp"
 
-fengine::asset_manager::SFMLAssetManager::SFMLAssetManager(): _textures(), _musics(), _shaders(), _soundBuffers(), _fonts() {}
+fengine::asset_manager::SFMLAssetManager::SFMLAssetManager()
+    : _textures(), _musics(), _shaders(), _soundBuffers(), _fonts() {
+}
 
-fengine::asset_manager::SFMLAssetManager::~SFMLAssetManager() {}
+fengine::asset_manager::SFMLAssetManager::~SFMLAssetManager() {
+}
 
 void fengine::asset_manager::SFMLAssetManager::loadTexture(std::string filepath) {
     if (!_textures.contains(filepath)) {

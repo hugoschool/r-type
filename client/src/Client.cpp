@@ -44,10 +44,13 @@
 #include <vector>
 
 rtype::client::Client::Client(std::string host, std::string port)
-    : _assetManager(std::make_shared<fengine::asset_manager::SFMLAssetManager>()), _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>(std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager))),
-      _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>(std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager))), _registery(), _camera(0.0, 100000),
-      _scenes(), _currentScene(), _writeThread(), _readThread(), _exit(false), _inputs(1024),
-      _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0) {
+    : _assetManager(std::make_shared<fengine::asset_manager::SFMLAssetManager>()),
+      _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>(
+          std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager))),
+      _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>(
+          std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager))),
+      _registery(), _camera(0.0, 100000), _scenes(), _currentScene(), _writeThread(), _readThread(), _exit(false),
+      _inputs(1024), _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0) {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));

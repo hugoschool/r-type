@@ -10,7 +10,7 @@
 #include <map>
 #include <string>
 namespace fengine::asset_manager {
-    class SFMLAssetManager: public IAssetManager {
+    class SFMLAssetManager : public IAssetManager {
         public:
             SFMLAssetManager();
             ~SFMLAssetManager() override;

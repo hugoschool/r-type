@@ -27,6 +27,7 @@ namespace fengine::modules::display {
             std::optional<sf::Event> pollEvent();
 
             void changeConfig(std::shared_ptr<config::IConfig>) override;
+
         private:
             sf::RenderTexture _scene;
             sf::RenderWindow _window;

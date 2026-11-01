@@ -20,7 +20,9 @@
 #include <optional>
 #include <queue>
 
-fengine::modules::display::SFMLDisplayModule::SFMLDisplayModule(std::shared_ptr<fengine::asset_manager::SFMLAssetManager> assetManager) : _window(assetManager), _keyPressed(), _assetManager(assetManager) {
+fengine::modules::display::SFMLDisplayModule::SFMLDisplayModule(
+    std::shared_ptr<fengine::asset_manager::SFMLAssetManager> assetManager)
+    : _window(assetManager), _keyPressed(), _assetManager(assetManager) {
 }
 
 fengine::modules::display::SFMLDisplayModule::~SFMLDisplayModule() {

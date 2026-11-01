@@ -5,7 +5,8 @@
 #include <optional>
 #include <string>
 
-fengine::modules::sound::SFMLSoundModule::SFMLSoundModule(std::shared_ptr<fengine::asset_manager::SFMLAssetManager> assetManager)
+fengine::modules::sound::SFMLSoundModule::SFMLSoundModule(
+    std::shared_ptr<fengine::asset_manager::SFMLAssetManager> assetManager)
     : _musicVec(), _soundBufferMap(), _soundMap(), _assetManager(assetManager), _tempindex(0) {
 }
 

@@ -6,7 +6,9 @@
 #include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 
-fengine::modules::display::SFMLWindow::SFMLWindow(std::shared_ptr<fengine::asset_manager::SFMLAssetManager> assetManager) : _videoMode({WINDOW_X, WINDOW_Y}), _colorblind(false), _assetManager(assetManager) {
+fengine::modules::display::SFMLWindow::SFMLWindow(
+    std::shared_ptr<fengine::asset_manager::SFMLAssetManager> assetManager)
+    : _videoMode({WINDOW_X, WINDOW_Y}), _colorblind(false), _assetManager(assetManager) {
     try {
         _window = sf::RenderWindow(_videoMode, "R-Type");
         _window.setMaximumSize(_window.getSize());
