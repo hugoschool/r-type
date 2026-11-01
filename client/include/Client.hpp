@@ -2,6 +2,7 @@
 
 #include "CircularBuffer.hpp"
 #include "ClientProtocol.hpp"
+#include "f-engine/asset_manager/IAssetManager.hpp"
 #include "f-engine/camera/Camera.hpp"
 #include "f-engine/config/IConfig.hpp"
 #include "f-engine/ecs/Registry.hpp"
@@ -28,6 +29,7 @@ namespace rtype::client {
             using udp = boost::asio::ip::udp;
 
         private:
+            std::shared_ptr<fengine::asset_manager::IAssetManager> _assetManager;
             std::unique_ptr<fengine::modules::display::IDisplayModule> _displayModule;
             std::unique_ptr<fengine::modules::sound::ISoundModule> _soundModule;
             fengine::ecs::Registry _registery;

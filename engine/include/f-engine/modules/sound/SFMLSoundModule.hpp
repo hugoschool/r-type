@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SFML/Audio/Sound.hpp"
+#include "f-engine/asset_manager/SFMLAssetManager.hpp"
 #include "f-engine/modules/sound/ISoundModule.hpp"
 #include <SFML/Audio.hpp>
 #include <map>
@@ -9,7 +10,7 @@
 namespace fengine::modules::sound {
     class SFMLSoundModule : public ISoundModule {
         public:
-            SFMLSoundModule();
+            SFMLSoundModule(std::shared_ptr<asset_manager::SFMLAssetManager> assetManager);
             ~SFMLSoundModule() override;
 
             void playSound(std::string) override;
@@ -17,9 +18,11 @@ namespace fengine::modules::sound {
             void stopMusic(std::string) override;
 
         private:
-            std::map<std::string, std::unique_ptr<sf::Music>> _musicMap;
+            std::vector<std::string> _musicVec;
             std::map<std::string, std::optional<sf::SoundBuffer>> _soundBufferMap;
             std::map<std::string, std::optional<sf::Sound>> _soundMap;
+
+            std::shared_ptr<asset_manager::SFMLAssetManager> _assetManager;
 
             std::size_t _tempindex;
     };
