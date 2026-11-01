@@ -1,11 +1,12 @@
 #include "f-engine/modules/display/window/SFMLWindow.hpp"
 #include "f-engine/Exceptions.hpp"
+#include "f-engine/asset_manager/SFMLAssetManager.hpp"
 #include "f-engine/config/IConfig.hpp"
 #include "f-engine/modules/display/shapes/SFMLCircle.hpp"
 #include "f-engine/modules/display/shapes/SFMLRectangle.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 
-fengine::modules::display::SFMLWindow::SFMLWindow() : font(), _videoMode({WINDOW_X, WINDOW_Y}), _colorblind(false) {
+fengine::modules::display::SFMLWindow::SFMLWindow(std::shared_ptr<fengine::asset_manager::SFMLAssetManager> assetManager) : _videoMode({WINDOW_X, WINDOW_Y}), _colorblind(false), _assetManager(assetManager) {
     try {
         _window = sf::RenderWindow(_videoMode, "R-Type");
         _window.setMaximumSize(_window.getSize());
@@ -13,13 +14,8 @@ fengine::modules::display::SFMLWindow::SFMLWindow() : font(), _videoMode({WINDOW
         _window.setKeyRepeatEnabled(false);
     } catch (std::exception &) { throw SfmlException("render window creation"); }
     _window.setFramerateLimit(60);
-    if (font.openFromFile("./assets/fonts/PressStart2P.ttf") == false) {
-        throw SfmlException("font creation");
-    }
-    if (!_colorblindShader.loadFromFile("./assets/shaders/colorblind.glsl", sf::Shader::Type::Fragment)) {
-        throw SfmlException("failed to load colorblind shader");
-    }
-    _window.setFramerateLimit(60);
+    _assetManager->loadFont(std::string(FONT));
+    _assetManager->loadShader(std::string(CSHADER));
     _scene = sf::RenderTexture(sf::Vector2u(WINDOW_X, WINDOW_Y));
 }
 
@@ -44,7 +40,7 @@ void fengine::modules::display::SFMLWindow::display() {
     _scene.display();
     sf::Sprite sceneSprite(_scene.getTexture());
     if (_colorblind) {
-        _window.draw(sceneSprite, &_colorblindShader);
+        _window.draw(sceneSprite, &_assetManager->getShader(std::string(CSHADER)).value());
     } else {
         _window.draw(sceneSprite);
     }
@@ -69,7 +65,7 @@ void fengine::modules::display::SFMLWindow::changeConfig(std::shared_ptr<config:
             _colorblind = false;
         else {
             _colorblind = value.first;
-            _colorblindShader.setUniform("mode", value.second);
+            _assetManager->getShader(std::string(CSHADER)).value().setUniform("mode", value.second);
         }
     }
 }

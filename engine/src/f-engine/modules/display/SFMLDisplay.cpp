@@ -1,5 +1,6 @@
 #include "SFML/Window/Event.hpp"
 #include "SFML/Window/Keyboard.hpp"
+#include "f-engine/asset_manager/SFMLAssetManager.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
@@ -19,7 +20,7 @@
 #include <optional>
 #include <queue>
 
-fengine::modules::display::SFMLDisplayModule::SFMLDisplayModule() : _window(), _textureMap(), _keyPressed() {
+fengine::modules::display::SFMLDisplayModule::SFMLDisplayModule(std::shared_ptr<fengine::asset_manager::SFMLAssetManager> assetManager) : _window(assetManager), _keyPressed(), _assetManager(assetManager) {
 }
 
 fengine::modules::display::SFMLDisplayModule::~SFMLDisplayModule() {
@@ -129,20 +130,20 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fen
 
     // background (a changer aussi)
     sf::RectangleShape bg1 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
-    if (_textureMap.contains(background.texture) == false) {
-        sf::Texture textureBg;
-        if (textureBg.loadFromFile(background.texture))
-            _textureMap.insert({background.texture, std::move(textureBg)});
+    if (_assetManager->textureContains(background.texture) == false) {
+        _assetManager->loadTexture(background.texture);
     }
-    auto &t = _textureMap.at(background.texture).value();
-    bg1.setPosition(sf::Vector2f(-background.offset, 0));
-    bg1.setTexture(&t);
-    _window.draw(bg1);
-    if (background.paralax) {
-        sf::RectangleShape bg2 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
-        bg2.setPosition(sf::Vector2f(-background.offset + WINDOW_X, 0));
-        bg2.setTexture(&t);
-        _window.draw(bg2);
+    auto &t = _assetManager->getTexture(background.texture);
+    if (t.has_value()) {
+        bg1.setPosition(sf::Vector2f(-background.offset, 0));
+        bg1.setTexture(&t.value());
+        _window.draw(bg1);
+        if (background.paralax) {
+            sf::RectangleShape bg2 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
+            bg2.setPosition(sf::Vector2f(-background.offset + WINDOW_X, 0));
+            bg2.setTexture(&t.value());
+            _window.draw(bg2);
+        }
     }
 
     // boutons (a changer)
@@ -152,20 +153,16 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fen
 
         sf::Texture texture;
 
-        if (_textureMap.contains(button.content) == false) {
-            if (texture.loadFromFile(button.content)) {
-                _textureMap.insert({button.content, std::move(texture)});
-            } else {
-                _textureMap.insert({button.content, std::nullopt});
-            }
+        if (_assetManager->textureContains(button.content) == false) {
+            _assetManager->loadTexture(button.content);
         }
 
-        auto &t = _textureMap.at(button.content);
+        auto &t = _assetManager->getTexture(button.content);
         if (t.has_value()) {
             rect.setTexture(&t.value());
             _window.draw(rect);
         } else {
-            sf::Text text(_window.font);
+            sf::Text text(_assetManager->getFont(std::string(FONT)).value());
             text.setString(button.content);
             text.setPosition(sf::Vector2f(button.pos_x + 10, button.pos_y + 10));
             text.setFillColor(sf::Color::Black);
@@ -182,16 +179,10 @@ void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::Posi
         return;
 
     if (drawable.texture_filepath.has_value()) {
-        if (_textureMap.contains(drawable.texture_filepath.value()) == false) {
-            sf::Texture texture;
-
-            if (texture.loadFromFile(drawable.texture_filepath.value())) {
-                _textureMap.insert({drawable.texture_filepath.value(), std::move(texture)});
-            } else {
-                _textureMap.insert({drawable.texture_filepath.value(), std::nullopt});
-            }
+        if (!_assetManager->textureContains(drawable.texture_filepath.value())) {
+            _assetManager->loadTexture(drawable.texture_filepath.value());
         }
-        auto &t = _textureMap.at(drawable.texture_filepath.value());
+        auto &t = _assetManager->getTexture(drawable.texture_filepath.value());
         if (t.has_value()) {
             drawable.shape->setTexture(&t.value());
         }
@@ -206,7 +197,7 @@ void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::Posi
 void fengine::modules::display::SFMLDisplayModule::animateEntity(ecs::AnimationComponent &anim,
     ecs::DrawableComponent &drawable, bool reversed) {
     if (drawable.texture_filepath.has_value()) {
-        auto &t = _textureMap.at(drawable.texture_filepath.value());
+        auto &t = _assetManager->getTexture(drawable.texture_filepath.value());
         if (t.has_value()) {
             drawable.shape->setTextureRect(anim.offset_x, anim.offset_y, anim.length, anim.height, reversed);
         }

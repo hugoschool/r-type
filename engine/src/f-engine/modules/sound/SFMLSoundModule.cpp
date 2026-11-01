@@ -1,64 +1,68 @@
 #include "f-engine/modules/sound/SFMLSoundModule.hpp"
 #include "SFML/Audio/SoundBuffer.hpp"
+#include "f-engine/asset_manager/SFMLAssetManager.hpp"
+#include <memory>
+#include <optional>
 #include <string>
 
-fengine::modules::sound::SFMLSoundModule::SFMLSoundModule()
-    : _musicMap(), _soundBufferMap(), _soundMap(), _tempindex(0) {
+fengine::modules::sound::SFMLSoundModule::SFMLSoundModule(std::shared_ptr<fengine::asset_manager::SFMLAssetManager> assetManager)
+    : _musicVec(), _soundBufferMap(), _soundMap(), _assetManager(assetManager), _tempindex(0) {
 }
 
 fengine::modules::sound::SFMLSoundModule::~SFMLSoundModule() {
 }
 
 void fengine::modules::sound::SFMLSoundModule::playSound(std::string filepath) {
-    if (!_soundBufferMap.contains(filepath)) {
-        sf::SoundBuffer buffer;
-        if (buffer.loadFromFile(filepath)) {
-            _soundBufferMap.insert({filepath, buffer});
-            sf::Sound sound(buffer);
-            _soundMap.insert({filepath, sound});
-            _soundMap.at(filepath).value().setBuffer(_soundBufferMap.at(filepath).value());
-            _soundMap.at(filepath).value().setVolume(50);
-        } else {
-            _soundBufferMap.insert({filepath, std::nullopt});
-            _soundMap.insert({filepath, std::nullopt});
-        }
+    if (!_assetManager->soundContains(filepath)) {
+        _assetManager->loadSound(filepath);
     }
 
-    if (_soundMap.at(filepath).has_value()) {
-        auto status = _soundMap.at(filepath).value().getStatus();
-        if (status == sf::Sound::Status::Playing) {
-            sf::Sound sound(_soundMap.at(filepath).value().getBuffer());
-            _soundMap.insert({"temp" + std::to_string(_tempindex), sound});
-            _soundMap["temp" + std::to_string(_tempindex)].value().setBuffer(_soundBufferMap.at(filepath).value());
-            _soundMap["temp" + std::to_string(_tempindex)].value().play();
-            _tempindex++;
-        }
-        _soundMap.at(filepath).value().play();
+    std::optional<sf::SoundBuffer> &buffer = _assetManager->getSoundBuffer(filepath);
+    if (!buffer.has_value()) {
+        return;
     }
+
+    if (!_soundMap.contains(filepath) || !_soundMap.at(filepath).has_value()) {
+        _soundMap.emplace(filepath, buffer.value());
+        _soundMap.at(filepath).value().setVolume(50);
+    }
+
+    sf::Sound &sound = _soundMap.at(filepath).value();
+    if (sound.getStatus() == sf::Sound::Status::Playing) {
+        std::string tempKey = "temp" + std::to_string(_tempindex);
+        _soundMap.emplace(tempKey, buffer.value());
+        _soundMap.at(tempKey).value().setVolume(50);
+        _soundMap.at(tempKey).value().play();
+        _tempindex++;
+    }
+    sound.play();
 }
 
 void fengine::modules::sound::SFMLSoundModule::playMusic(std::string filepath) {
-    if (!_musicMap.contains(filepath)) {
-        std::unique_ptr<sf::Music> music = std::make_unique<sf::Music>();
-        if (music->openFromFile(filepath)) {
-            music->setLooping(true);
-            _musicMap.insert({filepath, std::move(music)});
-        }
+    if (!_assetManager->musicContains(filepath)) {
+        _assetManager->loadMusic(filepath);
+        _musicVec.push_back(filepath);
     }
 
-    for (auto &[path, music] : _musicMap) {
-        if (path != filepath && music && (music->getStatus() == sf::Music::Status::Playing)) {
-            music->stop();
-        }
+    for (auto &filepath : _musicVec) {
+        stopMusic(filepath);
     }
 
-    if (_musicMap.at(filepath)) {
-        _musicMap.at(filepath)->play();
+    if (_assetManager->musicContains(filepath)) {
+        std::shared_ptr<sf::Music> music = _assetManager->getMusic(filepath);
+        if (music) {
+            music->play();
+        }
     }
 }
 
 void fengine::modules::sound::SFMLSoundModule::stopMusic(std::string filepath) {
-    if (_musicMap.at(filepath)) {
-        _musicMap.at(filepath)->stop();
+    if (!_assetManager->musicContains(filepath)) {
+        return;
+    }
+
+    std::shared_ptr<sf::Music> music = _assetManager->getMusic(filepath);
+    if (music) {
+        music->stop();
     }
 }
