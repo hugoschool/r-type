@@ -1,7 +1,7 @@
 #pragma once
 
 #include <google/protobuf/message.h>
-#include <r-type/proto/packets.pb.h>
+#include <packets.pb.h>
 #include <sstream>
 #include <string>
 

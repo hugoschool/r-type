@@ -2,7 +2,7 @@
 
 #include "CircularBuffer.hpp"
 #include "boost/system/detail/error_code.hpp"
-#include "r-type/proto/packets.pb.h"
+#include "packets.pb.h"
 #include <boost/asio/io_context.hpp>
 #include <cstddef>
 #include <f-engine/modules/display/events/EventKey.hpp>

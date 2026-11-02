@@ -1,5 +1,5 @@
 #include "Server.hpp"
-#include "r-type/proto/packets.pb.h"
+#include "packets.pb.h"
 #include <boost/asio.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <iostream>

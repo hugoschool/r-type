@@ -1,6 +1,6 @@
 #include "ServerProtocol.hpp"
 #include "ClientHandler.hpp"
-#include "r-type/proto/packets.pb.h"
+#include "packets.pb.h"
 #include <boost/asio/placeholders.hpp>
 #include <iostream>
 #include <r-type/packets/PacketBuilder.hpp>

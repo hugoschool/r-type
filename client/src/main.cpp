@@ -1,6 +1,6 @@
 #include "Client.hpp"
 #include "ClientHelper.hpp"
-#include "r-type/proto/packets.pb.h"
+#include "packets.pb.h"
 #include <iostream>
 
 int main(int ac, char *av[]) {

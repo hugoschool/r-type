@@ -8,7 +8,7 @@ add_executable(${BINARY} ${src})
 if (MSVC)
     target_compile_options(${BINARY} PRIVATE /W4)
 else()
-    target_compile_options(${BINARY} PRIVATE -Wall -Wextra)
+    target_compile_options(${BINARY} PRIVATE -Wall -Wextra -g3)
 endif()
 
 target_include_directories(
@@ -26,6 +26,7 @@ target_link_libraries(
     freaky-engine-asset-manager
     freaky-network
     r-type_common
+    r-type_proto
     Boost::asio
     Boost::serialization
 )

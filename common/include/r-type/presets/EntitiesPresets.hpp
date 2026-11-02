@@ -1,6 +1,6 @@
 #pragma once
 
-#include "r-type/proto/packets.pb.h"
+#include "packets.pb.h"
 #include <string_view>
 
 namespace fengine::presets {

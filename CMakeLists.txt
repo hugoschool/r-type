@@ -39,6 +39,7 @@ CPMAddPackage(
 if (ONLY_BUILD_ENGINE STREQUAL "ON")
     add_subdirectory(engine)
 else()
+    add_subdirectory(proto)
     add_subdirectory(network)
     add_subdirectory(common)
     add_subdirectory(engine)

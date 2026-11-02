@@ -8,7 +8,7 @@
 #include "r-type/components/BehaviourComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
 #include "r-type/components/EntityTypeComponent.hpp"
-#include "r-type/proto/packets.pb.h"
+#include "packets.pb.h"
 #include "r-type/systems/BehaviouralSystem.hpp"
 #include "r-type/systems/CollisionDetectionSystem.hpp"
 #include "r-type/systems/CollisionProcessorSystem.hpp"

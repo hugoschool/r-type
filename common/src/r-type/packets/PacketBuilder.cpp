@@ -1,4 +1,4 @@
-#include "r-type/proto/packets.pb.h"
+#include "packets.pb.h"
 #include <r-type/packets/PacketBuilder.hpp>
 
 rtype::packets::PacketBuilderContent::PacketBuilderContent(PacketType type, std::size_t tick, std::string uuid)
@@ -24,14 +24,11 @@ rtype::packets::PacketBuilderContent &rtype::packets::PacketBuilderContent::addP
 std::string rtype::packets::PacketBuilderContent::get() {
     Packet packet;
 
-    std::cout << "header" << std::endl;
     auto *header = new PacketHeader();
     header->set_type(_type);
     header->set_tick(_tick);
     header->set_playeruuid(_uuid);
     packet.set_allocated_header(header);
-
-    std::cout << _payload << std::endl;
 
     switch (header->type()) {
         case TypeLoginAnswer:

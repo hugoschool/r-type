@@ -2,7 +2,7 @@
 
 #include "TickHandler.hpp"
 #include <r-type/packets/PacketBuilder.hpp>
-#include <r-type/proto/packets.pb.h>
+#include <packets.pb.h>
 
 namespace rtype::server {
     class ServerPacketBuilder : public packets::PacketBuilder {

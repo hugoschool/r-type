@@ -26,7 +26,7 @@
 
 #include "r-type/packets/Serialization.hpp"
 #include "r-type/presets/EntitiesPresets.hpp"
-#include "r-type/proto/packets.pb.h"
+#include "packets.pb.h"
 #include "r-type/scene/GameScene.hpp"
 #include "r-type/scene/MenuScene.hpp"
 #include "r-type/scene/ParamScene.hpp"

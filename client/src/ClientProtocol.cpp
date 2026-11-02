@@ -4,7 +4,7 @@
 #include "r-type/packets/Serialization.hpp"
 #include <cstddef>
 #include <iostream>
-#include <r-type/proto/packets.pb.h>
+#include <packets.pb.h>
 
 rtype::client::ClientProtocol::ClientProtocol(rtype::client::CircularBuffer<PlayerEvent> &inputs, std::string host,
     std::string port, std::size_t &tick)
