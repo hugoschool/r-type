@@ -20,6 +20,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <any>
+#include <cstddef>
 #include <memory>
 #include <optional>
 #include <queue>
@@ -52,17 +53,17 @@ fengine::modules::display::SFMLDisplayModule::pollEvent() {
         }
         if (!sf::Joystick::isConnected(0)) {
             if (const sf::Event::KeyPressed *key = event->getIf<sf::Event::KeyPressed>()) {
-                if (_keyPressed.contains(key->code) == false) {
+                if (key != nullptr && _keyPressed.contains(key->code) == false) {
                     _keyPressed.insert(key->code);
                 }
             }
             if (const sf::Event::KeyReleased *key = event->getIf<sf::Event::KeyReleased>()) {
-                if (_keyPressed.contains(key->code) == true) {
+                if (key != nullptr  && _keyPressed.contains(key->code) == true) {
                     _keyPressed.erase(key->code);
                 }
             }
             if (const sf::Event::MouseButtonPressed *mouse = event->getIf<sf::Event::MouseButtonPressed>()) {
-                EventMouseButton mouseButton;
+                std::optional<EventMouseButton> mouseButton = std::nullopt;
                 switch (mouse->button) {
                     case sf::Mouse::Button::Left:
                         mouseButton = EventMouseButton::Left;
@@ -73,7 +74,9 @@ fengine::modules::display::SFMLDisplayModule::pollEvent() {
                     default:
                         break;
                 }
-                eventQueue.push(std::make_unique<ClickEvent>(mouseButton, mouse->position.x, mouse->position.y));
+                if (mouseButton.has_value()) {
+                    eventQueue.push(std::make_unique<ClickEvent>(mouseButton.value(), mouse->position.x, mouse->position.y));
+                }
             }
         } else {
             if (event->getIf<sf::Event::JoystickButtonPressed>()) {
