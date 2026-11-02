@@ -19,7 +19,6 @@ namespace fengine::modules::sound {
 
         private:
             std::vector<std::string> _musicVec;
-            std::map<std::string, std::optional<sf::SoundBuffer>> _soundBufferMap;
             std::map<std::string, std::optional<sf::Sound>> _soundMap;
 
             std::shared_ptr<asset_manager::SFMLAssetManager> _assetManager;
