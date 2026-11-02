@@ -24,7 +24,7 @@ namespace rtype::server {
 
             void run();
             void tickThreadRun();
-            void interpretPacket(packets::Serialization::deserialize_archive &ar, packets::PacketHeader &header);
+            void interpretPacket(packets::Packet &packet);
 
         private:
             std::uint32_t _port;
@@ -59,7 +59,7 @@ namespace rtype::server {
             void newEntityPacket(std::size_t entityId, rtype::packets::EntityType entityType, std::size_t tick,
                 std::string uuid);
             void userLoginPacket(std::size_t tick, std::string uuid);
-            void handlePlayerEvents(packets::Serialization::deserialize_archive &ar, packets::PacketHeader &header);
+            void handlePlayerEvents(packets::Packet &packet);
             void handleVelocityChanges(float &velocity, float counterVelocity, float value);
 
             std::chrono::steady_clock::time_point _resendClock;

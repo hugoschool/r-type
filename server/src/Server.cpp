@@ -8,8 +8,6 @@
 #include "r-type/components/BehaviourComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
 #include "r-type/components/EntityTypeComponent.hpp"
-
-#include "r-type/presets/EntitiesPresets.hpp"
 #include "r-type/proto/packets.pb.h"
 #include "r-type/systems/BehaviouralSystem.hpp"
 #include "r-type/systems/CollisionDetectionSystem.hpp"
@@ -97,13 +95,14 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, rtype::packets
         auto &boundary = boundaryComponents[entityId];
 
         {
-            packets::EntitySpawn payload;
-            payload.set_entityid(entityId);
-            payload.set_entitytype(entityType);
-            payload.set_width(boundary->size_x);
-            payload.set_height(boundary->size_y);
+            auto *payload = new packets::EntitySpawn();
+            payload->set_entityid(entityId);
+            payload->set_entitytype(entityType);
+            payload->set_width(boundary->size_x);
+            payload->set_height(boundary->size_y);
 
-            std::string content = _packetBuilder.create(packets::TypeEntitySpawn).addHeader().addPayload(payload).get();
+            std::string content =
+                _packetBuilder.create(packets::TypeEntitySpawn).addHeader().addPayload(payload).get();
 
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
@@ -114,19 +113,17 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, rtype::packets
         auto &velocity = velocityComponents[entityId];
 
         {
-            packets::EntityVelocityChange payload;
-            payload.set_entityid(entityId);
+            auto *payload = new packets::EntityVelocityChange();
+            payload->set_entityid(entityId);
 
             auto *allocatedVelocity = new packets::Vector2D();
             allocatedVelocity->set_x(velocity->vel_x);
             allocatedVelocity->set_y(velocity->vel_y);
 
-            payload.set_allocated_velocity(allocatedVelocity);
+            payload->set_allocated_velocity(allocatedVelocity);
 
             std::string content =
                 _packetBuilder.create(packets::TypeEntityVelocityChange).addHeader().addPayload(payload).get();
-
-            static_cast<void>(payload.release_velocity());
 
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
@@ -135,18 +132,16 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, rtype::packets
         auto &position = positionComponents[entityId];
 
         {
-            packets::EntityMove payload;
-            payload.set_entityid(entityId);
+            auto *payload = new packets::EntityMove();
+            payload->set_entityid(entityId);
 
             auto *allocatedCoordinates = new packets::Vector2D();
             allocatedCoordinates->set_x(position->pos_x);
             allocatedCoordinates->set_y(position->pos_y);
 
-            payload.set_allocated_coordinates(allocatedCoordinates);
+            payload->set_allocated_coordinates(allocatedCoordinates);
 
             std::string content = _packetBuilder.create(packets::TypeEntityMove).addHeader().addPayload(payload).get();
-
-            static_cast<void>(payload.release_coordinates());
 
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
@@ -170,8 +165,9 @@ void rtype::server::Server::userLoginPacket(std::size_t tick, std::string uuid) 
     }
 }
 
-void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_archive &ar,
-    packets::PacketHeader &header) {
+void rtype::server::Server::interpretPacket(packets::Packet &packet) {
+    const packets::PacketHeader &header = packet.header();
+
     switch (header.type()) {
         case packets::TypeAck: {
             std::string uuid(header.playeruuid());
@@ -183,7 +179,7 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
             break;
         }
         case packets::TypePlayerEvent: {
-            handlePlayerEvents(ar, header);
+            handlePlayerEvents(packet);
             break;
         }
         default:
@@ -191,11 +187,10 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
     }
 }
 
-void rtype::server::Server::handlePlayerEvents(packets::Serialization::deserialize_archive &ar,
-    packets::PacketHeader &header) {
-    packets::PlayerEvent event;
+void rtype::server::Server::handlePlayerEvents(packets::Packet &packet) {
+    const packets::PacketHeader &header = packet.header();
+    const packets::PlayerEvent &event = packet.playerevent();
 
-    packets::Serialization::deserialize(ar, event);
     auto &data = _clientHandler.getClients().at(header.playeruuid());
     auto &entity = _world._registry.entityManager.entityFromIndex(data.entityId);
 
@@ -361,13 +356,13 @@ void rtype::server::Server::tickThreadRun() {
         while (!_tickHandler.getMessageQueue().empty()) {
             std::string msg = _tickHandler.getMessageQueue().pop();
 
-            packets::PacketHeader header;
+            packets::Packet packet;
             try {
                 std::stringstream ss(msg);
                 packets::Serialization::deserialize_archive &ar = packets::Serialization::createDeserializeArchive(ss);
 
-                packets::Serialization::deserialize(ar, header);
-                interpretPacket(ar, header);
+                packets::Serialization::deserialize(ar, packet);
+                interpretPacket(packet);
             } catch (std::exception &) {
                 std::cerr << "Doesn't seem to be a packet..." << std::endl;
                 continue;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "r-type/packets/Serialization.hpp"
+#include <google/protobuf/message.h>
 #include <r-type/proto/packets.pb.h>
 #include <sstream>
 #include <string>
@@ -12,12 +12,7 @@ namespace rtype::packets {
             ~PacketBuilderContent() = default;
 
             PacketBuilderContent &addHeader();
-
-            template <class T>
-            PacketBuilderContent &addPayload(T payload) {
-                Serialization::serialize(_ss, payload);
-                return *this;
-            };
+            PacketBuilderContent &addPayload(google::protobuf::Message *payload);
 
             std::string get();
 
@@ -27,6 +22,9 @@ namespace rtype::packets {
             PacketType _type;
             std::size_t _tick;
             std::string _uuid;
+
+            PacketHeader _header;
+            google::protobuf::Message *_payload;
     };
 
     class PacketBuilder {

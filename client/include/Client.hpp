@@ -52,10 +52,10 @@ namespace rtype::client {
 
             void interpretMsg(std::string msg);
             void stockMsg(std::string msg);
-            void removeEntity(packets::Serialization::deserialize_archive &ar);
-            void addEntity(packets::Serialization::deserialize_archive &ar);
-            void moveEntity(packets::Serialization::deserialize_archive &ar);
-            void modifyVelocity(packets::Serialization::deserialize_archive &ar);
+            void removeEntity(packets::Packet &packet);
+            void addEntity(packets::Packet &packet);
+            void moveEntity(packets::Packet &packet);
+            void modifyVelocity(packets::Packet &packet);
 
             void interpretButtonAction(int);
 

@@ -61,14 +61,6 @@ extern const ::google::protobuf::internal::ClassDataFull EntityDied_class_data_;
 #else
 extern const EntityDiedGlobalsTypeInternal EntityDied_globals_;
 #endif  // PROTOBUF_MESSAGE_GLOBALS
-class EntityIdOnly;
-struct EntityIdOnlyGlobalsTypeInternal;
-#ifndef PROTOBUF_MESSAGE_GLOBALS
-extern EntityIdOnlyGlobalsTypeInternal EntityIdOnly_globals_;
-extern const ::google::protobuf::internal::ClassDataFull EntityIdOnly_class_data_;
-#else
-extern const EntityIdOnlyGlobalsTypeInternal EntityIdOnly_globals_;
-#endif  // PROTOBUF_MESSAGE_GLOBALS
 class EntityMove;
 struct EntityMoveGlobalsTypeInternal;
 #ifndef PROTOBUF_MESSAGE_GLOBALS
@@ -100,6 +92,14 @@ extern LoginAnswerGlobalsTypeInternal LoginAnswer_globals_;
 extern const ::google::protobuf::internal::ClassDataFull LoginAnswer_class_data_;
 #else
 extern const LoginAnswerGlobalsTypeInternal LoginAnswer_globals_;
+#endif  // PROTOBUF_MESSAGE_GLOBALS
+class Packet;
+struct PacketGlobalsTypeInternal;
+#ifndef PROTOBUF_MESSAGE_GLOBALS
+extern PacketGlobalsTypeInternal Packet_globals_;
+extern const ::google::protobuf::internal::ClassDataFull Packet_class_data_;
+#else
+extern const PacketGlobalsTypeInternal Packet_globals_;
 #endif  // PROTOBUF_MESSAGE_GLOBALS
 class PacketHeader;
 struct PacketHeaderGlobalsTypeInternal;
@@ -341,7 +341,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED Vector2D final : public ::google::p
   [[nodiscard]] static const Vector2D& default_instance() {
     return *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<Vector2D>(&Vector2D_globals_);
   }
-  static constexpr int kIndexInFileMessages = 1;
+  static constexpr int kIndexInFileMessages = 2;
   friend void swap(Vector2D& a, Vector2D& b) { a.Swap(&b); }
   inline void Swap(Vector2D* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -991,7 +991,7 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED LoginAnswer final : public ::google
   [[nodiscard]] static const LoginAnswer& default_instance() {
     return *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<LoginAnswer>(&LoginAnswer_globals_);
   }
-  static constexpr int kIndexInFileMessages = 2;
+  static constexpr int kIndexInFileMessages = 3;
   friend void swap(LoginAnswer& a, LoginAnswer& b) { a.Swap(&b); }
   inline void Swap(LoginAnswer* PROTOBUF_NONNULL other) {
     if (other == this) return;
@@ -1374,208 +1374,6 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED EntitySpawn final : public ::google
     int entitytype_;
     float width_;
     float height_;
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_packets_2eproto;
-};
-// -------------------------------------------------------------------
-
-class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED EntityIdOnly final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:rtype.packets.EntityIdOnly) */ {
-  using Super_ = ::google::protobuf::Message;
-
- public:
-  inline EntityIdOnly() : EntityIdOnly(nullptr) {}
-  ~EntityIdOnly() PROTOBUF_FINAL;
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(EntityIdOnly* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(EntityIdOnly));
-  }
-#endif
-
-  template <typename = void>
-  explicit constexpr EntityIdOnly(::google::protobuf::internal::ConstantInitialized,
-                           const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
-                               class_data);
-
-  inline EntityIdOnly(const EntityIdOnly& from) : EntityIdOnly(nullptr, from) {}
-  inline EntityIdOnly(EntityIdOnly&& from) noexcept : EntityIdOnly(nullptr, ::std::move(from)) {}
-  inline EntityIdOnly& operator=(const EntityIdOnly& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline EntityIdOnly& operator=(EntityIdOnly&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
-  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
-    return GetDescriptor();
-  }
-  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
-  GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  [[nodiscard]] static const EntityIdOnly& default_instance() {
-    return *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<EntityIdOnly>(&EntityIdOnly_globals_);
-  }
-  static constexpr int kIndexInFileMessages = 3;
-  friend void swap(EntityIdOnly& a, EntityIdOnly& b) { a.Swap(&b); }
-  inline void Swap(EntityIdOnly* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(EntityIdOnly* PROTOBUF_NONNULL other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  [[nodiscard]] EntityIdOnly* PROTOBUF_NONNULL
-  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
-    return Super_::DefaultConstruct<EntityIdOnly>(arena);
-  }
-  using Super_::CopyFrom;
-  void CopyFrom(const EntityIdOnly& from);
-  using Super_::MergeFrom;
-  void MergeFrom(const EntityIdOnly& from) { EntityIdOnly::MergeImpl(*this, from); }
-
-  private:
-  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
-                        const ::google::protobuf::MessageLite& from_msg);
-
-  public:
-  [[nodiscard]] bool IsInitialized() const {
-    return true;
-  }
-  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
-  #if defined(PROTOBUF_CUSTOM_VTABLE)
-  private:
-  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
-  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
-
-  public:
-  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-    return _InternalSerialize(*this, target, stream);
-  }
-  #else   // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] ::size_t ByteSizeLong() const final;
-  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
-      ::uint8_t* PROTOBUF_NONNULL target,
-      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
-  #endif  // PROTOBUF_CUSTOM_VTABLE
-  [[nodiscard]] int GetCachedSize() const {
-    return _impl_._cached_size_.Get();
-  }
-
-  private:
-  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static void SharedDtor(MessageLite& self);
-  void InternalSwap(EntityIdOnly* PROTOBUF_NONNULL other);
- private:
-  static ::absl::string_view FullMessageName() { return "rtype.packets.EntityIdOnly"; }
-
-  explicit EntityIdOnly(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  EntityIdOnly(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const EntityIdOnly& from);
-  EntityIdOnly(
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, EntityIdOnly&& from) noexcept
-      : EntityIdOnly(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
-  static void* PROTOBUF_NONNULL PlacementNew_(
-      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-  static constexpr auto InternalNewImpl_();
-
- public:
-  static constexpr auto InternalGenerateClassData_(
-      const MessageLite& prototype,
-      const ::google::protobuf::internal::TcParseTableBase* PROTOBUF_NULLABLE tc_table = nullptr);
-
-  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  enum : int {
-    kEntityIdFieldNumber = 1,
-  };
-  // int64 entityId = 1;
-  [[nodiscard]] bool has_entityid() const;
-  void clear_entityid() ;
-  [[nodiscard]] ::int64_t entityid() const;
-  void set_entityid(::int64_t value);
-
-  private:
-  ::int64_t _internal_entityid() const;
-  void _internal_set_entityid(::int64_t value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:rtype.packets.EntityIdOnly)
- private:
-  class _Internal;
-  using ParseTableT_ =
-      ::google::protobuf::internal::TcParseTable<0, 1,
-                          0, 0,
-                          2>;
-  static constexpr ParseTableT_ InternalGenerateParseTable_(
-      const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL class_data);
-  friend class ::google::protobuf::internal::TcParser;
-  #ifndef PROTOBUF_MESSAGE_GLOBALS
-  static const ParseTableT_ _table_;
-  #endif
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  friend ::google::protobuf::internal::PrivateAccess;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
-    inline explicit Impl_(
-        ::google::protobuf::internal::InternalVisibility visibility,
-        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
-        const EntityIdOnly& from_msg);
-    ::google::protobuf::internal::HasBits<1> _has_bits_;
-    ::google::protobuf::internal::CachedSize _cached_size_;
-    ::int64_t entityid_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -2221,6 +2019,362 @@ class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED EntityMove final : public ::google:
   union { Impl_ _impl_; };
   friend struct ::TableStruct_packets_2eproto;
 };
+// -------------------------------------------------------------------
+
+class  PROTOBUF_FUTURE_ADD_EARLY_WARN_UNUSED Packet final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:rtype.packets.Packet) */ {
+  using Super_ = ::google::protobuf::Message;
+
+ public:
+  inline Packet() : Packet(nullptr) {}
+  ~Packet() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(Packet* PROTOBUF_NONNULL msg, ::std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(Packet));
+  }
+#endif
+
+  template <typename = void>
+  explicit constexpr Packet(::google::protobuf::internal::ConstantInitialized,
+                           const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+                               class_data);
+
+  inline Packet(const Packet& from) : Packet(nullptr, from) {}
+  inline Packet(Packet&& from) noexcept : Packet(nullptr, ::std::move(from)) {}
+  inline Packet& operator=(const Packet& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Packet& operator=(Packet&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  [[nodiscard]] inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  [[nodiscard]] inline ::google::protobuf::UnknownFieldSet* PROTOBUF_NONNULL
+  mutable_unknown_fields() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL descriptor() {
+    return GetDescriptor();
+  }
+  [[nodiscard]] static const ::google::protobuf::Descriptor* PROTOBUF_NONNULL
+  GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  [[nodiscard]] static const ::google::protobuf::Reflection* PROTOBUF_NONNULL GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  [[nodiscard]] static const Packet& default_instance() {
+    return *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<Packet>(&Packet_globals_);
+  }
+  enum PayloadCase {
+    kLoginAnswer = 4,
+    kEntitySpawn = 5,
+    kEntityDied = 6,
+    kEntityMove = 7,
+    kEntityVelocityChange = 8,
+    kPlayerEvent = 9,
+    PAYLOAD_NOT_SET = 0,
+  };
+  static constexpr int kIndexInFileMessages = 1;
+  friend void swap(Packet& a, Packet& b) { a.Swap(&b); }
+  inline void Swap(Packet* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(Packet* PROTOBUF_NONNULL other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  [[nodiscard]] Packet* PROTOBUF_NONNULL
+  New(::google::protobuf::Arena* PROTOBUF_NULLABLE arena = nullptr) const {
+    return Super_::DefaultConstruct<Packet>(arena);
+  }
+  using Super_::CopyFrom;
+  void CopyFrom(const Packet& from);
+  using Super_::MergeFrom;
+  void MergeFrom(const Packet& from) { Packet::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(::google::protobuf::MessageLite& to_msg,
+                        const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  [[nodiscard]] bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  [[nodiscard]] static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  [[nodiscard]] static ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      const ::google::protobuf::MessageLite& msg, ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream);
+
+  public:
+  [[nodiscard]] ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] ::size_t ByteSizeLong() const final;
+  [[nodiscard]] ::uint8_t* PROTOBUF_NONNULL _InternalSerialize(
+      ::uint8_t* PROTOBUF_NONNULL target,
+      ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  [[nodiscard]] int GetCachedSize() const {
+    return _impl_._cached_size_.Get();
+  }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(Packet* PROTOBUF_NONNULL other);
+ private:
+  static ::absl::string_view FullMessageName() { return "rtype.packets.Packet"; }
+
+  explicit Packet(::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  Packet(::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Packet& from);
+  Packet(
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, Packet&& from) noexcept
+      : Packet(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL GetClassData() const PROTOBUF_FINAL;
+  static void* PROTOBUF_NONNULL PlacementNew_(
+      const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+      ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+  static constexpr auto InternalNewImpl_();
+
+ public:
+  static constexpr auto InternalGenerateClassData_(
+      const MessageLite& prototype,
+      const ::google::protobuf::internal::TcParseTableBase* PROTOBUF_NULLABLE tc_table = nullptr);
+
+  [[nodiscard]] ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kHeaderFieldNumber = 1,
+    kLoginAnswerFieldNumber = 4,
+    kEntitySpawnFieldNumber = 5,
+    kEntityDiedFieldNumber = 6,
+    kEntityMoveFieldNumber = 7,
+    kEntityVelocityChangeFieldNumber = 8,
+    kPlayerEventFieldNumber = 9,
+  };
+  // .rtype.packets.PacketHeader header = 1;
+  [[nodiscard]] bool has_header() const;
+  void clear_header() ;
+  [[nodiscard]] const ::rtype::packets::PacketHeader& header() const;
+  [[nodiscard]] ::rtype::packets::PacketHeader* PROTOBUF_NULLABLE release_header();
+  ::rtype::packets::PacketHeader* PROTOBUF_NONNULL mutable_header();
+  void set_allocated_header(::rtype::packets::PacketHeader* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_header(::rtype::packets::PacketHeader* PROTOBUF_NULLABLE value);
+  ::rtype::packets::PacketHeader* PROTOBUF_NULLABLE unsafe_arena_release_header();
+
+  private:
+  const ::rtype::packets::PacketHeader& _internal_header() const;
+  ::rtype::packets::PacketHeader* PROTOBUF_NONNULL _internal_mutable_header();
+
+  public:
+  // .rtype.packets.LoginAnswer loginAnswer = 4;
+  [[nodiscard]] bool has_loginanswer() const;
+  private:
+  bool _internal_has_loginanswer() const;
+
+  public:
+  void clear_loginanswer() ;
+  [[nodiscard]] const ::rtype::packets::LoginAnswer& loginanswer() const;
+  [[nodiscard]] ::rtype::packets::LoginAnswer* PROTOBUF_NULLABLE release_loginanswer();
+  ::rtype::packets::LoginAnswer* PROTOBUF_NONNULL mutable_loginanswer();
+  void set_allocated_loginanswer(::rtype::packets::LoginAnswer* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_loginanswer(::rtype::packets::LoginAnswer* PROTOBUF_NULLABLE value);
+  ::rtype::packets::LoginAnswer* PROTOBUF_NULLABLE unsafe_arena_release_loginanswer();
+
+  private:
+  const ::rtype::packets::LoginAnswer& _internal_loginanswer() const;
+  ::rtype::packets::LoginAnswer* PROTOBUF_NONNULL _internal_mutable_loginanswer();
+
+  public:
+  // .rtype.packets.EntitySpawn entitySpawn = 5;
+  [[nodiscard]] bool has_entityspawn() const;
+  private:
+  bool _internal_has_entityspawn() const;
+
+  public:
+  void clear_entityspawn() ;
+  [[nodiscard]] const ::rtype::packets::EntitySpawn& entityspawn() const;
+  [[nodiscard]] ::rtype::packets::EntitySpawn* PROTOBUF_NULLABLE release_entityspawn();
+  ::rtype::packets::EntitySpawn* PROTOBUF_NONNULL mutable_entityspawn();
+  void set_allocated_entityspawn(::rtype::packets::EntitySpawn* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_entityspawn(::rtype::packets::EntitySpawn* PROTOBUF_NULLABLE value);
+  ::rtype::packets::EntitySpawn* PROTOBUF_NULLABLE unsafe_arena_release_entityspawn();
+
+  private:
+  const ::rtype::packets::EntitySpawn& _internal_entityspawn() const;
+  ::rtype::packets::EntitySpawn* PROTOBUF_NONNULL _internal_mutable_entityspawn();
+
+  public:
+  // .rtype.packets.EntityDied entityDied = 6;
+  [[nodiscard]] bool has_entitydied() const;
+  private:
+  bool _internal_has_entitydied() const;
+
+  public:
+  void clear_entitydied() ;
+  [[nodiscard]] const ::rtype::packets::EntityDied& entitydied() const;
+  [[nodiscard]] ::rtype::packets::EntityDied* PROTOBUF_NULLABLE release_entitydied();
+  ::rtype::packets::EntityDied* PROTOBUF_NONNULL mutable_entitydied();
+  void set_allocated_entitydied(::rtype::packets::EntityDied* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_entitydied(::rtype::packets::EntityDied* PROTOBUF_NULLABLE value);
+  ::rtype::packets::EntityDied* PROTOBUF_NULLABLE unsafe_arena_release_entitydied();
+
+  private:
+  const ::rtype::packets::EntityDied& _internal_entitydied() const;
+  ::rtype::packets::EntityDied* PROTOBUF_NONNULL _internal_mutable_entitydied();
+
+  public:
+  // .rtype.packets.EntityMove entityMove = 7;
+  [[nodiscard]] bool has_entitymove() const;
+  private:
+  bool _internal_has_entitymove() const;
+
+  public:
+  void clear_entitymove() ;
+  [[nodiscard]] const ::rtype::packets::EntityMove& entitymove() const;
+  [[nodiscard]] ::rtype::packets::EntityMove* PROTOBUF_NULLABLE release_entitymove();
+  ::rtype::packets::EntityMove* PROTOBUF_NONNULL mutable_entitymove();
+  void set_allocated_entitymove(::rtype::packets::EntityMove* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_entitymove(::rtype::packets::EntityMove* PROTOBUF_NULLABLE value);
+  ::rtype::packets::EntityMove* PROTOBUF_NULLABLE unsafe_arena_release_entitymove();
+
+  private:
+  const ::rtype::packets::EntityMove& _internal_entitymove() const;
+  ::rtype::packets::EntityMove* PROTOBUF_NONNULL _internal_mutable_entitymove();
+
+  public:
+  // .rtype.packets.EntityVelocityChange entityVelocityChange = 8;
+  [[nodiscard]] bool has_entityvelocitychange() const;
+  private:
+  bool _internal_has_entityvelocitychange() const;
+
+  public:
+  void clear_entityvelocitychange() ;
+  [[nodiscard]] const ::rtype::packets::EntityVelocityChange& entityvelocitychange() const;
+  [[nodiscard]] ::rtype::packets::EntityVelocityChange* PROTOBUF_NULLABLE release_entityvelocitychange();
+  ::rtype::packets::EntityVelocityChange* PROTOBUF_NONNULL mutable_entityvelocitychange();
+  void set_allocated_entityvelocitychange(::rtype::packets::EntityVelocityChange* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_entityvelocitychange(::rtype::packets::EntityVelocityChange* PROTOBUF_NULLABLE value);
+  ::rtype::packets::EntityVelocityChange* PROTOBUF_NULLABLE unsafe_arena_release_entityvelocitychange();
+
+  private:
+  const ::rtype::packets::EntityVelocityChange& _internal_entityvelocitychange() const;
+  ::rtype::packets::EntityVelocityChange* PROTOBUF_NONNULL _internal_mutable_entityvelocitychange();
+
+  public:
+  // .rtype.packets.PlayerEvent playerEvent = 9;
+  [[nodiscard]] bool has_playerevent() const;
+  private:
+  bool _internal_has_playerevent() const;
+
+  public:
+  void clear_playerevent() ;
+  [[nodiscard]] const ::rtype::packets::PlayerEvent& playerevent() const;
+  [[nodiscard]] ::rtype::packets::PlayerEvent* PROTOBUF_NULLABLE release_playerevent();
+  ::rtype::packets::PlayerEvent* PROTOBUF_NONNULL mutable_playerevent();
+  void set_allocated_playerevent(::rtype::packets::PlayerEvent* PROTOBUF_NULLABLE value);
+  void unsafe_arena_set_allocated_playerevent(::rtype::packets::PlayerEvent* PROTOBUF_NULLABLE value);
+  ::rtype::packets::PlayerEvent* PROTOBUF_NULLABLE unsafe_arena_release_playerevent();
+
+  private:
+  const ::rtype::packets::PlayerEvent& _internal_playerevent() const;
+  ::rtype::packets::PlayerEvent* PROTOBUF_NONNULL _internal_mutable_playerevent();
+
+  public:
+  void clear_payload();
+  PayloadCase payload_case() const;
+  // @@protoc_insertion_point(class_scope:rtype.packets.Packet)
+ private:
+  class _Internal;
+  void set_has_loginanswer();
+  void set_has_entityspawn();
+  void set_has_entitydied();
+  void set_has_entitymove();
+  void set_has_entityvelocitychange();
+  void set_has_playerevent();
+  [[nodiscard]] inline bool has_payload() const;
+  inline void clear_has_payload();
+  using ParseTableT_ =
+      ::google::protobuf::internal::TcParseTable<0, 7,
+                          7, 0,
+                          2>;
+  static constexpr ParseTableT_ InternalGenerateParseTable_(
+      const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL class_data);
+  friend class ::google::protobuf::internal::TcParser;
+  #ifndef PROTOBUF_MESSAGE_GLOBALS
+  static const ParseTableT_ _table_;
+  #endif
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  friend ::google::protobuf::internal::PrivateAccess;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                                    ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena);
+    inline explicit Impl_(
+        ::google::protobuf::internal::InternalVisibility visibility,
+        ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+        const Packet& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::rtype::packets::PacketHeader* PROTOBUF_NULLABLE header_;
+    union PayloadUnion {
+      constexpr PayloadUnion() : _constinit_{} {}
+      ::google::protobuf::internal::ConstantInitialized _constinit_;
+      ::google::protobuf::Message* PROTOBUF_NULLABLE loginanswer_;
+      ::google::protobuf::Message* PROTOBUF_NULLABLE entityspawn_;
+      ::google::protobuf::Message* PROTOBUF_NULLABLE entitydied_;
+      ::google::protobuf::Message* PROTOBUF_NULLABLE entitymove_;
+      ::google::protobuf::Message* PROTOBUF_NULLABLE entityvelocitychange_;
+      ::google::protobuf::Message* PROTOBUF_NULLABLE playerevent_;
+    } payload_;
+    ::uint32_t _oneof_case_[1];
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_packets_2eproto;
+};
 
 // ===================================================================
 
@@ -2364,6 +2518,603 @@ inline void PacketHeader::set_allocated_playeruuid(::std::string* PROTOBUF_NULLA
 
 // -------------------------------------------------------------------
 
+// Packet
+
+// .rtype.packets.PacketHeader header = 1;
+inline bool Packet::has_header() const {
+  bool value = CheckHasBit(_impl_._has_bits_[0], 0x00000001U);
+  PROTOBUF_ASSUME(!value || _impl_.header_ != nullptr);
+  return value;
+}
+inline void Packet::clear_header() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.header_ != nullptr) _impl_.header_->Clear();
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+}
+inline const ::rtype::packets::PacketHeader& Packet::_internal_header() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  const ::rtype::packets::PacketHeader* p = _impl_.header_;
+  return p != nullptr ? *p : *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<::rtype::packets::PacketHeader>(&::rtype::packets::PacketHeader_globals_);
+}
+inline const ::rtype::packets::PacketHeader& Packet::header() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:rtype.packets.Packet.header)
+  return _internal_header();
+}
+inline void Packet::unsafe_arena_set_allocated_header(
+    ::rtype::packets::PacketHeader* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (GetArena() == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.header_);
+  }
+  _impl_.header_ = reinterpret_cast<::rtype::packets::PacketHeader*>(value);
+  if (value != nullptr) {
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:rtype.packets.Packet.header)
+}
+inline ::rtype::packets::PacketHeader* PROTOBUF_NULLABLE Packet::release_header() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::rtype::packets::PacketHeader* released = _impl_.header_;
+  _impl_.header_ = nullptr;
+  if (::google::protobuf::internal::DebugHardenForceCopyInRelease()) {
+    auto* old = reinterpret_cast<::google::protobuf::MessageLite*>(released);
+    released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    if (GetArena() == nullptr) {
+      delete old;
+    }
+  } else {
+    if (GetArena() != nullptr) {
+      released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+    }
+  }
+  return released;
+}
+inline ::rtype::packets::PacketHeader* PROTOBUF_NULLABLE Packet::unsafe_arena_release_header() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:rtype.packets.Packet.header)
+
+  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::rtype::packets::PacketHeader* temp = _impl_.header_;
+  _impl_.header_ = nullptr;
+  return temp;
+}
+inline ::rtype::packets::PacketHeader* PROTOBUF_NONNULL Packet::_internal_mutable_header() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (_impl_.header_ == nullptr) {
+    auto* p = Super_::DefaultConstruct<::rtype::packets::PacketHeader>(GetArena());
+    _impl_.header_ = reinterpret_cast<::rtype::packets::PacketHeader*>(p);
+  }
+  return _impl_.header_;
+}
+inline ::rtype::packets::PacketHeader* PROTOBUF_NONNULL Packet::mutable_header()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  ::rtype::packets::PacketHeader* _msg = _internal_mutable_header();
+  // @@protoc_insertion_point(field_mutable:rtype.packets.Packet.header)
+  return _msg;
+}
+inline void Packet::set_allocated_header(::rtype::packets::PacketHeader* PROTOBUF_NULLABLE value) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (message_arena == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.header_);
+  }
+
+  if (value != nullptr) {
+    ::google::protobuf::Arena* submessage_arena = value->GetArena();
+    if (message_arena != submessage_arena) {
+      value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
+    }
+    SetHasBit(_impl_._has_bits_[0], 0x00000001U);
+  } else {
+    ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
+  }
+
+  _impl_.header_ = reinterpret_cast<::rtype::packets::PacketHeader*>(value);
+  // @@protoc_insertion_point(field_set_allocated:rtype.packets.Packet.header)
+}
+
+// .rtype.packets.LoginAnswer loginAnswer = 4;
+inline bool Packet::has_loginanswer() const {
+  return payload_case() == kLoginAnswer;
+}
+inline bool Packet::_internal_has_loginanswer() const {
+  return payload_case() == kLoginAnswer;
+}
+inline void Packet::set_has_loginanswer() {
+  _impl_._oneof_case_[0] = kLoginAnswer;
+}
+inline void Packet::clear_loginanswer() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (payload_case() == kLoginAnswer) {
+    if (GetArena() == nullptr) {
+      delete _impl_.payload_.loginanswer_;
+    } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.loginanswer_);
+    }
+    clear_has_payload();
+  }
+}
+inline ::rtype::packets::LoginAnswer* PROTOBUF_NULLABLE Packet::release_loginanswer() {
+  // @@protoc_insertion_point(field_release:rtype.packets.Packet.loginAnswer)
+  if (payload_case() == kLoginAnswer) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::rtype::packets::LoginAnswer*>(_impl_.payload_.loginanswer_);
+    if (GetArena() != nullptr) {
+      temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.payload_.loginanswer_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::rtype::packets::LoginAnswer& Packet::_internal_loginanswer() const {
+  return payload_case() == kLoginAnswer ? static_cast<const ::rtype::packets::LoginAnswer&>(*reinterpret_cast<::rtype::packets::LoginAnswer*>(_impl_.payload_.loginanswer_))
+                     : *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<::rtype::packets::LoginAnswer>(&::rtype::packets::LoginAnswer_globals_);
+}
+inline const ::rtype::packets::LoginAnswer& Packet::loginanswer() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:rtype.packets.Packet.loginAnswer)
+  return _internal_loginanswer();
+}
+inline ::rtype::packets::LoginAnswer* PROTOBUF_NULLABLE Packet::unsafe_arena_release_loginanswer() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:rtype.packets.Packet.loginAnswer)
+  if (payload_case() == kLoginAnswer) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::rtype::packets::LoginAnswer*>(_impl_.payload_.loginanswer_);
+    _impl_.payload_.loginanswer_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void Packet::unsafe_arena_set_allocated_loginanswer(
+    ::rtype::packets::LoginAnswer* PROTOBUF_NULLABLE value) {
+  // We rely on the oneof clear method to free the earlier contents
+  // of this oneof. We can directly use the pointer we're given to
+  // set the new value.
+  clear_payload();
+  if (value) {
+    set_has_loginanswer();
+    _impl_.payload_.loginanswer_ = reinterpret_cast<::google::protobuf::Message*>(value);
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:rtype.packets.Packet.loginAnswer)
+}
+inline ::rtype::packets::LoginAnswer* PROTOBUF_NONNULL Packet::_internal_mutable_loginanswer() {
+  if (payload_case() != kLoginAnswer) {
+    clear_payload();
+    set_has_loginanswer();
+    _impl_.payload_.loginanswer_ = reinterpret_cast<::google::protobuf::Message*>(Super_::DefaultConstruct<::rtype::packets::LoginAnswer>(GetArena()));
+  }
+  return reinterpret_cast<::rtype::packets::LoginAnswer*>(_impl_.payload_.loginanswer_);
+}
+inline ::rtype::packets::LoginAnswer* PROTOBUF_NONNULL Packet::mutable_loginanswer()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::rtype::packets::LoginAnswer* _msg = _internal_mutable_loginanswer();
+  // @@protoc_insertion_point(field_mutable:rtype.packets.Packet.loginAnswer)
+  return _msg;
+}
+
+// .rtype.packets.EntitySpawn entitySpawn = 5;
+inline bool Packet::has_entityspawn() const {
+  return payload_case() == kEntitySpawn;
+}
+inline bool Packet::_internal_has_entityspawn() const {
+  return payload_case() == kEntitySpawn;
+}
+inline void Packet::set_has_entityspawn() {
+  _impl_._oneof_case_[0] = kEntitySpawn;
+}
+inline void Packet::clear_entityspawn() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (payload_case() == kEntitySpawn) {
+    if (GetArena() == nullptr) {
+      delete _impl_.payload_.entityspawn_;
+    } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.entityspawn_);
+    }
+    clear_has_payload();
+  }
+}
+inline ::rtype::packets::EntitySpawn* PROTOBUF_NULLABLE Packet::release_entityspawn() {
+  // @@protoc_insertion_point(field_release:rtype.packets.Packet.entitySpawn)
+  if (payload_case() == kEntitySpawn) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::rtype::packets::EntitySpawn*>(_impl_.payload_.entityspawn_);
+    if (GetArena() != nullptr) {
+      temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.payload_.entityspawn_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::rtype::packets::EntitySpawn& Packet::_internal_entityspawn() const {
+  return payload_case() == kEntitySpawn ? static_cast<const ::rtype::packets::EntitySpawn&>(*reinterpret_cast<::rtype::packets::EntitySpawn*>(_impl_.payload_.entityspawn_))
+                     : *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<::rtype::packets::EntitySpawn>(&::rtype::packets::EntitySpawn_globals_);
+}
+inline const ::rtype::packets::EntitySpawn& Packet::entityspawn() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:rtype.packets.Packet.entitySpawn)
+  return _internal_entityspawn();
+}
+inline ::rtype::packets::EntitySpawn* PROTOBUF_NULLABLE Packet::unsafe_arena_release_entityspawn() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:rtype.packets.Packet.entitySpawn)
+  if (payload_case() == kEntitySpawn) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::rtype::packets::EntitySpawn*>(_impl_.payload_.entityspawn_);
+    _impl_.payload_.entityspawn_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void Packet::unsafe_arena_set_allocated_entityspawn(
+    ::rtype::packets::EntitySpawn* PROTOBUF_NULLABLE value) {
+  // We rely on the oneof clear method to free the earlier contents
+  // of this oneof. We can directly use the pointer we're given to
+  // set the new value.
+  clear_payload();
+  if (value) {
+    set_has_entityspawn();
+    _impl_.payload_.entityspawn_ = reinterpret_cast<::google::protobuf::Message*>(value);
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:rtype.packets.Packet.entitySpawn)
+}
+inline ::rtype::packets::EntitySpawn* PROTOBUF_NONNULL Packet::_internal_mutable_entityspawn() {
+  if (payload_case() != kEntitySpawn) {
+    clear_payload();
+    set_has_entityspawn();
+    _impl_.payload_.entityspawn_ = reinterpret_cast<::google::protobuf::Message*>(Super_::DefaultConstruct<::rtype::packets::EntitySpawn>(GetArena()));
+  }
+  return reinterpret_cast<::rtype::packets::EntitySpawn*>(_impl_.payload_.entityspawn_);
+}
+inline ::rtype::packets::EntitySpawn* PROTOBUF_NONNULL Packet::mutable_entityspawn()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::rtype::packets::EntitySpawn* _msg = _internal_mutable_entityspawn();
+  // @@protoc_insertion_point(field_mutable:rtype.packets.Packet.entitySpawn)
+  return _msg;
+}
+
+// .rtype.packets.EntityDied entityDied = 6;
+inline bool Packet::has_entitydied() const {
+  return payload_case() == kEntityDied;
+}
+inline bool Packet::_internal_has_entitydied() const {
+  return payload_case() == kEntityDied;
+}
+inline void Packet::set_has_entitydied() {
+  _impl_._oneof_case_[0] = kEntityDied;
+}
+inline void Packet::clear_entitydied() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (payload_case() == kEntityDied) {
+    if (GetArena() == nullptr) {
+      delete _impl_.payload_.entitydied_;
+    } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.entitydied_);
+    }
+    clear_has_payload();
+  }
+}
+inline ::rtype::packets::EntityDied* PROTOBUF_NULLABLE Packet::release_entitydied() {
+  // @@protoc_insertion_point(field_release:rtype.packets.Packet.entityDied)
+  if (payload_case() == kEntityDied) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::rtype::packets::EntityDied*>(_impl_.payload_.entitydied_);
+    if (GetArena() != nullptr) {
+      temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.payload_.entitydied_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::rtype::packets::EntityDied& Packet::_internal_entitydied() const {
+  return payload_case() == kEntityDied ? static_cast<const ::rtype::packets::EntityDied&>(*reinterpret_cast<::rtype::packets::EntityDied*>(_impl_.payload_.entitydied_))
+                     : *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<::rtype::packets::EntityDied>(&::rtype::packets::EntityDied_globals_);
+}
+inline const ::rtype::packets::EntityDied& Packet::entitydied() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:rtype.packets.Packet.entityDied)
+  return _internal_entitydied();
+}
+inline ::rtype::packets::EntityDied* PROTOBUF_NULLABLE Packet::unsafe_arena_release_entitydied() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:rtype.packets.Packet.entityDied)
+  if (payload_case() == kEntityDied) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::rtype::packets::EntityDied*>(_impl_.payload_.entitydied_);
+    _impl_.payload_.entitydied_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void Packet::unsafe_arena_set_allocated_entitydied(
+    ::rtype::packets::EntityDied* PROTOBUF_NULLABLE value) {
+  // We rely on the oneof clear method to free the earlier contents
+  // of this oneof. We can directly use the pointer we're given to
+  // set the new value.
+  clear_payload();
+  if (value) {
+    set_has_entitydied();
+    _impl_.payload_.entitydied_ = reinterpret_cast<::google::protobuf::Message*>(value);
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:rtype.packets.Packet.entityDied)
+}
+inline ::rtype::packets::EntityDied* PROTOBUF_NONNULL Packet::_internal_mutable_entitydied() {
+  if (payload_case() != kEntityDied) {
+    clear_payload();
+    set_has_entitydied();
+    _impl_.payload_.entitydied_ = reinterpret_cast<::google::protobuf::Message*>(Super_::DefaultConstruct<::rtype::packets::EntityDied>(GetArena()));
+  }
+  return reinterpret_cast<::rtype::packets::EntityDied*>(_impl_.payload_.entitydied_);
+}
+inline ::rtype::packets::EntityDied* PROTOBUF_NONNULL Packet::mutable_entitydied()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::rtype::packets::EntityDied* _msg = _internal_mutable_entitydied();
+  // @@protoc_insertion_point(field_mutable:rtype.packets.Packet.entityDied)
+  return _msg;
+}
+
+// .rtype.packets.EntityMove entityMove = 7;
+inline bool Packet::has_entitymove() const {
+  return payload_case() == kEntityMove;
+}
+inline bool Packet::_internal_has_entitymove() const {
+  return payload_case() == kEntityMove;
+}
+inline void Packet::set_has_entitymove() {
+  _impl_._oneof_case_[0] = kEntityMove;
+}
+inline void Packet::clear_entitymove() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (payload_case() == kEntityMove) {
+    if (GetArena() == nullptr) {
+      delete _impl_.payload_.entitymove_;
+    } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.entitymove_);
+    }
+    clear_has_payload();
+  }
+}
+inline ::rtype::packets::EntityMove* PROTOBUF_NULLABLE Packet::release_entitymove() {
+  // @@protoc_insertion_point(field_release:rtype.packets.Packet.entityMove)
+  if (payload_case() == kEntityMove) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::rtype::packets::EntityMove*>(_impl_.payload_.entitymove_);
+    if (GetArena() != nullptr) {
+      temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.payload_.entitymove_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::rtype::packets::EntityMove& Packet::_internal_entitymove() const {
+  return payload_case() == kEntityMove ? static_cast<const ::rtype::packets::EntityMove&>(*reinterpret_cast<::rtype::packets::EntityMove*>(_impl_.payload_.entitymove_))
+                     : *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<::rtype::packets::EntityMove>(&::rtype::packets::EntityMove_globals_);
+}
+inline const ::rtype::packets::EntityMove& Packet::entitymove() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:rtype.packets.Packet.entityMove)
+  return _internal_entitymove();
+}
+inline ::rtype::packets::EntityMove* PROTOBUF_NULLABLE Packet::unsafe_arena_release_entitymove() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:rtype.packets.Packet.entityMove)
+  if (payload_case() == kEntityMove) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::rtype::packets::EntityMove*>(_impl_.payload_.entitymove_);
+    _impl_.payload_.entitymove_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void Packet::unsafe_arena_set_allocated_entitymove(
+    ::rtype::packets::EntityMove* PROTOBUF_NULLABLE value) {
+  // We rely on the oneof clear method to free the earlier contents
+  // of this oneof. We can directly use the pointer we're given to
+  // set the new value.
+  clear_payload();
+  if (value) {
+    set_has_entitymove();
+    _impl_.payload_.entitymove_ = reinterpret_cast<::google::protobuf::Message*>(value);
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:rtype.packets.Packet.entityMove)
+}
+inline ::rtype::packets::EntityMove* PROTOBUF_NONNULL Packet::_internal_mutable_entitymove() {
+  if (payload_case() != kEntityMove) {
+    clear_payload();
+    set_has_entitymove();
+    _impl_.payload_.entitymove_ = reinterpret_cast<::google::protobuf::Message*>(Super_::DefaultConstruct<::rtype::packets::EntityMove>(GetArena()));
+  }
+  return reinterpret_cast<::rtype::packets::EntityMove*>(_impl_.payload_.entitymove_);
+}
+inline ::rtype::packets::EntityMove* PROTOBUF_NONNULL Packet::mutable_entitymove()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::rtype::packets::EntityMove* _msg = _internal_mutable_entitymove();
+  // @@protoc_insertion_point(field_mutable:rtype.packets.Packet.entityMove)
+  return _msg;
+}
+
+// .rtype.packets.EntityVelocityChange entityVelocityChange = 8;
+inline bool Packet::has_entityvelocitychange() const {
+  return payload_case() == kEntityVelocityChange;
+}
+inline bool Packet::_internal_has_entityvelocitychange() const {
+  return payload_case() == kEntityVelocityChange;
+}
+inline void Packet::set_has_entityvelocitychange() {
+  _impl_._oneof_case_[0] = kEntityVelocityChange;
+}
+inline void Packet::clear_entityvelocitychange() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (payload_case() == kEntityVelocityChange) {
+    if (GetArena() == nullptr) {
+      delete _impl_.payload_.entityvelocitychange_;
+    } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.entityvelocitychange_);
+    }
+    clear_has_payload();
+  }
+}
+inline ::rtype::packets::EntityVelocityChange* PROTOBUF_NULLABLE Packet::release_entityvelocitychange() {
+  // @@protoc_insertion_point(field_release:rtype.packets.Packet.entityVelocityChange)
+  if (payload_case() == kEntityVelocityChange) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::rtype::packets::EntityVelocityChange*>(_impl_.payload_.entityvelocitychange_);
+    if (GetArena() != nullptr) {
+      temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.payload_.entityvelocitychange_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::rtype::packets::EntityVelocityChange& Packet::_internal_entityvelocitychange() const {
+  return payload_case() == kEntityVelocityChange ? static_cast<const ::rtype::packets::EntityVelocityChange&>(*reinterpret_cast<::rtype::packets::EntityVelocityChange*>(_impl_.payload_.entityvelocitychange_))
+                     : *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<::rtype::packets::EntityVelocityChange>(&::rtype::packets::EntityVelocityChange_globals_);
+}
+inline const ::rtype::packets::EntityVelocityChange& Packet::entityvelocitychange() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:rtype.packets.Packet.entityVelocityChange)
+  return _internal_entityvelocitychange();
+}
+inline ::rtype::packets::EntityVelocityChange* PROTOBUF_NULLABLE Packet::unsafe_arena_release_entityvelocitychange() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:rtype.packets.Packet.entityVelocityChange)
+  if (payload_case() == kEntityVelocityChange) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::rtype::packets::EntityVelocityChange*>(_impl_.payload_.entityvelocitychange_);
+    _impl_.payload_.entityvelocitychange_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void Packet::unsafe_arena_set_allocated_entityvelocitychange(
+    ::rtype::packets::EntityVelocityChange* PROTOBUF_NULLABLE value) {
+  // We rely on the oneof clear method to free the earlier contents
+  // of this oneof. We can directly use the pointer we're given to
+  // set the new value.
+  clear_payload();
+  if (value) {
+    set_has_entityvelocitychange();
+    _impl_.payload_.entityvelocitychange_ = reinterpret_cast<::google::protobuf::Message*>(value);
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:rtype.packets.Packet.entityVelocityChange)
+}
+inline ::rtype::packets::EntityVelocityChange* PROTOBUF_NONNULL Packet::_internal_mutable_entityvelocitychange() {
+  if (payload_case() != kEntityVelocityChange) {
+    clear_payload();
+    set_has_entityvelocitychange();
+    _impl_.payload_.entityvelocitychange_ = reinterpret_cast<::google::protobuf::Message*>(Super_::DefaultConstruct<::rtype::packets::EntityVelocityChange>(GetArena()));
+  }
+  return reinterpret_cast<::rtype::packets::EntityVelocityChange*>(_impl_.payload_.entityvelocitychange_);
+}
+inline ::rtype::packets::EntityVelocityChange* PROTOBUF_NONNULL Packet::mutable_entityvelocitychange()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::rtype::packets::EntityVelocityChange* _msg = _internal_mutable_entityvelocitychange();
+  // @@protoc_insertion_point(field_mutable:rtype.packets.Packet.entityVelocityChange)
+  return _msg;
+}
+
+// .rtype.packets.PlayerEvent playerEvent = 9;
+inline bool Packet::has_playerevent() const {
+  return payload_case() == kPlayerEvent;
+}
+inline bool Packet::_internal_has_playerevent() const {
+  return payload_case() == kPlayerEvent;
+}
+inline void Packet::set_has_playerevent() {
+  _impl_._oneof_case_[0] = kPlayerEvent;
+}
+inline void Packet::clear_playerevent() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  if (payload_case() == kPlayerEvent) {
+    if (GetArena() == nullptr) {
+      delete _impl_.payload_.playerevent_;
+    } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+      ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.playerevent_);
+    }
+    clear_has_payload();
+  }
+}
+inline ::rtype::packets::PlayerEvent* PROTOBUF_NULLABLE Packet::release_playerevent() {
+  // @@protoc_insertion_point(field_release:rtype.packets.Packet.playerEvent)
+  if (payload_case() == kPlayerEvent) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::rtype::packets::PlayerEvent*>(_impl_.payload_.playerevent_);
+    if (GetArena() != nullptr) {
+      temp = ::google::protobuf::internal::DuplicateIfNonNull(temp);
+    }
+    _impl_.payload_.playerevent_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline const ::rtype::packets::PlayerEvent& Packet::_internal_playerevent() const {
+  return payload_case() == kPlayerEvent ? static_cast<const ::rtype::packets::PlayerEvent&>(*reinterpret_cast<::rtype::packets::PlayerEvent*>(_impl_.payload_.playerevent_))
+                     : *::google::protobuf::internal::MessageGlobalsBase::ToDefaultInstance<::rtype::packets::PlayerEvent>(&::rtype::packets::PlayerEvent_globals_);
+}
+inline const ::rtype::packets::PlayerEvent& Packet::playerevent() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:rtype.packets.Packet.playerEvent)
+  return _internal_playerevent();
+}
+inline ::rtype::packets::PlayerEvent* PROTOBUF_NULLABLE Packet::unsafe_arena_release_playerevent() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:rtype.packets.Packet.playerEvent)
+  if (payload_case() == kPlayerEvent) {
+    clear_has_payload();
+    auto* temp = reinterpret_cast<::rtype::packets::PlayerEvent*>(_impl_.payload_.playerevent_);
+    _impl_.payload_.playerevent_ = nullptr;
+    return temp;
+  } else {
+    return nullptr;
+  }
+}
+inline void Packet::unsafe_arena_set_allocated_playerevent(
+    ::rtype::packets::PlayerEvent* PROTOBUF_NULLABLE value) {
+  // We rely on the oneof clear method to free the earlier contents
+  // of this oneof. We can directly use the pointer we're given to
+  // set the new value.
+  clear_payload();
+  if (value) {
+    set_has_playerevent();
+    _impl_.payload_.playerevent_ = reinterpret_cast<::google::protobuf::Message*>(value);
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:rtype.packets.Packet.playerEvent)
+}
+inline ::rtype::packets::PlayerEvent* PROTOBUF_NONNULL Packet::_internal_mutable_playerevent() {
+  if (payload_case() != kPlayerEvent) {
+    clear_payload();
+    set_has_playerevent();
+    _impl_.payload_.playerevent_ = reinterpret_cast<::google::protobuf::Message*>(Super_::DefaultConstruct<::rtype::packets::PlayerEvent>(GetArena()));
+  }
+  return reinterpret_cast<::rtype::packets::PlayerEvent*>(_impl_.payload_.playerevent_);
+}
+inline ::rtype::packets::PlayerEvent* PROTOBUF_NONNULL Packet::mutable_playerevent()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::rtype::packets::PlayerEvent* _msg = _internal_mutable_playerevent();
+  // @@protoc_insertion_point(field_mutable:rtype.packets.Packet.playerEvent)
+  return _msg;
+}
+
+inline bool Packet::has_payload() const {
+  return payload_case() != PAYLOAD_NOT_SET;
+}
+inline void Packet::clear_has_payload() {
+  _impl_._oneof_case_[0] = PAYLOAD_NOT_SET;
+}
+inline Packet::PayloadCase Packet::payload_case() const {
+  return Packet::PayloadCase(_impl_._oneof_case_[0]);
+}
+// -------------------------------------------------------------------
+
 // Vector2D
 
 // double x = 1;
@@ -2492,38 +3243,6 @@ inline void LoginAnswer::set_allocated_uuid(::std::string* PROTOBUF_NULLABLE val
     _impl_.uuid_.Set("", GetArena());
   }
   // @@protoc_insertion_point(field_set_allocated:rtype.packets.LoginAnswer.uuid)
-}
-
-// -------------------------------------------------------------------
-
-// EntityIdOnly
-
-// int64 entityId = 1;
-inline bool EntityIdOnly::has_entityid() const {
-  bool value = CheckHasBit(_impl_._has_bits_[0], 0x00000001U);
-  return value;
-}
-inline void EntityIdOnly::clear_entityid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.entityid_ = ::int64_t{0};
-  ClearHasBit(_impl_._has_bits_[0], 0x00000001U);
-}
-inline ::int64_t EntityIdOnly::entityid() const {
-  // @@protoc_insertion_point(field_get:rtype.packets.EntityIdOnly.entityId)
-  return _internal_entityid();
-}
-inline void EntityIdOnly::set_entityid(::int64_t value) {
-  _internal_set_entityid(value);
-  SetHasBit(_impl_._has_bits_[0], 0x00000001U);
-  // @@protoc_insertion_point(field_set:rtype.packets.EntityIdOnly.entityId)
-}
-inline ::int64_t EntityIdOnly::_internal_entityid() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.entityid_;
-}
-inline void EntityIdOnly::_internal_set_entityid(::int64_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.entityid_ = value;
 }
 
 // -------------------------------------------------------------------

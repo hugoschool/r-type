@@ -74,8 +74,8 @@ void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observe
     if (!content.existsAndRetrieve(dead))
         return;
 
-    packets::EntityDied payload;
-    payload.set_entityid(dead.entityId);
+    auto *payload = new packets::EntityDied();
+    payload->set_entityid(dead.entityId);
 
     std::string str = _packetBuilder.create(packets::PacketType::TypeEntityDied).addHeader().addPayload(payload).get();
 
@@ -88,19 +88,17 @@ void rtype::server::SubscriberHandler::handleVelocityComponent(fengine::ecs::obs
     if (!content.existsAndRetrieve(velocity))
         return;
 
-    packets::EntityVelocityChange payload;
-    payload.set_entityid(content.getEntityId());
+    auto *payload = new packets::EntityVelocityChange();
+    payload->set_entityid(content.getEntityId());
 
     auto *allocatedVelocity = new packets::Vector2D();
     allocatedVelocity->set_x(velocity.vel_x);
     allocatedVelocity->set_y(velocity.vel_y);
 
-    payload.set_allocated_velocity(allocatedVelocity);
+    payload->set_allocated_velocity(allocatedVelocity);
 
     std::string str =
         _packetBuilder.create(packets::PacketType::TypeEntityVelocityChange).addHeader().addPayload(payload).get();
-
-    static_cast<void>(payload.release_velocity());
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
@@ -111,19 +109,17 @@ void rtype::server::SubscriberHandler::handlePositionComponent(fengine::ecs::obs
     if (!content.existsAndRetrieve(position))
         return;
 
-    packets::EntityMove payload;
+    auto *payload = new packets::EntityMove();
 
-    payload.set_entityid(content.getEntityId());
+    payload->set_entityid(content.getEntityId());
 
     auto *allocatedCoordinates = new packets::Vector2D();
     allocatedCoordinates->set_x(position.pos_x);
     allocatedCoordinates->set_y(position.pos_y);
 
-    payload.set_allocated_coordinates(allocatedCoordinates);
+    payload->set_allocated_coordinates(allocatedCoordinates);
 
     std::string str = _packetBuilder.create(packets::PacketType::TypeEntityMove).addHeader().addPayload(payload).get();
-
-    static_cast<void>(payload.release_coordinates());
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }

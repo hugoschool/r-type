@@ -1,8 +1,6 @@
 #include "ClientHandler.hpp"
 #include "Exception.hpp"
 #include "SafeQueue.hpp"
-#include "r-type/components/AttackComponent.hpp"
-#include "r-type/components/DefenseComponent.hpp"
 #include "r-type/proto/packets.pb.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/generators.hpp>
@@ -127,8 +125,8 @@ std::string rtype::server::ClientHandler::newClient() {
 
     _newClientQueue.push(entityId);
 
-    packets::LoginAnswer payload;
-    payload.set_uuid(uuid);
+    auto *payload = new packets::LoginAnswer();
+    payload->set_uuid(uuid);
 
     std::string content = _packetBuilder.create(packets::TypeLoginAnswer).addHeader().addPayload(payload).get();
     std::cout << "LoginAnswered: " << content << std::endl;

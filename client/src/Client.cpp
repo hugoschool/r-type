@@ -108,12 +108,14 @@ void rtype::client::Client::readLoop() {
 }
 
 void rtype::client::Client::stockMsg(std::string msg) {
-    packets::PacketHeader header;
+    packets::Packet packet;
 
     try {
         std::stringstream ss(msg);
         packets::Serialization::deserialize_archive &ar = packets::Serialization::createDeserializeArchive(ss);
-        packets::Serialization::deserialize(ar, header);
+        packets::Serialization::deserialize(ar, packet);
+
+        const packets::PacketHeader &header = packet.header();
 
         // TODO handle overflow
         if (_maxTick < header.tick()) {
@@ -133,12 +135,14 @@ void rtype::client::Client::stockMsg(std::string msg) {
 }
 
 void rtype::client::Client::interpretMsg(std::string msg) {
-    packets::PacketHeader header;
+    packets::Packet packet;
 
     try {
         std::stringstream ss(msg);
         packets::Serialization::deserialize_archive &ar = packets::Serialization::createDeserializeArchive(ss);
-        packets::Serialization::deserialize(ar, header);
+        packets::Serialization::deserialize(ar, packet);
+
+        const packets::PacketHeader &header = packet.header();
 
         switch (header.type()) {
             // TODO: All packets
@@ -147,16 +151,16 @@ void rtype::client::Client::interpretMsg(std::string msg) {
             case rtype::packets::TypePlayerEvent:
                 break;
             case rtype::packets::TypeEntityDied:
-                removeEntity(ar);
+                removeEntity(packet);
                 break;
             case rtype::packets::TypeEntitySpawn:
-                addEntity(ar);
+                addEntity(packet);
                 break;
             case rtype::packets::TypeEntityMove:
-                moveEntity(ar);
+                moveEntity(packet);
                 break;
             case rtype::packets::TypeEntityVelocityChange:
-                modifyVelocity(ar);
+                modifyVelocity(packet);
                 break;
             default:
                 break;
@@ -228,10 +232,8 @@ void rtype::client::Client::applyReceivedPackets() {
     }
 }
 
-void rtype::client::Client::removeEntity(packets::Serialization::deserialize_archive &ar) {
-    packets::EntityDied payload;
-
-    packets::Serialization::deserialize(ar, payload);
+void rtype::client::Client::removeEntity(packets::Packet &packet) {
+    const packets::EntityDied &payload = packet.entitydied();
 
     try {
         auto &entity = _registery.entityManager.getEntities().at(payload.entityid());
@@ -239,10 +241,8 @@ void rtype::client::Client::removeEntity(packets::Serialization::deserialize_arc
     } catch (std::exception &) {}
 }
 
-void rtype::client::Client::addEntity(packets::Serialization::deserialize_archive &ar) {
-    packets::EntitySpawn payload;
-
-    packets::Serialization::deserialize(ar, payload);
+void rtype::client::Client::addEntity(packets::Packet &packet) {
+    const packets::EntitySpawn &payload = packet.entityspawn();
 
     try {
         auto &_ = _registery.entityManager.getEntities().at(payload.entityid());
@@ -267,10 +267,8 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
     }
 }
 
-void rtype::client::Client::moveEntity(rtype::packets::Serialization::deserialize_archive &ar) {
-    packets::EntityMove payload;
-
-    packets::Serialization::deserialize(ar, payload);
+void rtype::client::Client::moveEntity(rtype::packets::Packet &packet) {
+    const packets::EntityMove &payload = packet.entitymove();
 
     try {
         auto &sparseArray = _registery.componentManager.getComponents<fengine::ecs::PositionComponent>();
@@ -284,10 +282,8 @@ void rtype::client::Client::moveEntity(rtype::packets::Serialization::deserializ
     } catch (std::exception &) {}
 }
 
-void rtype::client::Client::modifyVelocity(rtype::packets::Serialization::deserialize_archive &ar) {
-    packets::EntityVelocityChange payload;
-
-    packets::Serialization::deserialize(ar, payload);
+void rtype::client::Client::modifyVelocity(rtype::packets::Packet &packet) {
+    const packets::EntityVelocityChange &payload = packet.entityvelocitychange();
 
     try {
         auto &sparseArray = _registery.componentManager.getComponents<fengine::ecs::VelocityComponent>();

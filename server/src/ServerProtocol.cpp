@@ -1,5 +1,6 @@
 #include "ServerProtocol.hpp"
 #include "ClientHandler.hpp"
+#include "r-type/proto/packets.pb.h"
 #include <boost/asio/placeholders.hpp>
 #include <iostream>
 #include <r-type/packets/PacketBuilder.hpp>
@@ -18,14 +19,16 @@ void rtype::server::ServerProtocol::handleReceive(const boost::system::error_cod
         std::string str(std::begin(_buffer), std::end(_buffer));
 
         try {
-            packets::PacketHeader header;
+            packets::Packet packet;
 
             {
                 std::stringstream ss(str);
                 packets::Serialization::deserialize_archive &ar = packets::Serialization::createDeserializeArchive(ss);
 
-                packets::Serialization::deserialize(ar, header);
+                packets::Serialization::deserialize(ar, packet);
             }
+
+            const packets::PacketHeader &header = packet.header();
 
             bool addMessageToQueue = true;
             std::string playerUuid(header.playeruuid());

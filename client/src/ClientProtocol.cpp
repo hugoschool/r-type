@@ -21,12 +21,16 @@ void rtype::client::ClientProtocol::sendConnectionPackets() {
     {
         std::stringstream ss;
 
-        packets::PacketHeader header;
-        header.set_type(packets::TypeLoginRequest);
-        header.set_tick(_tick);
-        header.set_playeruuid("");
+        packets::Packet packet;
 
-        packets::Serialization::serialize(ss, header);
+        auto *header = new packets::PacketHeader();
+        header->set_type(packets::TypeLoginRequest);
+        header->set_tick(_tick);
+        header->set_playeruuid("");
+
+        packet.set_allocated_header(header);
+
+        packets::Serialization::serialize(ss, packet);
 
         std::string send = ss.str();
         _udp.send(send);
@@ -37,12 +41,10 @@ void rtype::client::ClientProtocol::sendConnectionPackets() {
         std::string loginAnswerStr = _udp.read(error);
         std::stringstream loginAnswerSs(loginAnswerStr);
 
-        packets::PacketHeader header;
-        packets::LoginAnswer payload;
+        packets::Packet packet;
 
-        packets::Serialization::deserialize(loginAnswerSs, header);
-        packets::Serialization::deserialize(loginAnswerSs, payload);
-        _uuid = std::string(payload.uuid());
+        packets::Serialization::deserialize(loginAnswerSs, packet);
+        _uuid = std::string(packet.loginanswer().uuid());
 
         std::cout << "UUID: " << _uuid << std::endl;
     }
@@ -57,18 +59,23 @@ void rtype::client::ClientProtocol::sendMessage() {
         if (_inputs.canRead()) {
             std::stringstream ss;
 
-            packets::PacketHeader header;
-            header.set_type(packets::TypePlayerEvent);
-            header.set_tick(_tick);
-            header.set_playeruuid(_uuid);
+            packets::Packet packet;
+
+            auto *header = new packets::PacketHeader();
+            header->set_type(packets::TypePlayerEvent);
+            header->set_tick(_tick);
+            header->set_playeruuid(_uuid);
+
+            packet.set_allocated_header(header);
 
             rtype::packets::Event input = _inputs.getElem();
-            packets::PlayerEvent newInput;
-            newInput.set_event(input);
+            auto *payload = new packets::PlayerEvent();
+            payload->set_event(input);
+
+            packet.set_allocated_playerevent(payload);
 
             // auto &ar = packets::Serialization::createSerializeArchive(ss);
-            packets::Serialization::serialize(ss, header);
-            packets::Serialization::serialize(ss, newInput);
+            packets::Serialization::serialize(ss, packet);
 
             std::string buf = ss.str();
             _udp.send(buf);
@@ -76,12 +83,16 @@ void rtype::client::ClientProtocol::sendMessage() {
             // Send Ack if nothing else
             std::stringstream ss;
 
-            packets::PacketHeader header;
-            header.set_type(packets::PacketType::TypeAck);
-            header.set_tick(_tick);
-            header.set_playeruuid(_uuid);
+            packets::Packet packet;
 
-            packets::Serialization::serialize(ss, header);
+            auto *header = new packets::PacketHeader();
+            header->set_type(packets::PacketType::TypeAck);
+            header->set_tick(_tick);
+            header->set_playeruuid(_uuid);
+
+            packet.set_allocated_header(header);
+
+            packets::Serialization::serialize(ss, packet);
 
             std::string buf = ss.str();
             _udp.send(buf);

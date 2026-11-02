@@ -20,6 +20,19 @@ message PacketHeader {
     string playerUuid = 3;
 };
 
+message Packet {
+    PacketHeader header = 1;
+
+    oneof payload {
+        LoginAnswer loginAnswer = 4;
+        EntitySpawn entitySpawn = 5;
+        EntityDied entityDied = 6;
+        EntityMove entityMove = 7;
+        EntityVelocityChange entityVelocityChange = 8;
+        PlayerEvent playerEvent = 9;
+    }
+}
+
 enum EntityType {
     ENTITY_PLAYERS = 0;
     ENTITY_BULLETS = 1;
@@ -42,10 +55,6 @@ message Vector2D {
 
 message LoginAnswer {
     string uuid = 1;
-}
-
-message EntityIdOnly {
-    int64 entityId = 1;
 }
 
 message EntitySpawn {

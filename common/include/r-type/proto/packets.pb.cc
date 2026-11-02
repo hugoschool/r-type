@@ -31,11 +31,11 @@ PROTOBUF_CONSTINIT ::google::protobuf::internal::ReflectionData
     file_reflection_data[] = {
         // ::rtype::packets::PacketHeader
         {&::_pbi::kDescriptorMethods, &::descriptor_table_packets_2eproto, /* tracker*/ nullptr,},
+        // ::rtype::packets::Packet
+        {&::_pbi::kDescriptorMethods, &::descriptor_table_packets_2eproto, /* tracker*/ nullptr,},
         // ::rtype::packets::Vector2D
         {&::_pbi::kDescriptorMethods, &::descriptor_table_packets_2eproto, /* tracker*/ nullptr,},
         // ::rtype::packets::LoginAnswer
-        {&::_pbi::kDescriptorMethods, &::descriptor_table_packets_2eproto, /* tracker*/ nullptr,},
-        // ::rtype::packets::EntityIdOnly
         {&::_pbi::kDescriptorMethods, &::descriptor_table_packets_2eproto, /* tracker*/ nullptr,},
         // ::rtype::packets::EntitySpawn
         {&::_pbi::kDescriptorMethods, &::descriptor_table_packets_2eproto, /* tracker*/ nullptr,},
@@ -148,7 +148,7 @@ constexpr auto Vector2D::InternalGenerateClassData_(
           false,
       },
 #ifdef PROTOBUF_MESSAGE_GLOBALS
-      &file_reflection_data[1],
+      &file_reflection_data[2],
 #else   // !PROTOBUF_MESSAGE_GLOBALS
       &::_pbi::kDescriptorMethods,
       &descriptor_table_packets_2eproto,
@@ -593,7 +593,7 @@ constexpr auto LoginAnswer::InternalGenerateClassData_(
           false,
       },
 #ifdef PROTOBUF_MESSAGE_GLOBALS
-      &file_reflection_data[2],
+      &file_reflection_data[3],
 #else   // !PROTOBUF_MESSAGE_GLOBALS
       &::_pbi::kDescriptorMethods,
       &descriptor_table_packets_2eproto,
@@ -801,146 +801,6 @@ const ::_pbi::ClassData* EntitySpawn_get_class_data() {
   return EntitySpawn_globals_.GetClassData();
 #else
   return EntitySpawn_class_data_.base();
-#endif  // PROTOBUF_MESSAGE_GLOBALS
-}
-}  // namespace
-#endif  // PROTOBUF_CUSTOM_VTABLE
-class EntityIdOnly::_Internal {
- public:
-  using HasBits = decltype(::std::declval<EntityIdOnly>()._impl_._has_bits_);
-  static constexpr ::int32_t kHasBitsOffset =
-      8 * PROTOBUF_FIELD_OFFSET(EntityIdOnly, _impl_._has_bits_);
-};
-
-constexpr EntityIdOnly::ParseTableT_ EntityIdOnly::InternalGenerateParseTable_(const ::_pbi::ClassData* class_data) {
-  return ParseTableT_{
-    {
-      PROTOBUF_FIELD_OFFSET(EntityIdOnly, _impl_._has_bits_),
-      0, // no _extensions_
-      1, 0,  // max_field_number, fast_idx_mask
-      offsetof(ParseTableT_, field_lookup_table),
-      4294967294,  // skipmap
-      offsetof(ParseTableT_, field_entries),
-      1,  // num_field_entries
-      0,  // num_aux_entries
-      offsetof(ParseTableT_, field_names),  // no aux_entries
-      class_data,
-      nullptr,  // post_loop_handler
-      ::_pbi::TcParser::MpUnknownFields,  // fallback
-      #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-      ::_pbi::TcParser::GetTable<::rtype::packets::EntityIdOnly>(),  // to_prefetch
-      #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
-    }, {{
-      // int64 entityId = 1;
-      {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(EntityIdOnly, _impl_.entityid_), 0>(),
-       {8, 0, 0,
-        PROTOBUF_FIELD_OFFSET(EntityIdOnly, _impl_.entityid_)}},
-    }}, {{
-      65535, 65535
-    }}, {{
-      // int64 entityId = 1;
-      {PROTOBUF_FIELD_OFFSET(EntityIdOnly, _impl_.entityid_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kInt64)},
-    }},
-    // no aux_entries
-    {{
-    }},
-  };
-}
-
-
-inline constexpr EntityIdOnly::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    ::_pbi::ConstantInitialized) noexcept
-      : entityid_{::int64_t{0}} {}
-
-template <typename>
-constexpr EntityIdOnly::EntityIdOnly(::_pbi::ConstantInitialized,
-                       const ::_pbi::ClassData* PROTOBUF_NONNULL class_data)
-    : Super_(
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-          class_data
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          ),
-      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
-}
-inline void* PROTOBUF_NONNULL EntityIdOnly::PlacementNew_(
-    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
-  return ::new (mem) EntityIdOnly(arena);
-}
-constexpr auto EntityIdOnly::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(EntityIdOnly), alignof(EntityIdOnly));
-}
-constexpr auto EntityIdOnly::InternalGenerateClassData_(
-    const MessageLite& prototype,
-    const ::google::protobuf::internal::TcParseTableBase* tc_table) {
-  return ::google::protobuf::internal::ClassDataFull{
-      ::google::protobuf::internal::ClassData{
-          &prototype,
-#ifndef PROTOBUF_MESSAGE_GLOBALS
-          &_table_.header,
-#else
-          tc_table,
-#endif
-          nullptr,  // IsInitialized
-          &EntityIdOnly::MergeImpl,
-          Super_::GetNewImpl<EntityIdOnly>(),
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-          &EntityIdOnly::SharedDtor,
-          Super_::GetClearImpl<EntityIdOnly>(), &EntityIdOnly::ByteSizeLong,
-              &EntityIdOnly::_InternalSerialize,
-#endif  // PROTOBUF_CUSTOM_VTABLE
-          PROTOBUF_FIELD_OFFSET(EntityIdOnly, _impl_._cached_size_),
-          false,
-      },
-#ifdef PROTOBUF_MESSAGE_GLOBALS
-      &file_reflection_data[3],
-#else   // !PROTOBUF_MESSAGE_GLOBALS
-      &::_pbi::kDescriptorMethods,
-      &descriptor_table_packets_2eproto,
-      nullptr,  // tracker
-#endif  // PROTOBUF_MESSAGE_GLOBALS
-  };
-}
-struct EntityIdOnlyGlobalsTypeInternal : ::_pbi::MessageGlobalsBase {
-  constexpr EntityIdOnlyGlobalsTypeInternal()
-      :
-#ifndef PROTOBUF_MESSAGE_GLOBALS
-        _default(::_pbi::ConstantInitialized{},
-                 EntityIdOnly_class_data_.base())
-#else   // !PROTOBUF_MESSAGE_GLOBALS
-        MessageGlobalsBase(EntityIdOnly::InternalGenerateClassData_(
-            _default, &EntityIdOnly_globals_._table.header)),
-        _default(::_pbi::ConstantInitialized{}, GetClassData()),
-        _table(::_pbi::PrivateAccess::GenerateParseTable<EntityIdOnly>(
-            GetClassData()))
-#endif  // PROTOBUF_MESSAGE_GLOBALS
-  {
-  }
-  ~EntityIdOnlyGlobalsTypeInternal() {}
-  union {
-    alignas(::_pbi::kMaxMessageAlignment) EntityIdOnly _default;
-  };
-#ifdef PROTOBUF_MESSAGE_GLOBALS
-  decltype(::_pbi::PrivateAccess::GenerateParseTable<EntityIdOnly>(
-      ::std::declval<const ::_pbi::ClassData*>())) _table;
-#endif
-};
-#ifdef PROTOBUF_MESSAGE_GLOBALS
-static_assert(PROTOBUF_FIELD_OFFSET(EntityIdOnlyGlobalsTypeInternal, _default) ==
-              ::_pbi::MessageGlobalsBase::OffsetToDefault());
-#endif  // PROTOBUF_MESSAGE_GLOBALS
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PROTOBUF_MESSAGE_GLOBALS_CONST EntityIdOnlyGlobalsTypeInternal EntityIdOnly_globals_
-        PROTOBUF_MESSAGE_GLOBALS_SECTION(.data.rel.ro);
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-namespace {
-const ::_pbi::ClassData* EntityIdOnly_get_class_data() {
-#ifdef PROTOBUF_MESSAGE_GLOBALS
-  return EntityIdOnly_globals_.GetClassData();
-#else
-  return EntityIdOnly_class_data_.base();
 #endif  // PROTOBUF_MESSAGE_GLOBALS
 }
 }  // namespace
@@ -1391,6 +1251,198 @@ const ::_pbi::ClassData* EntityMove_get_class_data() {
 }
 }  // namespace
 #endif  // PROTOBUF_CUSTOM_VTABLE
+class Packet::_Internal {
+ public:
+  using HasBits = decltype(::std::declval<Packet>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+      8 * PROTOBUF_FIELD_OFFSET(Packet, _impl_._has_bits_);
+  static constexpr ::int32_t kOneofCaseOffset =
+      PROTOBUF_FIELD_OFFSET(::rtype::packets::Packet, _impl_._oneof_case_);
+};
+
+constexpr Packet::ParseTableT_ Packet::InternalGenerateParseTable_(const ::_pbi::ClassData* class_data) {
+  return ParseTableT_{
+    {
+      PROTOBUF_FIELD_OFFSET(Packet, _impl_._has_bits_),
+      0, // no _extensions_
+      9, 0,  // max_field_number, fast_idx_mask
+      offsetof(ParseTableT_, field_lookup_table),
+      4294966790,  // skipmap
+      offsetof(ParseTableT_, field_entries),
+      7,  // num_field_entries
+      7,  // num_aux_entries
+      offsetof(ParseTableT_, aux_entries),
+      class_data,
+      nullptr,  // post_loop_handler
+      ::_pbi::TcParser::MpUnknownFields,  // fallback
+      #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+      ::_pbi::TcParser::GetTable<::rtype::packets::Packet>(),  // to_prefetch
+      #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+    }, {{
+      // .rtype.packets.PacketHeader header = 1;
+      {::_pbi::TcParser::FastMtS1,
+       {10, 0, 0,
+        PROTOBUF_FIELD_OFFSET(Packet, _impl_.header_)}},
+    }}, {{
+      65535, 65535
+    }}, {{
+      // .rtype.packets.PacketHeader header = 1;
+      {PROTOBUF_FIELD_OFFSET(Packet, _impl_.header_), _Internal::kHasBitsOffset + 0, 0, (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
+      // .rtype.packets.LoginAnswer loginAnswer = 4;
+      {PROTOBUF_FIELD_OFFSET(Packet, _impl_.payload_.loginanswer_), _Internal::kOneofCaseOffset + 0, 1, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
+      // .rtype.packets.EntitySpawn entitySpawn = 5;
+      {PROTOBUF_FIELD_OFFSET(Packet, _impl_.payload_.entityspawn_), _Internal::kOneofCaseOffset + 0, 2, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
+      // .rtype.packets.EntityDied entityDied = 6;
+      {PROTOBUF_FIELD_OFFSET(Packet, _impl_.payload_.entitydied_), _Internal::kOneofCaseOffset + 0, 3, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
+      // .rtype.packets.EntityMove entityMove = 7;
+      {PROTOBUF_FIELD_OFFSET(Packet, _impl_.payload_.entitymove_), _Internal::kOneofCaseOffset + 0, 4, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
+      // .rtype.packets.EntityVelocityChange entityVelocityChange = 8;
+      {PROTOBUF_FIELD_OFFSET(Packet, _impl_.payload_.entityvelocitychange_), _Internal::kOneofCaseOffset + 0, 5, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
+      // .rtype.packets.PlayerEvent playerEvent = 9;
+      {PROTOBUF_FIELD_OFFSET(Packet, _impl_.payload_.playerevent_), _Internal::kOneofCaseOffset + 0, 6, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
+    }},
+    {{
+        #ifndef PROTOBUF_MESSAGE_GLOBALS
+        {::_pbi::TcParser::GetTable<::rtype::packets::PacketHeader>()},
+        #else
+        {::_pbi::FieldAuxMessageGlobals(), &::rtype::packets::PacketHeader_globals_},
+        #endif
+        #ifndef PROTOBUF_MESSAGE_GLOBALS
+        {::_pbi::TcParser::GetTable<::rtype::packets::LoginAnswer>()},
+        #else
+        {::_pbi::FieldAuxMessageGlobals(), &::rtype::packets::LoginAnswer_globals_},
+        #endif
+        #ifndef PROTOBUF_MESSAGE_GLOBALS
+        {::_pbi::TcParser::GetTable<::rtype::packets::EntitySpawn>()},
+        #else
+        {::_pbi::FieldAuxMessageGlobals(), &::rtype::packets::EntitySpawn_globals_},
+        #endif
+        #ifndef PROTOBUF_MESSAGE_GLOBALS
+        {::_pbi::TcParser::GetTable<::rtype::packets::EntityDied>()},
+        #else
+        {::_pbi::FieldAuxMessageGlobals(), &::rtype::packets::EntityDied_globals_},
+        #endif
+        #ifndef PROTOBUF_MESSAGE_GLOBALS
+        {::_pbi::TcParser::GetTable<::rtype::packets::EntityMove>()},
+        #else
+        {::_pbi::FieldAuxMessageGlobals(), &::rtype::packets::EntityMove_globals_},
+        #endif
+        #ifndef PROTOBUF_MESSAGE_GLOBALS
+        {::_pbi::TcParser::GetTable<::rtype::packets::EntityVelocityChange>()},
+        #else
+        {::_pbi::FieldAuxMessageGlobals(), &::rtype::packets::EntityVelocityChange_globals_},
+        #endif
+        #ifndef PROTOBUF_MESSAGE_GLOBALS
+        {::_pbi::TcParser::GetTable<::rtype::packets::PlayerEvent>()},
+        #else
+        {::_pbi::FieldAuxMessageGlobals(), &::rtype::packets::PlayerEvent_globals_},
+        #endif
+    }},
+    {{
+    }},
+  };
+}
+
+
+inline constexpr Packet::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    ::_pbi::ConstantInitialized) noexcept
+      : header_{nullptr},
+        payload_{},
+        _oneof_case_{} {}
+
+template <typename>
+constexpr Packet::Packet(::_pbi::ConstantInitialized,
+                       const ::_pbi::ClassData* PROTOBUF_NONNULL class_data)
+    : Super_(
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          class_data
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          ),
+      _impl_(internal_visibility(), ::_pbi::ConstantInitialized()) {
+}
+inline void* PROTOBUF_NONNULL Packet::PlacementNew_(
+    const void* PROTOBUF_NONNULL, void* PROTOBUF_NONNULL mem,
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena) {
+  return ::new (mem) Packet(arena);
+}
+constexpr auto Packet::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(Packet), alignof(Packet));
+}
+constexpr auto Packet::InternalGenerateClassData_(
+    const MessageLite& prototype,
+    const ::google::protobuf::internal::TcParseTableBase* tc_table) {
+  return ::google::protobuf::internal::ClassDataFull{
+      ::google::protobuf::internal::ClassData{
+          &prototype,
+#ifndef PROTOBUF_MESSAGE_GLOBALS
+          &_table_.header,
+#else
+          tc_table,
+#endif
+          nullptr,  // IsInitialized
+          &Packet::MergeImpl,
+          Super_::GetNewImpl<Packet>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+          &Packet::SharedDtor,
+          Super_::GetClearImpl<Packet>(), &Packet::ByteSizeLong,
+              &Packet::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          PROTOBUF_FIELD_OFFSET(Packet, _impl_._cached_size_),
+          false,
+      },
+#ifdef PROTOBUF_MESSAGE_GLOBALS
+      &file_reflection_data[1],
+#else   // !PROTOBUF_MESSAGE_GLOBALS
+      &::_pbi::kDescriptorMethods,
+      &descriptor_table_packets_2eproto,
+      nullptr,  // tracker
+#endif  // PROTOBUF_MESSAGE_GLOBALS
+  };
+}
+struct PacketGlobalsTypeInternal : ::_pbi::MessageGlobalsBase {
+  constexpr PacketGlobalsTypeInternal()
+      :
+#ifndef PROTOBUF_MESSAGE_GLOBALS
+        _default(::_pbi::ConstantInitialized{},
+                 Packet_class_data_.base())
+#else   // !PROTOBUF_MESSAGE_GLOBALS
+        MessageGlobalsBase(Packet::InternalGenerateClassData_(
+            _default, &Packet_globals_._table.header)),
+        _default(::_pbi::ConstantInitialized{}, GetClassData()),
+        _table(::_pbi::PrivateAccess::GenerateParseTable<Packet>(
+            GetClassData()))
+#endif  // PROTOBUF_MESSAGE_GLOBALS
+  {
+  }
+  ~PacketGlobalsTypeInternal() {}
+  union {
+    alignas(::_pbi::kMaxMessageAlignment) Packet _default;
+  };
+#ifdef PROTOBUF_MESSAGE_GLOBALS
+  decltype(::_pbi::PrivateAccess::GenerateParseTable<Packet>(
+      ::std::declval<const ::_pbi::ClassData*>())) _table;
+#endif
+};
+#ifdef PROTOBUF_MESSAGE_GLOBALS
+static_assert(PROTOBUF_FIELD_OFFSET(PacketGlobalsTypeInternal, _default) ==
+              ::_pbi::MessageGlobalsBase::OffsetToDefault());
+#endif  // PROTOBUF_MESSAGE_GLOBALS
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 PROTOBUF_MESSAGE_GLOBALS_CONST PacketGlobalsTypeInternal Packet_globals_
+        PROTOBUF_MESSAGE_GLOBALS_SECTION(.data.rel.ro);
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+namespace {
+const ::_pbi::ClassData* Packet_get_class_data() {
+#ifdef PROTOBUF_MESSAGE_GLOBALS
+  return Packet_globals_.GetClassData();
+#else
+  return Packet_class_data_.base();
+#endif  // PROTOBUF_MESSAGE_GLOBALS
+}
+}  // namespace
+#endif  // PROTOBUF_CUSTOM_VTABLE
 }  // namespace packets
 }  // namespace rtype
 static const ::_pb::EnumDescriptor* PROTOBUF_NONNULL
@@ -1409,6 +1461,25 @@ const ::uint32_t
         2,
         1,
         0,
+        0x085, // bitmap
+        PROTOBUF_FIELD_OFFSET(::rtype::packets::Packet, _impl_._has_bits_),
+        PROTOBUF_FIELD_OFFSET(::rtype::packets::Packet, _impl_._oneof_case_[0]),
+        12, // hasbit index offset
+        PROTOBUF_FIELD_OFFSET(::rtype::packets::Packet, _impl_.header_),
+        PROTOBUF_FIELD_OFFSET(::rtype::packets::Packet, _impl_.payload_),
+        PROTOBUF_FIELD_OFFSET(::rtype::packets::Packet, _impl_.payload_),
+        PROTOBUF_FIELD_OFFSET(::rtype::packets::Packet, _impl_.payload_),
+        PROTOBUF_FIELD_OFFSET(::rtype::packets::Packet, _impl_.payload_),
+        PROTOBUF_FIELD_OFFSET(::rtype::packets::Packet, _impl_.payload_),
+        PROTOBUF_FIELD_OFFSET(::rtype::packets::Packet, _impl_.payload_),
+        PROTOBUF_FIELD_OFFSET(::rtype::packets::Packet, _impl_.payload_),
+        0,
+        ~0u,
+        ~0u,
+        ~0u,
+        ~0u,
+        ~0u,
+        ~0u,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::rtype::packets::Vector2D, _impl_._has_bits_),
         5, // hasbit index offset
@@ -1420,11 +1491,6 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::rtype::packets::LoginAnswer, _impl_._has_bits_),
         4, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::rtype::packets::LoginAnswer, _impl_.uuid_),
-        0,
-        0x081, // bitmap
-        PROTOBUF_FIELD_OFFSET(::rtype::packets::EntityIdOnly, _impl_._has_bits_),
-        4, // hasbit index offset
-        PROTOBUF_FIELD_OFFSET(::rtype::packets::EntityIdOnly, _impl_.entityid_),
         0,
         0x081, // bitmap
         PROTOBUF_FIELD_OFFSET(::rtype::packets::EntitySpawn, _impl_._has_bits_),
@@ -1466,21 +1532,21 @@ const ::uint32_t
 static const ::_pbi::MigrationSchema
     schemas[] ABSL_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
         {0, sizeof(::rtype::packets::PacketHeader)},
-        {9, sizeof(::rtype::packets::Vector2D)},
-        {16, sizeof(::rtype::packets::LoginAnswer)},
-        {21, sizeof(::rtype::packets::EntityIdOnly)},
-        {26, sizeof(::rtype::packets::EntitySpawn)},
-        {37, sizeof(::rtype::packets::EntityDied)},
-        {42, sizeof(::rtype::packets::EntityMove)},
-        {49, sizeof(::rtype::packets::EntityVelocityChange)},
-        {56, sizeof(::rtype::packets::PlayerEvent)},
+        {9, sizeof(::rtype::packets::Packet)},
+        {28, sizeof(::rtype::packets::Vector2D)},
+        {35, sizeof(::rtype::packets::LoginAnswer)},
+        {40, sizeof(::rtype::packets::EntitySpawn)},
+        {51, sizeof(::rtype::packets::EntityDied)},
+        {56, sizeof(::rtype::packets::EntityMove)},
+        {63, sizeof(::rtype::packets::EntityVelocityChange)},
+        {70, sizeof(::rtype::packets::PlayerEvent)},
 };
 static const ::_pbi::MessageGlobalsBase* PROTOBUF_NONNULL const
     file_message_globals[] = {
         &::rtype::packets::PacketHeader_globals_,
+        &::rtype::packets::Packet_globals_,
         &::rtype::packets::Vector2D_globals_,
         &::rtype::packets::LoginAnswer_globals_,
-        &::rtype::packets::EntityIdOnly_globals_,
         &::rtype::packets::EntitySpawn_globals_,
         &::rtype::packets::EntityDied_globals_,
         &::rtype::packets::EntityMove_globals_,
@@ -1492,34 +1558,43 @@ const char descriptor_table_protodef_packets_2eproto[] ABSL_ATTRIBUTE_SECTION_VA
     "\n\rpackets.proto\022\rrtype.packets\"Y\n\014Packet"
     "Header\022\'\n\004type\030\001 \001(\0162\031.rtype.packets.Pac"
     "ketType\022\014\n\004tick\030\002 \001(\003\022\022\n\nplayerUuid\030\003 \001("
-    "\t\" \n\010Vector2D\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\"\033\n\013L"
-    "oginAnswer\022\014\n\004uuid\030\001 \001(\t\" \n\014EntityIdOnly"
-    "\022\020\n\010entityId\030\001 \001(\003\"m\n\013EntitySpawn\022\020\n\010ent"
-    "ityId\030\001 \001(\003\022-\n\nentityType\030\002 \001(\0162\031.rtype."
-    "packets.EntityType\022\r\n\005width\030\003 \001(\002\022\016\n\006hei"
-    "ght\030\004 \001(\002\"\036\n\nEntityDied\022\020\n\010entityId\030\001 \001("
-    "\003\"L\n\nEntityMove\022\020\n\010entityId\030\001 \001(\003\022,\n\013coo"
-    "rdinates\030\002 \001(\0132\027.rtype.packets.Vector2D\""
-    "S\n\024EntityVelocityChange\022\020\n\010entityId\030\001 \001("
-    "\003\022)\n\010velocity\030\002 \001(\0132\027.rtype.packets.Vect"
-    "or2D\"2\n\013PlayerEvent\022#\n\005event\030\001 \001(\0162\024.rty"
-    "pe.packets.Event*\311\001\n\nPacketType\022\024\n\020TypeL"
-    "oginRequest\020\000\022\023\n\017TypeLoginAnswer\020\001\022\023\n\017Ty"
-    "peLoginFailed\020\002\022\023\n\017TypeEntitySpawn\020\003\022\022\n\016"
-    "TypeEntityMove\020\004\022\034\n\030TypeEntityVelocityCh"
-    "ange\020\005\022\022\n\016TypeEntityDied\020\006\022\013\n\007TypeAck\020\007\022"
-    "\023\n\017TypePlayerEvent\020\010*Y\n\nEntityType\022\022\n\016EN"
-    "TITY_PLAYERS\020\000\022\022\n\016ENTITY_BULLETS\020\001\022\022\n\016EN"
-    "TITY_SHOOTER\020\002\022\017\n\013ENTITY_BOSS\020\003*W\n\005Event"
-    "\022\014\n\010EVENT_UP\020\000\022\016\n\nEVENT_LEFT\020\001\022\016\n\nEVENT_"
-    "DOWN\020\002\022\017\n\013EVENT_RIGHT\020\003\022\017\n\013EVENT_SHOOT\020\004"
-    "b\010editionsp\350\007"
+    "\t\"\200\003\n\006Packet\022+\n\006header\030\001 \001(\0132\033.rtype.pac"
+    "kets.PacketHeader\0221\n\013loginAnswer\030\004 \001(\0132\032"
+    ".rtype.packets.LoginAnswerH\000\0221\n\013entitySp"
+    "awn\030\005 \001(\0132\032.rtype.packets.EntitySpawnH\000\022"
+    "/\n\nentityDied\030\006 \001(\0132\031.rtype.packets.Enti"
+    "tyDiedH\000\022/\n\nentityMove\030\007 \001(\0132\031.rtype.pac"
+    "kets.EntityMoveH\000\022C\n\024entityVelocityChang"
+    "e\030\010 \001(\0132#.rtype.packets.EntityVelocityCh"
+    "angeH\000\0221\n\013playerEvent\030\t \001(\0132\032.rtype.pack"
+    "ets.PlayerEventH\000B\t\n\007payload\" \n\010Vector2D"
+    "\022\t\n\001x\030\001 \001(\001\022\t\n\001y\030\002 \001(\001\"\033\n\013LoginAnswer\022\014\n"
+    "\004uuid\030\001 \001(\t\"m\n\013EntitySpawn\022\020\n\010entityId\030\001"
+    " \001(\003\022-\n\nentityType\030\002 \001(\0162\031.rtype.packets"
+    ".EntityType\022\r\n\005width\030\003 \001(\002\022\016\n\006height\030\004 \001"
+    "(\002\"\036\n\nEntityDied\022\020\n\010entityId\030\001 \001(\003\"L\n\nEn"
+    "tityMove\022\020\n\010entityId\030\001 \001(\003\022,\n\013coordinate"
+    "s\030\002 \001(\0132\027.rtype.packets.Vector2D\"S\n\024Enti"
+    "tyVelocityChange\022\020\n\010entityId\030\001 \001(\003\022)\n\010ve"
+    "locity\030\002 \001(\0132\027.rtype.packets.Vector2D\"2\n"
+    "\013PlayerEvent\022#\n\005event\030\001 \001(\0162\024.rtype.pack"
+    "ets.Event*\311\001\n\nPacketType\022\024\n\020TypeLoginReq"
+    "uest\020\000\022\023\n\017TypeLoginAnswer\020\001\022\023\n\017TypeLogin"
+    "Failed\020\002\022\023\n\017TypeEntitySpawn\020\003\022\022\n\016TypeEnt"
+    "ityMove\020\004\022\034\n\030TypeEntityVelocityChange\020\005\022"
+    "\022\n\016TypeEntityDied\020\006\022\013\n\007TypeAck\020\007\022\023\n\017Type"
+    "PlayerEvent\020\010*Y\n\nEntityType\022\022\n\016ENTITY_PL"
+    "AYERS\020\000\022\022\n\016ENTITY_BULLETS\020\001\022\022\n\016ENTITY_SH"
+    "OOTER\020\002\022\017\n\013ENTITY_BOSS\020\003*W\n\005Event\022\014\n\010EVE"
+    "NT_UP\020\000\022\016\n\nEVENT_LEFT\020\001\022\016\n\nEVENT_DOWN\020\002\022"
+    "\017\n\013EVENT_RIGHT\020\003\022\017\n\013EVENT_SHOOT\020\004b\010editi"
+    "onsp\350\007"
 };
 static ::absl::once_flag descriptor_table_packets_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_packets_2eproto = {
     false,
     false,
-    973,
+    1326,
     descriptor_table_protodef_packets_2eproto,
     "packets.proto",
     &descriptor_table_packets_2eproto_once,
@@ -1811,6 +1886,527 @@ void PacketHeader::InternalSwap(PacketHeader* PROTOBUF_RESTRICT PROTOBUF_NONNULL
 }
 
 ::google::protobuf::Metadata PacketHeader::GetMetadata() const {
+  return Super_::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+void Packet::set_allocated_loginanswer(::rtype::packets::LoginAnswer* PROTOBUF_NULLABLE loginanswer) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  clear_payload();
+  if (loginanswer) {
+    ::google::protobuf::Arena* submessage_arena = loginanswer->GetArena();
+    if (message_arena != submessage_arena) {
+      loginanswer = ::google::protobuf::internal::GetOwnedMessage(message_arena, loginanswer, submessage_arena);
+    }
+    set_has_loginanswer();
+    _impl_.payload_.loginanswer_ = loginanswer;
+  }
+  // @@protoc_insertion_point(field_set_allocated:rtype.packets.Packet.loginAnswer)
+}
+void Packet::set_allocated_entityspawn(::rtype::packets::EntitySpawn* PROTOBUF_NULLABLE entityspawn) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  clear_payload();
+  if (entityspawn) {
+    ::google::protobuf::Arena* submessage_arena = entityspawn->GetArena();
+    if (message_arena != submessage_arena) {
+      entityspawn = ::google::protobuf::internal::GetOwnedMessage(message_arena, entityspawn, submessage_arena);
+    }
+    set_has_entityspawn();
+    _impl_.payload_.entityspawn_ = entityspawn;
+  }
+  // @@protoc_insertion_point(field_set_allocated:rtype.packets.Packet.entitySpawn)
+}
+void Packet::set_allocated_entitydied(::rtype::packets::EntityDied* PROTOBUF_NULLABLE entitydied) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  clear_payload();
+  if (entitydied) {
+    ::google::protobuf::Arena* submessage_arena = entitydied->GetArena();
+    if (message_arena != submessage_arena) {
+      entitydied = ::google::protobuf::internal::GetOwnedMessage(message_arena, entitydied, submessage_arena);
+    }
+    set_has_entitydied();
+    _impl_.payload_.entitydied_ = entitydied;
+  }
+  // @@protoc_insertion_point(field_set_allocated:rtype.packets.Packet.entityDied)
+}
+void Packet::set_allocated_entitymove(::rtype::packets::EntityMove* PROTOBUF_NULLABLE entitymove) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  clear_payload();
+  if (entitymove) {
+    ::google::protobuf::Arena* submessage_arena = entitymove->GetArena();
+    if (message_arena != submessage_arena) {
+      entitymove = ::google::protobuf::internal::GetOwnedMessage(message_arena, entitymove, submessage_arena);
+    }
+    set_has_entitymove();
+    _impl_.payload_.entitymove_ = entitymove;
+  }
+  // @@protoc_insertion_point(field_set_allocated:rtype.packets.Packet.entityMove)
+}
+void Packet::set_allocated_entityvelocitychange(::rtype::packets::EntityVelocityChange* PROTOBUF_NULLABLE entityvelocitychange) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  clear_payload();
+  if (entityvelocitychange) {
+    ::google::protobuf::Arena* submessage_arena = entityvelocitychange->GetArena();
+    if (message_arena != submessage_arena) {
+      entityvelocitychange = ::google::protobuf::internal::GetOwnedMessage(message_arena, entityvelocitychange, submessage_arena);
+    }
+    set_has_entityvelocitychange();
+    _impl_.payload_.entityvelocitychange_ = entityvelocitychange;
+  }
+  // @@protoc_insertion_point(field_set_allocated:rtype.packets.Packet.entityVelocityChange)
+}
+void Packet::set_allocated_playerevent(::rtype::packets::PlayerEvent* PROTOBUF_NULLABLE playerevent) {
+  ::google::protobuf::Arena* message_arena = GetArena();
+  clear_payload();
+  if (playerevent) {
+    ::google::protobuf::Arena* submessage_arena = playerevent->GetArena();
+    if (message_arena != submessage_arena) {
+      playerevent = ::google::protobuf::internal::GetOwnedMessage(message_arena, playerevent, submessage_arena);
+    }
+    set_has_playerevent();
+    _impl_.payload_.playerevent_ = playerevent;
+  }
+  // @@protoc_insertion_point(field_set_allocated:rtype.packets.Packet.playerEvent)
+}
+Packet::Packet(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : Super_(arena, Packet_get_class_data()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : Super_(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:rtype.packets.Packet)
+}
+PROTOBUF_NDEBUG_INLINE Packet::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const Impl_& from,
+    [[maybe_unused]] const ::rtype::packets::Packet& from_msg)
+      : _has_bits_{from._has_bits_},
+        payload_{},
+        _oneof_case_{from._oneof_case_[0]} {}
+
+Packet::Packet(
+    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena,
+    const Packet& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : Super_(arena, Packet_get_class_data()) {
+
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : Super_(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  Packet* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::uint32_t cached_has_bits = _impl_._has_bits_[0];
+  _impl_.header_ = (CheckHasBit(cached_has_bits, 0x00000001U))
+                 ? Super_::CopyConstruct(arena, *from._impl_.header_)
+                 : nullptr;
+  switch (payload_case()) {
+    case PAYLOAD_NOT_SET:
+      break;
+      case kLoginAnswer:
+        _impl_.payload_.loginanswer_ = Super_::CopyConstruct(arena, *from._impl_.payload_.loginanswer_);
+        break;
+      case kEntitySpawn:
+        _impl_.payload_.entityspawn_ = Super_::CopyConstruct(arena, *from._impl_.payload_.entityspawn_);
+        break;
+      case kEntityDied:
+        _impl_.payload_.entitydied_ = Super_::CopyConstruct(arena, *from._impl_.payload_.entitydied_);
+        break;
+      case kEntityMove:
+        _impl_.payload_.entitymove_ = Super_::CopyConstruct(arena, *from._impl_.payload_.entitymove_);
+        break;
+      case kEntityVelocityChange:
+        _impl_.payload_.entityvelocitychange_ = Super_::CopyConstruct(arena, *from._impl_.payload_.entityvelocitychange_);
+        break;
+      case kPlayerEvent:
+        _impl_.payload_.playerevent_ = Super_::CopyConstruct(arena, *from._impl_.payload_.playerevent_);
+        break;
+  }
+
+  // @@protoc_insertion_point(copy_constructor:rtype.packets.Packet)
+}
+PROTOBUF_NDEBUG_INLINE Packet::Impl_::Impl_(
+    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
+    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
+      : payload_{},
+        _oneof_case_{} {}
+
+inline void Packet::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.header_ = {};
+}
+Packet::~Packet() {
+  // @@protoc_insertion_point(destructor:rtype.packets.Packet)
+  SharedDtor(*this);
+}
+inline void Packet::SharedDtor(MessageLite& self) {
+  Packet& this_ = static_cast<Packet&>(self);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  delete this_._impl_.header_;
+  if (this_.has_payload()) {
+    this_.clear_payload();
+  }
+  this_._impl_.~Impl_();
+}
+
+void Packet::clear_payload() {
+// @@protoc_insertion_point(one_of_clear_start:rtype.packets.Packet)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  switch (payload_case()) {
+    case kLoginAnswer: {
+      if (GetArena() == nullptr) {
+        delete _impl_.payload_.loginanswer_;
+      } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.loginanswer_);
+      }
+      break;
+    }
+    case kEntitySpawn: {
+      if (GetArena() == nullptr) {
+        delete _impl_.payload_.entityspawn_;
+      } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.entityspawn_);
+      }
+      break;
+    }
+    case kEntityDied: {
+      if (GetArena() == nullptr) {
+        delete _impl_.payload_.entitydied_;
+      } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.entitydied_);
+      }
+      break;
+    }
+    case kEntityMove: {
+      if (GetArena() == nullptr) {
+        delete _impl_.payload_.entitymove_;
+      } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.entitymove_);
+      }
+      break;
+    }
+    case kEntityVelocityChange: {
+      if (GetArena() == nullptr) {
+        delete _impl_.payload_.entityvelocitychange_;
+      } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.entityvelocitychange_);
+      }
+      break;
+    }
+    case kPlayerEvent: {
+      if (GetArena() == nullptr) {
+        delete _impl_.payload_.playerevent_;
+      } else if (::google::protobuf::internal::DebugHardenClearOneofMessageOnArena()) {
+        ::google::protobuf::internal::MaybePoisonAfterClear(_impl_.payload_.playerevent_);
+      }
+      break;
+    }
+    case PAYLOAD_NOT_SET: {
+      break;
+    }
+  }
+  _impl_._oneof_case_[0] = PAYLOAD_NOT_SET;
+}
+
+
+#ifndef PROTOBUF_MESSAGE_GLOBALS
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
+    ::google::protobuf::internal::ClassDataFull Packet_class_data_ =
+        Packet::InternalGenerateClassData_(Packet_globals_._default);
+
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+Packet::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&Packet_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(Packet_class_data_.tc_table);
+  return Packet_class_data_.base();
+}
+#else
+PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
+Packet::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&Packet_globals_);
+  ::google::protobuf::internal::PrefetchToLocalCache(
+      ::google::protobuf::internal::MessageGlobalsBase::ToParseTableBase(&Packet_globals_));
+  return Packet_globals_.GetClassData();
+}
+#endif  // !PROTOBUF_MESSAGE_GLOBALS
+#ifndef PROTOBUF_MESSAGE_GLOBALS
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const Packet::ParseTableT_
+    Packet::_table_ =
+        Packet::InternalGenerateParseTable_(Packet_class_data_.base());
+#endif  // !PROTOBUF_MESSAGE_GLOBALS
+PROTOBUF_NOINLINE void Packet::Clear() {
+  auto& this_ [[maybe_unused]] = *this;
+  // @@protoc_insertion_point(message_clear_start:rtype.packets.Packet)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits [[maybe_unused]] = 0;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    ABSL_DCHECK(this_._impl_.header_ != nullptr);
+    this_._impl_.header_->Clear();
+  }
+  clear_payload();
+  _impl_._has_bits_.Clear();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::uint8_t* PROTOBUF_NONNULL Packet::_InternalSerialize(
+    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
+  const Packet& this_ = static_cast<const Packet&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::uint8_t* PROTOBUF_NONNULL Packet::_InternalSerialize(
+    ::uint8_t* PROTOBUF_NONNULL target,
+    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
+  const Packet& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    this_.CheckHasBitConsistency();
+  }
+  // @@protoc_insertion_point(serialize_to_array_start:rtype.packets.Packet)
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = this_._impl_._has_bits_[0];
+  // .rtype.packets.PacketHeader header = 1;
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+        1, *this_._impl_.header_, this_._impl_.header_->GetCachedSize(), target,
+        stream);
+  }
+
+  switch (this_.payload_case()) {
+    case kLoginAnswer: {
+      target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+          4, *this_._impl_.payload_.loginanswer_, this_._impl_.payload_.loginanswer_->GetCachedSize(), target,
+          stream);
+      break;
+    }
+    case kEntitySpawn: {
+      target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+          5, *this_._impl_.payload_.entityspawn_, this_._impl_.payload_.entityspawn_->GetCachedSize(), target,
+          stream);
+      break;
+    }
+    case kEntityDied: {
+      target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+          6, *this_._impl_.payload_.entitydied_, this_._impl_.payload_.entitydied_->GetCachedSize(), target,
+          stream);
+      break;
+    }
+    case kEntityMove: {
+      target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+          7, *this_._impl_.payload_.entitymove_, this_._impl_.payload_.entitymove_->GetCachedSize(), target,
+          stream);
+      break;
+    }
+    case kEntityVelocityChange: {
+      target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+          8, *this_._impl_.payload_.entityvelocitychange_, this_._impl_.payload_.entityvelocitychange_->GetCachedSize(), target,
+          stream);
+      break;
+    }
+    case kPlayerEvent: {
+      target = ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+          9, *this_._impl_.payload_.playerevent_, this_._impl_.payload_.playerevent_->GetCachedSize(), target,
+          stream);
+      break;
+    }
+    default:
+      break;
+  }
+  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:rtype.packets.Packet)
+  return target;
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+::size_t Packet::ByteSizeLong(const MessageLite& base) {
+  const Packet& this_ = static_cast<const Packet&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+::size_t Packet::ByteSizeLong() const {
+  const Packet& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(message_byte_size_start:rtype.packets.Packet)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits [[maybe_unused]] = 0;
+
+   {
+    // .rtype.packets.PacketHeader header = 1;
+    cached_has_bits = this_._impl_._has_bits_[0];
+    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+      total_size += 1 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.header_);
+    }
+  }
+  switch (this_.payload_case()) {
+    // .rtype.packets.LoginAnswer loginAnswer = 4;
+    case kLoginAnswer: {
+      total_size += 1 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.payload_.loginanswer_);
+      break;
+    }
+    // .rtype.packets.EntitySpawn entitySpawn = 5;
+    case kEntitySpawn: {
+      total_size += 1 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.payload_.entityspawn_);
+      break;
+    }
+    // .rtype.packets.EntityDied entityDied = 6;
+    case kEntityDied: {
+      total_size += 1 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.payload_.entitydied_);
+      break;
+    }
+    // .rtype.packets.EntityMove entityMove = 7;
+    case kEntityMove: {
+      total_size += 1 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.payload_.entitymove_);
+      break;
+    }
+    // .rtype.packets.EntityVelocityChange entityVelocityChange = 8;
+    case kEntityVelocityChange: {
+      total_size += 1 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.payload_.entityvelocitychange_);
+      break;
+    }
+    // .rtype.packets.PlayerEvent playerEvent = 9;
+    case kPlayerEvent: {
+      total_size += 1 +
+                    ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.payload_.playerevent_);
+      break;
+    }
+    case PAYLOAD_NOT_SET: {
+      break;
+    }
+  }
+  return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                             &this_._impl_._cached_size_);
+}
+
+void Packet::MergeImpl(::google::protobuf::MessageLite& to_msg,
+                      const ::google::protobuf::MessageLite& from_msg) {
+   auto* const _this = static_cast<Packet*>(&to_msg);
+  auto& from = static_cast<const Packet&>(from_msg);
+  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
+    from.CheckHasBitConsistency();
+  }
+  ::google::protobuf::Arena* arena = _this->GetArena();
+  // @@protoc_insertion_point(class_specific_merge_from_start:rtype.packets.Packet)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
+
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
+    ABSL_DCHECK(from._impl_.header_ != nullptr);
+    if (_this->_impl_.header_ == nullptr) {
+      _this->_impl_.header_ = Super_::CopyConstruct(arena, *from._impl_.header_);
+    } else {
+      _this->_impl_.header_->MergeFrom(*from._impl_.header_);
+    }
+  }
+  _this->_impl_._has_bits_[0] |= cached_has_bits;
+  if (const uint32_t oneof_from_case =
+          from._impl_._oneof_case_[0]) {
+    const uint32_t oneof_to_case = _this->_impl_._oneof_case_[0];
+    const bool oneof_needs_init = oneof_to_case != oneof_from_case;
+    if (oneof_needs_init) {
+      if (oneof_to_case != 0) {
+        _this->clear_payload();
+      }
+      _this->_impl_._oneof_case_[0] = oneof_from_case;
+    }
+
+    switch (oneof_from_case) {
+      case kLoginAnswer: {
+        if (oneof_needs_init) {
+          _this->_impl_.payload_.loginanswer_ = Super_::CopyConstruct(arena, *from._impl_.payload_.loginanswer_);
+        } else {
+          _this->_impl_.payload_.loginanswer_->MergeFrom(*from._impl_.payload_.loginanswer_);
+        }
+        break;
+      }
+      case kEntitySpawn: {
+        if (oneof_needs_init) {
+          _this->_impl_.payload_.entityspawn_ = Super_::CopyConstruct(arena, *from._impl_.payload_.entityspawn_);
+        } else {
+          _this->_impl_.payload_.entityspawn_->MergeFrom(*from._impl_.payload_.entityspawn_);
+        }
+        break;
+      }
+      case kEntityDied: {
+        if (oneof_needs_init) {
+          _this->_impl_.payload_.entitydied_ = Super_::CopyConstruct(arena, *from._impl_.payload_.entitydied_);
+        } else {
+          _this->_impl_.payload_.entitydied_->MergeFrom(*from._impl_.payload_.entitydied_);
+        }
+        break;
+      }
+      case kEntityMove: {
+        if (oneof_needs_init) {
+          _this->_impl_.payload_.entitymove_ = Super_::CopyConstruct(arena, *from._impl_.payload_.entitymove_);
+        } else {
+          _this->_impl_.payload_.entitymove_->MergeFrom(*from._impl_.payload_.entitymove_);
+        }
+        break;
+      }
+      case kEntityVelocityChange: {
+        if (oneof_needs_init) {
+          _this->_impl_.payload_.entityvelocitychange_ = Super_::CopyConstruct(arena, *from._impl_.payload_.entityvelocitychange_);
+        } else {
+          _this->_impl_.payload_.entityvelocitychange_->MergeFrom(*from._impl_.payload_.entityvelocitychange_);
+        }
+        break;
+      }
+      case kPlayerEvent: {
+        if (oneof_needs_init) {
+          _this->_impl_.payload_.playerevent_ = Super_::CopyConstruct(arena, *from._impl_.payload_.playerevent_);
+        } else {
+          _this->_impl_.payload_.playerevent_->MergeFrom(*from._impl_.payload_.playerevent_);
+        }
+        break;
+      }
+      case PAYLOAD_NOT_SET:
+        break;
+    }
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+}
+
+void Packet::CopyFrom(const Packet& from) {
+  // @@protoc_insertion_point(class_specific_copy_from_start:rtype.packets.Packet)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void Packet::InternalSwap(Packet* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
+  using ::std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_.header_, other->_impl_.header_);
+  swap(_impl_.payload_, other->_impl_.payload_);
+  swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
+}
+
+::google::protobuf::Metadata Packet::GetMetadata() const {
   return Super_::GetMetadataImpl(GetClassData()->full());
 }
 // ===================================================================
@@ -2214,186 +2810,6 @@ void LoginAnswer::InternalSwap(LoginAnswer* PROTOBUF_RESTRICT PROTOBUF_NONNULL o
 }
 
 ::google::protobuf::Metadata LoginAnswer::GetMetadata() const {
-  return Super_::GetMetadataImpl(GetClassData()->full());
-}
-// ===================================================================
-
-EntityIdOnly::EntityIdOnly(::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : Super_(arena, EntityIdOnly_get_class_data()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : Super_(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:rtype.packets.EntityIdOnly)
-}
-EntityIdOnly::EntityIdOnly(
-    ::google::protobuf::Arena* PROTOBUF_NULLABLE arena, const EntityIdOnly& from)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : Super_(arena, EntityIdOnly_get_class_data()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : Super_(arena),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(from._impl_) {
-  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-}
-PROTOBUF_NDEBUG_INLINE EntityIdOnly::Impl_::Impl_(
-    [[maybe_unused]] ::google::protobuf::internal::InternalVisibility visibility,
-    [[maybe_unused]] ::google::protobuf::Arena* PROTOBUF_NULLABLE arena)
-     {}
-
-inline void EntityIdOnly::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
-  new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.entityid_ = {};
-}
-EntityIdOnly::~EntityIdOnly() {
-  // @@protoc_insertion_point(destructor:rtype.packets.EntityIdOnly)
-  SharedDtor(*this);
-}
-inline void EntityIdOnly::SharedDtor(MessageLite& self) {
-  EntityIdOnly& this_ = static_cast<EntityIdOnly&>(self);
-  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
-    this_.CheckHasBitConsistency();
-  }
-  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
-  ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.~Impl_();
-}
-
-#ifndef PROTOBUF_MESSAGE_GLOBALS
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const
-    ::google::protobuf::internal::ClassDataFull EntityIdOnly_class_data_ =
-        EntityIdOnly::InternalGenerateClassData_(EntityIdOnly_globals_._default);
-
-PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
-EntityIdOnly::GetClassData() const {
-  ::google::protobuf::internal::PrefetchToLocalCache(&EntityIdOnly_class_data_);
-  ::google::protobuf::internal::PrefetchToLocalCache(EntityIdOnly_class_data_.tc_table);
-  return EntityIdOnly_class_data_.base();
-}
-#else
-PROTOBUF_ATTRIBUTE_WEAK const ::google::protobuf::internal::ClassData* PROTOBUF_NONNULL
-EntityIdOnly::GetClassData() const {
-  ::google::protobuf::internal::PrefetchToLocalCache(&EntityIdOnly_globals_);
-  ::google::protobuf::internal::PrefetchToLocalCache(
-      ::google::protobuf::internal::MessageGlobalsBase::ToParseTableBase(&EntityIdOnly_globals_));
-  return EntityIdOnly_globals_.GetClassData();
-}
-#endif  // !PROTOBUF_MESSAGE_GLOBALS
-#ifndef PROTOBUF_MESSAGE_GLOBALS
-PROTOBUF_CONSTINIT
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 const EntityIdOnly::ParseTableT_
-    EntityIdOnly::_table_ =
-        EntityIdOnly::InternalGenerateParseTable_(EntityIdOnly_class_data_.base());
-#endif  // !PROTOBUF_MESSAGE_GLOBALS
-PROTOBUF_NOINLINE void EntityIdOnly::Clear() {
-  auto& this_ [[maybe_unused]] = *this;
-  // @@protoc_insertion_point(message_clear_start:rtype.packets.EntityIdOnly)
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::uint32_t cached_has_bits [[maybe_unused]] = 0;
-
-  this_._impl_.entityid_ = ::int64_t{0};
-  _impl_._has_bits_.Clear();
-  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
-}
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-::uint8_t* PROTOBUF_NONNULL EntityIdOnly::_InternalSerialize(
-    const ::google::protobuf::MessageLite& base, ::uint8_t* PROTOBUF_NONNULL target,
-    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) {
-  const EntityIdOnly& this_ = static_cast<const EntityIdOnly&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-::uint8_t* PROTOBUF_NONNULL EntityIdOnly::_InternalSerialize(
-    ::uint8_t* PROTOBUF_NONNULL target,
-    ::google::protobuf::io::EpsCopyOutputStream* PROTOBUF_NONNULL stream) const {
-  const EntityIdOnly& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
-    this_.CheckHasBitConsistency();
-  }
-  // @@protoc_insertion_point(serialize_to_array_start:rtype.packets.EntityIdOnly)
-  ::uint32_t cached_has_bits = 0;
-  (void)cached_has_bits;
-
-  cached_has_bits = this_._impl_._has_bits_[0];
-  // int64 entityId = 1;
-  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-    target =
-        ::google::protobuf::internal::WireFormatLite::WriteInt64ToArrayWithField<1>(
-            stream, this_._internal_entityid(), target);
-  }
-
-  if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
-    target =
-        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-            this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:rtype.packets.EntityIdOnly)
-  return target;
-}
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-::size_t EntityIdOnly::ByteSizeLong(const MessageLite& base) {
-  const EntityIdOnly& this_ = static_cast<const EntityIdOnly&>(base);
-#else   // PROTOBUF_CUSTOM_VTABLE
-::size_t EntityIdOnly::ByteSizeLong() const {
-  const EntityIdOnly& this_ = *this;
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  // @@protoc_insertion_point(message_byte_size_start:rtype.packets.EntityIdOnly)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits [[maybe_unused]] = 0;
-
-   {
-    // int64 entityId = 1;
-    cached_has_bits = this_._impl_._has_bits_[0];
-    if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-      total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
-          this_._internal_entityid());
-    }
-  }
-  return this_.MaybeComputeUnknownFieldsSize(total_size,
-                                             &this_._impl_._cached_size_);
-}
-
-void EntityIdOnly::MergeImpl(::google::protobuf::MessageLite& to_msg,
-                      const ::google::protobuf::MessageLite& from_msg) {
-   auto* const _this = static_cast<EntityIdOnly*>(&to_msg);
-  auto& from = static_cast<const EntityIdOnly&>(from_msg);
-  if constexpr (::_pbi::DebugHardenCheckHasBitConsistency()) {
-    from.CheckHasBitConsistency();
-  }
-  // @@protoc_insertion_point(class_specific_merge_from_start:rtype.packets.EntityIdOnly)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void)cached_has_bits;
-
-  cached_has_bits = from._impl_._has_bits_[0];
-  if (CheckHasBit(cached_has_bits, 0x00000001U)) {
-    _this->_impl_.entityid_ = from._impl_.entityid_;
-  }
-  _this->_impl_._has_bits_[0] |= cached_has_bits;
-  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-}
-
-void EntityIdOnly::CopyFrom(const EntityIdOnly& from) {
-  // @@protoc_insertion_point(class_specific_copy_from_start:rtype.packets.EntityIdOnly)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-
-void EntityIdOnly::InternalSwap(EntityIdOnly* PROTOBUF_RESTRICT PROTOBUF_NONNULL other) {
-  using ::std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  swap(_impl_.entityid_, other->_impl_.entityid_);
-}
-
-::google::protobuf::Metadata EntityIdOnly::GetMetadata() const {
   return Super_::GetMetadataImpl(GetClassData()->full());
 }
 // ===================================================================
