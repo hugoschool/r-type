@@ -5,9 +5,9 @@
 namespace fengine::scene {
     class Button {
         public:
-            Button(float l, float h, float x, float y, std::string str)
+            Button(float l, float h, float x, float y, std::string str, std::string ttsPath)
                 : length(l), height(h), pos_x(x), pos_y(y), content(str),
-                selected(false) {};
+                selected(false), tts(ttsPath) {};
             ~Button() {};
 
             float length;
@@ -17,6 +17,8 @@ namespace fengine::scene {
             std::string content;
 
             bool selected;
+
+            std::string tts;
 
             bool isInBounds(float x, float y) {
                 return (pos_x < x + 1 && pos_x + length > x && pos_y < y + 1 && pos_y + height > y);

@@ -331,6 +331,9 @@ void rtype::client::Client::interpretButtonAction(int button) {
         case static_cast<int>(fengine::scene::ParamSceneButtons::COLORBLIND_3):
             _clientConfig->set("colorblind", std::pair<bool, int>(true, 3));
             break;
+        case static_cast<int>(fengine::scene::ParamSceneButtons::TTS):
+            _clientConfig->set("tts", bool(true));
+            break;
     }
     return;
 }
@@ -347,15 +350,25 @@ void rtype::client::Client::moveButtonSelection(bool left) {
 
     if (map.empty())
         return;
-
+    auto ttsConfig = _clientConfig->get("tts");
+    bool ttsSet = false;
+    if (ttsConfig && ttsConfig->has_value()) {
+        auto tts = std::any_cast<bool>(ttsConfig.value());
+        ttsSet = tts;
+    }
     for (auto &[val, button]: map) {
         if (button.selected) {
             button.selected = false;
             try {
-                if (left)
+                if (left) {
                     map.at(val + 1).selected = true;
-                else
+                    if (ttsSet)
+                        _soundModule->playSound(map.at(val + 1).tts);
+                } else {
                     map.at(val - 1).selected = true;
+                    if (ttsSet)
+                        _soundModule->playSound(map.at(val - 1).tts);
+                }
             } catch (std::exception &) {
                 button.selected = true;
             }
