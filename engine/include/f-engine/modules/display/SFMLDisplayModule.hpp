@@ -1,5 +1,6 @@
 #pragma once
 
+#include "f-engine/asset_manager/SFMLAssetManager.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/modules/display/ADisplayModule.hpp"
@@ -11,14 +12,13 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
-#include <map>
 #include <queue>
 #include <set>
 
 namespace fengine::modules::display {
     class SFMLDisplayModule : public ADisplayModule {
         public:
-            SFMLDisplayModule();
+            SFMLDisplayModule(std::shared_ptr<asset_manager::SFMLAssetManager> assetManager);
             ~SFMLDisplayModule() override;
 
             void clear() override;
@@ -37,7 +37,8 @@ namespace fengine::modules::display {
 
             SFMLWindow _window;
 
-            std::map<std::string, std::optional<sf::Texture>> _textureMap;
             std::set<sf::Keyboard::Key> _keyPressed;
+
+            std::shared_ptr<asset_manager::SFMLAssetManager> _assetManager;
     };
 }

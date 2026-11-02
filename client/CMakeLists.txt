@@ -22,6 +22,7 @@ target_link_libraries(
     freaky-engine-module-display
     freaky-engine-module-sound
     freaky-engine-observer
+    freaky-engine-asset-manager
     freaky-network
     r-type_common
     Boost::asio

@@ -1,6 +1,7 @@
 #include "Client.hpp"
 #include "boost/asio/error.hpp"
 #include "boost/system/detail/error_code.hpp"
+#include "f-engine/asset_manager/SFMLAssetManager.hpp"
 #include "f-engine/camera/Camera.hpp"
 #include "f-engine/ecs/Entity.hpp"
 #include "f-engine/ecs/Registry.hpp"
@@ -43,10 +44,13 @@
 #include <vector>
 
 rtype::client::Client::Client(std::string host, std::string port)
-    : _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>()),
-      _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>()), _registery(), _camera(0.0, 100000),
-      _scenes(), _currentScene(), _writeThread(), _readThread(), _exit(false), _inputs(1024),
-      _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0) {
+    : _assetManager(std::make_shared<fengine::asset_manager::SFMLAssetManager>()),
+      _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>(
+          std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager))),
+      _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>(
+          std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager))),
+      _registery(), _camera(0.0, 100000), _scenes(), _currentScene(), _writeThread(), _readThread(), _exit(false),
+      _inputs(1024), _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0) {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));
