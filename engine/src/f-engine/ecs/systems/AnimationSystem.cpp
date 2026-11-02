@@ -34,10 +34,11 @@ void fengine::ecs::AnimationSystem::update(Registry &manager) {
                     if (anim.value().cols > 1)
                         anim.value().offset_x += anim.value().length;
                     if (anim.value().offset_x > anim.value().length * (anim.value().cols - 1)) {
-                        if (anim.value().rows > 1)
+                        if (anim.value().rows > 1) {
                             anim.value().offset_y += anim.value().height;
-                        if (anim.value().offset_y > anim.value().height * (anim.value().rows - 1)) {
-                            anim.value().offset_y = 0;
+                            if (anim.value().offset_y > anim.value().height * (anim.value().rows - 1)) {
+                                anim.value().offset_y = 0;
+                            }
                         }
                         anim.value().offset_x = 0;
                     }

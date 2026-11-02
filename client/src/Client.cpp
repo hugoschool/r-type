@@ -207,7 +207,7 @@ void rtype::client::Client::loop() {
                             _inputs.addElement(event::Event::RIGHT);
                         } else if (key == fengine::modules::display::EventKey::Enter) {
                             activateSelectedButton();
-                            _displayModule->verifyConfig();
+                            _inputs.addElement(event::Event::SHOOT);
                         }
                     }
                 }
@@ -381,6 +381,6 @@ void rtype::client::Client::activateSelectedButton() {
             break;
         }
     }
-
+    _displayModule->verifyConfig();
     _navClock = std::chrono::steady_clock::now();
 }
