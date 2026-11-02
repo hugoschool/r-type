@@ -51,7 +51,7 @@ rtype::client::Client::Client(std::string host, std::string port)
           std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager))),
       _registery(), _camera(0.0, 100000), _scenes(), _currentScene(), _writeThread(), _readThread(), _exit(false),
       _inputs(1024), _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0),
-      _startedPlaying(false), _navClock(std::chrono::steady_clock::now()) {
+      _startedPlaying(false), _level(0), _navClock(std::chrono::steady_clock::now()) {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));
@@ -160,6 +160,9 @@ void rtype::client::Client::interpretMsg(std::string msg) {
             case rtype::packets::PacketType::EntityVelocityChange:
                 modifyVelocity(ar);
                 break;
+            case rtype::packets::PacketType::Level:
+                modifyLevel(ar);
+                break;
             default:
                 break;
         }
@@ -172,6 +175,7 @@ void rtype::client::Client::loop() {
     // when it is fill it will start display with some ticks of difference
 
     while (!_exit) {
+        std::cout << _level << std::endl;
         _displayModule->clear();
 
         applyReceivedPackets();
@@ -189,7 +193,7 @@ void rtype::client::Client::loop() {
                     _exit = true;
                     break;
                 }
-                if (_startedPlaying == true && event->getType() == fengine::modules::display::EventType::KeyPressed) {
+                if (event->getType() == fengine::modules::display::EventType::KeyPressed) {
                     auto control = _clientConfig->get("controls");
                     auto key = event->getKey();
 
@@ -312,6 +316,16 @@ void rtype::client::Client::modifyVelocity(rtype::packets::Serialization::deseri
         auto &oldVel = sparseArray[payload.entityId];
         oldVel->vel_x = payload.velocity.x;
         oldVel->vel_y = payload.velocity.y;
+    } catch (std::exception &) {}
+}
+
+void rtype::client::Client::modifyLevel(rtype::packets::Serialization::deserialize_archive &ar) {
+    packets::Level payload;
+
+    packets::Serialization::deserialize(ar, payload);
+
+    try {
+        _level = payload.level;
     } catch (std::exception &) {}
 }
 

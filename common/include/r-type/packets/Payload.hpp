@@ -4,6 +4,7 @@
 #include "r-type/packets/Packet.hpp"
 #include "r-type/presets/EntitiesPresets.hpp"
 #include <cstddef>
+#include <cstdint>
 #include <cstring>
 #include <string>
 
@@ -92,6 +93,16 @@ namespace rtype::packets {
             template <class Archive>
             void serialize(Archive &ar, unsigned int) {
                 ar & event;
+            }
+    };
+
+    struct Level {
+        public:
+            std::size_t level;
+
+            template <class Archive>
+            void serialize(Archive &ar, unsigned int) {
+                ar & level;
             }
     };
 }

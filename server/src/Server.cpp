@@ -205,6 +205,7 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
     if (_gameStarted == false) {
         if (event.event == event::Event::PLAY) {
             _gameStarted = true;
+            _level = 1;
         }
         return;
     }
@@ -277,6 +278,7 @@ void rtype::server::Server::generateEnemies() {
     fengine::ecs::EntityTypeComponent typeComponent = {.type = type};
 
     if (_enemyCounter == 5) {
+        _level += 1;
         _enemyCounter = 0;
         vel = {-5, 2, false};
         atk.damage += 15;
@@ -331,6 +333,15 @@ void rtype::server::Server::checkResend() {
             }
         }
     }
+
+    packets::Level payload = {
+        .level = _level,
+    };
+
+    std::string content =
+        _packetBuilder.create(packets::PacketType::Level).addHeader().addPayload(payload).get();
+
+    _clientHandler.getMessageQueueHandler().sendToAllClients(content);
 
     _resendClock = elapsedTime;
 }
