@@ -18,6 +18,7 @@ target_include_directories(
 
 target_link_libraries(
     ${BINARY} PUBLIC
+    protobuf
     freaky-engine-ecs
     freaky-engine-observer
     freaky-engine-world

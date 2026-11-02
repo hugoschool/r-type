@@ -19,6 +19,7 @@ CPMAddPackage(
     NAME Boost
     URL https://github.com/boostorg/boost/releases/download/boost-${BOOST_VERSION}/boost-${BOOST_VERSION}-cmake.tar.xz
 )
+
 set(SFML_VERSION 3.1.0)
 CPMAddPackage(
     NAME SFML
@@ -29,12 +30,18 @@ CPMAddPackage(
         "SFML_BUILD_EXAMPLES OFF"
 )
 
+set(PROTOBUF_VERSION v36.1)
+CPMAddPackage(
+    NAME protobuf
+    URL https://github.com/protocolbuffers/protobuf/archive/refs/tags/${PROTOBUF_VERSION}.tar.gz
+)
+
 if (ONLY_BUILD_ENGINE STREQUAL "ON")
     add_subdirectory(engine)
 else()
     add_subdirectory(network)
-    add_subdirectory(engine)
     add_subdirectory(common)
+    add_subdirectory(engine)
     add_subdirectory(client)
     add_subdirectory(server)
 endif()

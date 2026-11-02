@@ -1,10 +1,10 @@
 #pragma once
 
-#include "r-type/presets/EntitiesPresets.hpp"
+#include <r-type/proto/packets.pb.h>
 
 namespace fengine::ecs {
     struct EntityTypeComponent {
         public:
-            presets::EntityType type;
+            rtype::packets::EntityType type;
     };
 }

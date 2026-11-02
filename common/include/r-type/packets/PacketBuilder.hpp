@@ -1,7 +1,7 @@
 #pragma once
 
-#include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
+#include <r-type/proto/packets.pb.h>
 #include <sstream>
 #include <string>
 
@@ -15,7 +15,7 @@ namespace rtype::packets {
 
             template <class T>
             PacketBuilderContent &addPayload(T payload) {
-                Serialization::serialize(_ar, payload);
+                Serialization::serialize(_ss, payload);
                 return *this;
             };
 
@@ -23,7 +23,6 @@ namespace rtype::packets {
 
         private:
             std::stringstream _ss;
-            Serialization::serialize_archive _ar;
 
             PacketType _type;
             std::size_t _tick;

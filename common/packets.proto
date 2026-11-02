@@ -1,0 +1,74 @@
+edition = "2023";
+
+package rtype.packets;
+
+enum PacketType {
+    TypeLoginRequest = 0;
+    TypeLoginAnswer = 1;
+    TypeLoginFailed = 2;
+    TypeEntitySpawn = 3;
+    TypeEntityMove = 4;
+    TypeEntityVelocityChange = 5;
+    TypeEntityDied = 6;
+    TypeAck = 7;
+    TypePlayerEvent = 8;
+};
+
+message PacketHeader {
+    PacketType type = 1;
+    int64 tick = 2;
+    string playerUuid = 3;
+};
+
+enum EntityType {
+    ENTITY_PLAYERS = 0;
+    ENTITY_BULLETS = 1;
+    ENTITY_SHOOTER = 2;
+    ENTITY_BOSS = 3;
+}
+
+enum Event {
+    EVENT_UP = 0;
+    EVENT_LEFT = 1;
+    EVENT_DOWN = 2;
+    EVENT_RIGHT = 3;
+    EVENT_SHOOT = 4;
+}
+
+message Vector2D {
+    double x = 1;
+    double y = 2;
+}
+
+message LoginAnswer {
+    string uuid = 1;
+}
+
+message EntityIdOnly {
+    int64 entityId = 1;
+}
+
+message EntitySpawn {
+    int64 entityId = 1;
+    EntityType entityType = 2;
+    float width = 3;
+    float height = 4;
+}
+
+message EntityDied {
+    int64 entityId = 1;
+}
+
+message EntityMove {
+    int64 entityId = 1;
+    Vector2D coordinates = 2;
+}
+
+message EntityVelocityChange {
+    int64 entityId = 1;
+    Vector2D velocity = 2;
+}
+
+message PlayerEvent {
+    Event event = 1;
+}

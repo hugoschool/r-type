@@ -3,6 +3,7 @@
 #include "SafeQueue.hpp"
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
+#include "r-type/proto/packets.pb.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/generators.hpp>
 #include <boost/uuid/uuid.hpp>
@@ -15,9 +16,7 @@
 #include <f-engine/ecs/components/VelocityComponent.hpp>
 #include <iostream>
 #include <r-type/components/EntityTypeComponent.hpp>
-#include <r-type/packets/Packet.hpp>
 #include <r-type/packets/PacketBuilder.hpp>
-#include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 #include <r-type/presets/EntitiesPresets.hpp>
 
@@ -129,9 +128,10 @@ std::string rtype::server::ClientHandler::newClient() {
     _newClientQueue.push(entityId);
 
     packets::LoginAnswer payload;
-    payload.setUuid(uuid);
+    payload.set_uuid(uuid);
 
-    std::string content = _packetBuilder.create(packets::PacketType::LoginAnswer).addHeader().addPayload(payload).get();
+    std::string content = _packetBuilder.create(packets::TypeLoginAnswer).addHeader().addPayload(payload).get();
+    std::cout << "LoginAnswered: " << content << std::endl;
     _messageQueueHandler.addMessage(uuid, content);
 
     return uuid;

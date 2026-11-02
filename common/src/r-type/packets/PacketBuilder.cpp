@@ -1,16 +1,15 @@
 #include <r-type/packets/PacketBuilder.hpp>
 
 rtype::packets::PacketBuilderContent::PacketBuilderContent(PacketType type, std::size_t tick, std::string uuid)
-    : _ss(), _ar(_ss), _type(type), _tick(tick), _uuid(uuid) {};
+    : _ss(), _type(type), _tick(tick), _uuid(uuid) {};
 
 rtype::packets::PacketBuilderContent &rtype::packets::PacketBuilderContent::addHeader() {
     PacketHeader header;
 
-    header.size = 0;
-    header.type = _type;
-    header.tick = _tick;
-    header.setUuid(_uuid);
-    Serialization::serialize(_ar, header);
+    header.set_type(_type);
+    header.set_tick(_tick);
+    header.set_playeruuid(_uuid);
+    Serialization::serialize(_ss, header);
 
     return *this;
 }

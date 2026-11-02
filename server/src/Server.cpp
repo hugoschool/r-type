@@ -8,8 +8,9 @@
 #include "r-type/components/BehaviourComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
 #include "r-type/components/EntityTypeComponent.hpp"
-#include "r-type/event/PlayerEvent.hpp"
+
 #include "r-type/presets/EntitiesPresets.hpp"
+#include "r-type/proto/packets.pb.h"
 #include "r-type/systems/BehaviouralSystem.hpp"
 #include "r-type/systems/CollisionDetectionSystem.hpp"
 #include "r-type/systems/CollisionProcessorSystem.hpp"
@@ -27,9 +28,7 @@
 #include <f-engine/ecs/systems/MoveSystem.hpp>
 #include <iostream>
 #include <optional>
-#include <r-type/packets/Packet.hpp>
 #include <r-type/packets/PacketBuilder.hpp>
-#include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 #include <sstream>
 #include <thread>
@@ -87,7 +86,7 @@ std::queue<std::size_t> rtype::server::Server::generateClientQueue() {
     return clientQueue;
 }
 
-void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::presets::EntityType entityType, std::size_t,
+void rtype::server::Server::newEntityPacket(std::size_t entityId, rtype::packets::EntityType entityType, std::size_t,
     std::string uuid) {
     auto &velocityComponents = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>();
     auto &positionComponents = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>();
@@ -98,15 +97,13 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
         auto &boundary = boundaryComponents[entityId];
 
         {
-            packets::EntitySpawn payload = {
-                .entityId = entityId,
-                .entityType = entityType,
-                .width = boundary->size_x,
-                .height = boundary->size_y,
-            };
+            packets::EntitySpawn payload;
+            payload.set_entityid(entityId);
+            payload.set_entitytype(entityType);
+            payload.set_width(boundary->size_x);
+            payload.set_height(boundary->size_y);
 
-            std::string content =
-                _packetBuilder.create(packets::PacketType::EntitySpawn).addHeader().addPayload(payload).get();
+            std::string content = _packetBuilder.create(packets::TypeEntitySpawn).addHeader().addPayload(payload).get();
 
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
@@ -117,13 +114,19 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
         auto &velocity = velocityComponents[entityId];
 
         {
-            packets::EntityVelocityChange payload = {
-                .entityId = entityId,
-                .velocity = packets::Vector2D(velocity->vel_x, velocity->vel_y),
-            };
+            packets::EntityVelocityChange payload;
+            payload.set_entityid(entityId);
+
+            auto *allocatedVelocity = new packets::Vector2D();
+            allocatedVelocity->set_x(velocity->vel_x);
+            allocatedVelocity->set_y(velocity->vel_y);
+
+            payload.set_allocated_velocity(allocatedVelocity);
 
             std::string content =
-                _packetBuilder.create(packets::PacketType::EntityVelocityChange).addHeader().addPayload(payload).get();
+                _packetBuilder.create(packets::TypeEntityVelocityChange).addHeader().addPayload(payload).get();
+
+            static_cast<void>(payload.release_velocity());
 
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
@@ -132,13 +135,18 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
         auto &position = positionComponents[entityId];
 
         {
-            packets::EntityMove payload = {
-                .entityId = entityId,
-                .coordinates = packets::Vector2D(position->pos_x, position->pos_y),
-            };
+            packets::EntityMove payload;
+            payload.set_entityid(entityId);
 
-            std::string content =
-                _packetBuilder.create(packets::PacketType::EntityMove).addHeader().addPayload(payload).get();
+            auto *allocatedCoordinates = new packets::Vector2D();
+            allocatedCoordinates->set_x(position->pos_x);
+            allocatedCoordinates->set_y(position->pos_y);
+
+            payload.set_allocated_coordinates(allocatedCoordinates);
+
+            std::string content = _packetBuilder.create(packets::TypeEntityMove).addHeader().addPayload(payload).get();
+
+            static_cast<void>(payload.release_coordinates());
 
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
@@ -164,17 +172,17 @@ void rtype::server::Server::userLoginPacket(std::size_t tick, std::string uuid) 
 
 void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_archive &ar,
     packets::PacketHeader &header) {
-    switch (header.type) {
-        case packets::PacketType::Ack: {
-            std::string uuid(header.playerUuid);
+    switch (header.type()) {
+        case packets::TypeAck: {
+            std::string uuid(header.playeruuid());
             _clientHandler.setAlive(uuid);
             break;
         }
-        case packets::PacketType::LoginRequest: {
-            userLoginPacket(_tickHandler.getTick(), header.playerUuid);
+        case packets::TypeLoginRequest: {
+            userLoginPacket(_tickHandler.getTick(), header.playeruuid());
             break;
         }
-        case rtype::packets::PacketType::PlayerEvent: {
+        case packets::TypePlayerEvent: {
             handlePlayerEvents(ar, header);
             break;
         }
@@ -188,7 +196,7 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
     packets::PlayerEvent event;
 
     packets::Serialization::deserialize(ar, event);
-    auto &data = _clientHandler.getClients().at(header.playerUuid);
+    auto &data = _clientHandler.getClients().at(header.playeruuid());
     auto &entity = _world._registry.entityManager.entityFromIndex(data.entityId);
 
     if (!entity.has_value())
@@ -199,20 +207,20 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
     if (!vel.has_value())
         return;
 
-    switch (event.event) {
-        case event::Event::UP:
+    switch (event.event()) {
+        case packets::EVENT_UP:
             handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, -10);
             break;
-        case event::Event::LEFT:
+        case packets::EVENT_LEFT:
             handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, -10);
             break;
-        case event::Event::DOWN:
+        case packets::EVENT_DOWN:
             handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, 10);
             break;
-        case event::Event::RIGHT:
+        case packets::EVENT_RIGHT:
             handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, 10);
             break;
-        case event::Event::SHOOT:
+        case packets::EVENT_SHOOT: {
             fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
             fengine::ecs::PositionComponent &pos =
                 _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>()[data.entityId]
@@ -228,8 +236,11 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
                 (fengine::ecs::AttackComponent) {{.team = fengine::ecs::team::ALLIES}, att.damage});
             _world._registry.componentManager.addComponent(entity, (fengine::ecs::DefenseComponent) {1, 0});
             _world._registry.componentManager.addComponent(entity,
-                (fengine::ecs::EntityTypeComponent) {fengine::presets::EntityType::BULLETS});
+                (fengine::ecs::EntityTypeComponent) {packets::ENTITY_BULLETS});
 
+            break;
+        }
+        default:
             break;
     }
 }
@@ -258,7 +269,7 @@ void rtype::server::Server::generateEnemies() {
     fengine::ecs::AttackComponent atk = {{.team = fengine::ecs::team::MONSTERS}, 10};
     fengine::ecs::DefenseComponent def = {150, 0};
 
-    fengine::presets::EntityType type = fengine::presets::EntityType::E_SHOOTER;
+    rtype::packets::EntityType type = packets::ENTITY_SHOOTER;
     fengine::ecs::EntityTypeComponent typeComponent = {.type = type};
 
     if (_enemyCounter == 5) {
@@ -269,7 +280,7 @@ void rtype::server::Server::generateEnemies() {
         bound.size_x += 100;
         bound.size_y += 50;
         bound.bouncy = true;
-        type = fengine::presets::EntityType::E_BOSS;
+        type = rtype::packets::ENTITY_BOSS;
     } else {
         // fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER, std::chrono::steady_clock::now()};
         // _world._registry.componentManager.addComponent(entity, std::move(behaviour));
@@ -338,7 +349,7 @@ void rtype::server::Server::tickThreadRun() {
             fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
             fengine::ecs::DefenseComponent def = {100, 0};
             fengine::ecs::BoundaryComponent bound = {100, 50, false, true, std::nullopt};
-            fengine::ecs::EntityTypeComponent type = {fengine::presets::EntityType::PLAYERS};
+            fengine::ecs::EntityTypeComponent type = {packets::ENTITY_PLAYERS};
 
             _world._registry.componentManager.addComponent(entity.value(), std::move(pos));
             _world._registry.componentManager.addComponent(entity.value(), std::move(vel));
@@ -353,7 +364,7 @@ void rtype::server::Server::tickThreadRun() {
             packets::PacketHeader header;
             try {
                 std::stringstream ss(msg);
-                packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
+                packets::Serialization::deserialize_archive &ar = packets::Serialization::createDeserializeArchive(ss);
 
                 packets::Serialization::deserialize(ar, header);
                 interpretPacket(ar, header);

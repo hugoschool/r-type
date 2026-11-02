@@ -1,6 +1,7 @@
 #include "f-network/client/UDPProtocol.hpp"
 #include "f-network/client/AProtocol.hpp"
 #include <boost/asio/socket_base.hpp>
+#include <iostream>
 #include <iterator>
 
 fnetwork::client::UDPProtocol::UDPProtocol(boost::asio::io_context &_io_context, std::string host, std::uint16_t port)

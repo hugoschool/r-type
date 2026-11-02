@@ -9,7 +9,6 @@
 #include "f-engine/modules/display/IDisplayModule.hpp"
 #include "f-engine/modules/sound/ISoundModule.hpp"
 #include "f-engine/scene/IScene.hpp"
-#include "r-type/event/PlayerEvent.hpp"
 #include "r-type/packets/Serialization.hpp"
 #include <array>
 #include <boost/asio/io_context.hpp>
@@ -39,7 +38,7 @@ namespace rtype::client {
             std::thread _writeThread;
             std::thread _readThread;
             bool _exit;
-            rtype::client::CircularBuffer<rtype::event::Event> _inputs;
+            rtype::client::CircularBuffer<rtype::packets::Event> _inputs;
             std::string _uuid;
             ClientProtocol _protocol;
             std::shared_ptr<fengine::config::IConfig> _clientConfig;

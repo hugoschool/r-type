@@ -23,11 +23,10 @@
 #include "f-engine/modules/sound/SFMLSoundModule.hpp"
 #include "r-type/components/EntityTypeComponent.hpp"
 #include "r-type/config/ClientConfig.hpp"
-#include "r-type/event/PlayerEvent.hpp"
-#include "r-type/packets/Packet.hpp"
-#include "r-type/packets/Payload.hpp"
+
 #include "r-type/packets/Serialization.hpp"
 #include "r-type/presets/EntitiesPresets.hpp"
+#include "r-type/proto/packets.pb.h"
 #include "r-type/scene/GameScene.hpp"
 #include "r-type/scene/MenuScene.hpp"
 #include "r-type/scene/ParamScene.hpp"
@@ -113,22 +112,22 @@ void rtype::client::Client::stockMsg(std::string msg) {
 
     try {
         std::stringstream ss(msg);
-        packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
+        packets::Serialization::deserialize_archive &ar = packets::Serialization::createDeserializeArchive(ss);
         packets::Serialization::deserialize(ar, header);
 
         // TODO handle overflow
-        if (_maxTick < header.tick) {
-            _maxTick = header.tick;
+        if (_maxTick < header.tick()) {
+            _maxTick = header.tick();
         }
-        if (_packetReceived[header.tick % 10].first == header.tick) {
-            _packetReceived[header.tick % 10].second.push(msg);
+        if (_packetReceived[header.tick() % 10].first == header.tick()) {
+            _packetReceived[header.tick() % 10].second.push(msg);
         } else {
-            _packetReceived[header.tick % 10].first = header.tick;
+            _packetReceived[header.tick() % 10].first = header.tick();
 
-            while (!_packetReceived[header.tick % 10].second.empty()) {
-                _packetReceived[header.tick % 10].second.pop();
+            while (!_packetReceived[header.tick() % 10].second.empty()) {
+                _packetReceived[header.tick() % 10].second.pop();
             }
-            _packetReceived[header.tick % 10].second.push(msg);
+            _packetReceived[header.tick() % 10].second.push(msg);
         }
     } catch (std::exception &) {}
 }
@@ -138,25 +137,25 @@ void rtype::client::Client::interpretMsg(std::string msg) {
 
     try {
         std::stringstream ss(msg);
-        packets::Serialization::deserialize_archive ar = packets::Serialization::createDeserializeArchive(ss);
+        packets::Serialization::deserialize_archive &ar = packets::Serialization::createDeserializeArchive(ss);
         packets::Serialization::deserialize(ar, header);
 
-        switch (header.type) {
+        switch (header.type()) {
             // TODO: All packets
-            case rtype::packets::PacketType::Ack:
+            case rtype::packets::TypeAck:
                 break;
-            case rtype::packets::PacketType::PlayerEvent:
+            case rtype::packets::TypePlayerEvent:
                 break;
-            case rtype::packets::PacketType::EntityDied:
+            case rtype::packets::TypeEntityDied:
                 removeEntity(ar);
                 break;
-            case rtype::packets::PacketType::EntitySpawn:
+            case rtype::packets::TypeEntitySpawn:
                 addEntity(ar);
                 break;
-            case rtype::packets::PacketType::EntityMove:
+            case rtype::packets::TypeEntityMove:
                 moveEntity(ar);
                 break;
-            case rtype::packets::PacketType::EntityVelocityChange:
+            case rtype::packets::TypeEntityVelocityChange:
                 modifyVelocity(ar);
                 break;
             default:
@@ -195,18 +194,18 @@ void rtype::client::Client::loop() {
                     if (control->has_value()) {
                         auto value = std::any_cast<fengine::ecs::ControllableComponent>(control.value());
                         if (key == value.up)
-                            _inputs.addElement(event::Event::UP);
+                            _inputs.addElement(packets::EVENT_UP);
                         else if (key == value.down)
-                            _inputs.addElement(event::Event::DOWN);
+                            _inputs.addElement(packets::EVENT_DOWN);
                         else if (key == value.left)
-                            _inputs.addElement(event::Event::LEFT);
+                            _inputs.addElement(packets::EVENT_LEFT);
                         else if (key == value.right)
-                            _inputs.addElement(event::Event::RIGHT);
+                            _inputs.addElement(packets::EVENT_RIGHT);
                     }
                 }
                 if (event->getType() == fengine::modules::display::EventType::Click) {
                     if (event->getMouseButton() == fengine::modules::display::EventMouseButton::Left)
-                        _inputs.addElement(event::Event::SHOOT);
+                        _inputs.addElement(packets::EVENT_SHOOT);
                     _currentScene->updateButtons(event->getClickCoordinates());
                 }
             }
@@ -235,7 +234,7 @@ void rtype::client::Client::removeEntity(packets::Serialization::deserialize_arc
     packets::Serialization::deserialize(ar, payload);
 
     try {
-        auto &entity = _registery.entityManager.getEntities().at(payload.entityId);
+        auto &entity = _registery.entityManager.getEntities().at(payload.entityid());
         _registery.entityManager.killEntity(entity.value());
     } catch (std::exception &) {}
 }
@@ -246,18 +245,19 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
     packets::Serialization::deserialize(ar, payload);
 
     try {
-        auto &_ = _registery.entityManager.getEntities().at(payload.entityId);
+        auto &_ = _registery.entityManager.getEntities().at(payload.entityid());
         static_cast<void>(_);
     } catch (std::exception &) {
-        fengine::ecs::Entity entity = _registery.entityManager.createEntity(payload.entityId);
-        struct fengine::presets::presets preset = fengine::presets::EntityPresets[static_cast<int>(payload.entityType)];
+        fengine::ecs::Entity entity = _registery.entityManager.createEntity(payload.entityid());
+        struct fengine::presets::presets preset =
+            fengine::presets::EntityPresets[static_cast<int>(payload.entitytype())];
 
-        _registery.componentManager.addComponent(entity, (fengine::ecs::EntityTypeComponent) {payload.entityType});
+        _registery.componentManager.addComponent(entity, (fengine::ecs::EntityTypeComponent) {payload.entitytype()});
         _registery.componentManager.addComponent(entity, (fengine::ecs::PositionComponent) {200, 200, false});
         _registery.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent) {0, 0, false});
         _registery.componentManager.addComponent(entity,
             (fengine::ecs::DrawableComponent) {std::string(preset.preset.texture),
-                std::make_shared<fengine::modules::display::SFMLRectangle>(payload.width, payload.height),
+                std::make_shared<fengine::modules::display::SFMLRectangle>(payload.width(), payload.height()),
                 std::nullopt});
         _registery.componentManager.addComponent(entity,
             (fengine::ecs::AnimationComponent) {preset.values.length, preset.values.height, preset.values.offset_x,
@@ -275,11 +275,11 @@ void rtype::client::Client::moveEntity(rtype::packets::Serialization::deserializ
     try {
         auto &sparseArray = _registery.componentManager.getComponents<fengine::ecs::PositionComponent>();
 
-        if (sparseArray.containsAndHasValue(payload.entityId)) {
-            auto &oldPos = sparseArray[payload.entityId];
+        if (sparseArray.containsAndHasValue(payload.entityid())) {
+            auto &oldPos = sparseArray[payload.entityid()];
 
-            oldPos->pos_x = payload.coordinates.x;
-            oldPos->pos_y = payload.coordinates.y;
+            oldPos->pos_x = payload.coordinates().x();
+            oldPos->pos_y = payload.coordinates().y();
         }
     } catch (std::exception &) {}
 }
@@ -292,11 +292,11 @@ void rtype::client::Client::modifyVelocity(rtype::packets::Serialization::deseri
     try {
         auto &sparseArray = _registery.componentManager.getComponents<fengine::ecs::VelocityComponent>();
 
-        if (sparseArray.containsAndHasValue(payload.entityId)) {
-            auto &oldVel = sparseArray[payload.entityId];
+        if (sparseArray.containsAndHasValue(payload.entityid())) {
+            auto &oldVel = sparseArray[payload.entityid()];
 
-            oldVel->vel_x = payload.velocity.x;
-            oldVel->vel_y = payload.velocity.y;
+            oldVel->vel_x = payload.velocity().x();
+            oldVel->vel_y = payload.velocity().y();
         }
     } catch (std::exception &) {}
 }

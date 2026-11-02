@@ -10,9 +10,7 @@
 #include <f-engine/ecs/systems/MoveSystem.hpp>
 #include <functional>
 #include <memory>
-#include <r-type/packets/Packet.hpp>
 #include <r-type/packets/PacketBuilder.hpp>
-#include <r-type/packets/Payload.hpp>
 #include <r-type/packets/Serialization.hpp>
 
 rtype::server::SubscriberHandler::SubscriberHandler(rtype::server::ClientHandler &clientHandler,
@@ -76,10 +74,10 @@ void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observe
     if (!content.existsAndRetrieve(dead))
         return;
 
-    packets::EntityDied payload = {
-        .entityId = dead.entityId,
-    };
-    std::string str = _packetBuilder.create(packets::PacketType::EntityDied).addHeader().addPayload(payload).get();
+    packets::EntityDied payload;
+    payload.set_entityid(dead.entityId);
+
+    std::string str = _packetBuilder.create(packets::PacketType::TypeEntityDied).addHeader().addPayload(payload).get();
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
@@ -90,12 +88,19 @@ void rtype::server::SubscriberHandler::handleVelocityComponent(fengine::ecs::obs
     if (!content.existsAndRetrieve(velocity))
         return;
 
-    packets::EntityVelocityChange payload = {
-        .entityId = content.getEntityId(),
-        .velocity = packets::Vector2D(velocity.vel_x, velocity.vel_y),
-    };
+    packets::EntityVelocityChange payload;
+    payload.set_entityid(content.getEntityId());
+
+    auto *allocatedVelocity = new packets::Vector2D();
+    allocatedVelocity->set_x(velocity.vel_x);
+    allocatedVelocity->set_y(velocity.vel_y);
+
+    payload.set_allocated_velocity(allocatedVelocity);
+
     std::string str =
-        _packetBuilder.create(packets::PacketType::EntityVelocityChange).addHeader().addPayload(payload).get();
+        _packetBuilder.create(packets::PacketType::TypeEntityVelocityChange).addHeader().addPayload(payload).get();
+
+    static_cast<void>(payload.release_velocity());
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
@@ -106,12 +111,19 @@ void rtype::server::SubscriberHandler::handlePositionComponent(fengine::ecs::obs
     if (!content.existsAndRetrieve(position))
         return;
 
-    packets::EntityMove payload = {
-        .entityId = content.getEntityId(),
-        .coordinates = packets::Vector2D(position.pos_x, position.pos_y),
-    };
+    packets::EntityMove payload;
 
-    std::string str = _packetBuilder.create(packets::PacketType::EntityMove).addHeader().addPayload(payload).get();
+    payload.set_entityid(content.getEntityId());
+
+    auto *allocatedCoordinates = new packets::Vector2D();
+    allocatedCoordinates->set_x(position.pos_x);
+    allocatedCoordinates->set_y(position.pos_y);
+
+    payload.set_allocated_coordinates(allocatedCoordinates);
+
+    std::string str = _packetBuilder.create(packets::PacketType::TypeEntityMove).addHeader().addPayload(payload).get();
+
+    static_cast<void>(payload.release_coordinates());
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }

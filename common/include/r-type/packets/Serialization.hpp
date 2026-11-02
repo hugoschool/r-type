@@ -1,31 +1,29 @@
 #pragma once
 
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
+#include <google/protobuf/message.h>
+#include <iostream>
 #include <ostream>
 
 namespace rtype::packets {
     class Serialization {
         public:
-            using deserialize_archive = boost::archive::binary_iarchive;
-            using serialize_archive = boost::archive::binary_oarchive;
+            using deserialize_archive = std::istream;
+            using serialize_archive = std::ostream;
 
-            static serialize_archive createSerializeArchive(std::ostream &s) {
-                return serialize_archive(s);
+            static serialize_archive &createSerializeArchive(std::ostream &s) {
+                return s;
             }
 
-            template <class T>
-            static void serialize(serialize_archive &a, T &content) {
-                a & content;
+            static void serialize(serialize_archive &a, google::protobuf::Message &content) {
+                static_cast<void>(content.SerializeToOstream(&a));
             }
 
-            static deserialize_archive createDeserializeArchive(std::istream &s) {
-                return deserialize_archive(s);
+            static deserialize_archive &createDeserializeArchive(std::istream &s) {
+                return s;
             }
 
-            template <class T>
-            static void deserialize(deserialize_archive &a, T &content) {
-                a & content;
+            static void deserialize(deserialize_archive &a, google::protobuf::Message &content) {
+                static_cast<void>(content.ParseFromIstream(&a));
             }
     };
 }

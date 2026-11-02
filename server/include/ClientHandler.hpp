@@ -4,14 +4,14 @@
 #include "ServerPacketBuilder.hpp"
 #include <chrono>
 #include <map>
-#include <r-type/packets/Packet.hpp>
 #include <r-type/packets/PacketBuilder.hpp>
 #include <set>
 #include <string>
 #include <unordered_map>
 
 namespace rtype::server {
-    constexpr char DUMMY_UUID[packets::UUID_SIZE + 1] = "00000000-0000-4000-8000-000000000000";
+    constexpr std::size_t UUID_SIZE = 36;
+    constexpr char DUMMY_UUID[UUID_SIZE + 1] = "00000000-0000-4000-8000-000000000000";
 
     // Maximum number of seconds before a client is considered as disconnected
     constexpr std::uint64_t MAX_CONNECTED_SECONDS = 10;

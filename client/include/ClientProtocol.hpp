@@ -2,7 +2,7 @@
 
 #include "CircularBuffer.hpp"
 #include "boost/system/detail/error_code.hpp"
-#include "r-type/event/PlayerEvent.hpp"
+#include "r-type/proto/packets.pb.h"
 #include <boost/asio/io_context.hpp>
 #include <cstddef>
 #include <f-engine/modules/display/events/EventKey.hpp>
@@ -11,7 +11,7 @@
 namespace rtype::client {
     class ClientProtocol {
         public:
-            using PlayerEvent = rtype::event::Event;
+            using PlayerEvent = rtype::packets::Event;
 
             ClientProtocol(rtype::client::CircularBuffer<PlayerEvent> &inputs, std::string host, std::string port,
                 std::size_t &tick);
