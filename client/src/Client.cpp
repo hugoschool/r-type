@@ -266,6 +266,9 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
             (fengine::ecs::DrawableComponent) {std::string(preset.preset.texture),
                 std::make_shared<fengine::modules::display::SFMLRectangle>(payload.width, payload.height),
                 std::nullopt});
+        if (payload.entityType == fengine::presets::EntityType::PLAYERS) {
+            preset.values.offset_y += (preset.values.height * (payload.entityId + 1));
+        }
         _registery.componentManager.addComponent(entity,
             (fengine::ecs::AnimationComponent) {preset.values.length, preset.values.height, preset.values.offset_x,
                 preset.values.offset_y, preset.values.cols, preset.values.rows, false,
