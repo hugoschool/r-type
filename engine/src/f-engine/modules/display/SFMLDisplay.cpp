@@ -1,10 +1,13 @@
 #include "SFML/Window/Event.hpp"
+#include "SFML/Window/Joystick.hpp"
 #include "SFML/Window/Keyboard.hpp"
 #include "f-engine/asset_manager/SFMLAssetManager.hpp"
+#include "f-engine/ecs/components/ControllableComponent.hpp"
 #include "f-engine/ecs/components/DrawableComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
 #include "f-engine/modules/display/events/ClickEvent.hpp"
+#include "f-engine/modules/display/events/EventMouseButton.hpp"
 #include "f-engine/modules/display/events/IEvent.hpp"
 #include "f-engine/modules/display/events/KeyPressedEvent.hpp"
 #include "f-engine/modules/display/events/QuitEvent.hpp"
@@ -16,6 +19,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <any>
+#include <iostream>
 #include <memory>
 #include <optional>
 #include <queue>
@@ -35,6 +39,9 @@ void fengine::modules::display::SFMLDisplayModule::clear() {
 
 std::optional<std::queue<std::unique_ptr<fengine::modules::display::IEvent>>>
 fengine::modules::display::SFMLDisplayModule::pollEvent() {
+    if (sf::Joystick::isConnected(0)) {
+        sf::Joystick::update();
+    }
     std::queue<std::unique_ptr<fengine::modules::display::IEvent>> eventQueue;
     while (std::optional event = _window.pollEvent()) {
         if (event.has_value() == false) {
@@ -43,29 +50,69 @@ fengine::modules::display::SFMLDisplayModule::pollEvent() {
         if (event->is<sf::Event::Closed>()) {
             eventQueue.push(std::make_unique<QuitEvent>());
         }
-        if (const sf::Event::KeyPressed *key = event->getIf<sf::Event::KeyPressed>()) {
-            if (_keyPressed.contains(key->code) == false) {
-                _keyPressed.insert(key->code);
+        if (!sf::Joystick::isConnected(0)) {
+            if (const sf::Event::KeyPressed *key = event->getIf<sf::Event::KeyPressed>()) {
+                if (_keyPressed.contains(key->code) == false) {
+                    _keyPressed.insert(key->code);
+                }
             }
-        }
-        if (const sf::Event::KeyReleased *key = event->getIf<sf::Event::KeyReleased>()) {
-            if (_keyPressed.contains(key->code) == true) {
-                _keyPressed.erase(key->code);
+            if (const sf::Event::KeyReleased *key = event->getIf<sf::Event::KeyReleased>()) {
+                if (_keyPressed.contains(key->code) == true) {
+                    _keyPressed.erase(key->code);
+                }
             }
-        }
-        if (const sf::Event::MouseButtonPressed *mouse = event->getIf<sf::Event::MouseButtonPressed>()) {
-            EventMouseButton mouseButton;
-            switch (mouse->button) {
-                case sf::Mouse::Button::Left:
-                    mouseButton = EventMouseButton::Left;
-                    break;
-                case sf::Mouse::Button::Right:
-                    mouseButton = EventMouseButton::Right;
-                    break;
-                default:
-                    break;
+            if (const sf::Event::MouseButtonPressed *mouse = event->getIf<sf::Event::MouseButtonPressed>()) {
+                EventMouseButton mouseButton;
+                switch (mouse->button) {
+                    case sf::Mouse::Button::Left:
+                        mouseButton = EventMouseButton::Left;
+                        break;
+                    case sf::Mouse::Button::Right:
+                        mouseButton = EventMouseButton::Right;
+                        break;
+                    default:
+                        break;
+                }
+                eventQueue.push(std::make_unique<ClickEvent>(mouseButton, mouse->position.x, mouse->position.y));
             }
-            eventQueue.push(std::make_unique<ClickEvent>(mouseButton, mouse->position.x, mouse->position.y));
+        } else {
+            if (const sf::Event::JoystickButtonPressed *button = event->getIf<sf::Event::JoystickButtonPressed>()) {
+                eventQueue.push(std::make_unique<ClickEvent>(EventMouseButton::Left, 0, 0));
+            }
+            float newJoystickX = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X);
+            float newJoystickY = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y);
+            auto controls = _config->get("controls");
+            if (controls->has_value()) {
+                auto value = std::any_cast<ecs::ControllableComponent>(controls.value());
+                if (newJoystickX < 10) {
+                    if (!_keyPressed.contains(static_cast<sf::Keyboard::Key>(static_cast<int>(value.left) - 1)))
+                        _keyPressed.insert(static_cast<sf::Keyboard::Key>(static_cast<int>(value.left) - 1));
+                }
+                if (newJoystickY < 10) {
+                    if (!_keyPressed.contains(static_cast<sf::Keyboard::Key>(static_cast<int>(value.up) - 1)))
+                        _keyPressed.insert(static_cast<sf::Keyboard::Key>(static_cast<int>(value.up) - 1));
+                }
+                if (newJoystickX > 10) {
+                    if (!_keyPressed.contains(static_cast<sf::Keyboard::Key>(static_cast<int>(value.right) - 1)))
+                        _keyPressed.insert(static_cast<sf::Keyboard::Key>(static_cast<int>(value.right) - 1));
+                }
+                if (newJoystickY > 10) {
+                    if (!_keyPressed.contains(static_cast<sf::Keyboard::Key>(static_cast<int>(value.down) - 1)))
+                        _keyPressed.insert(static_cast<sf::Keyboard::Key>(static_cast<int>(value.down) - 1));
+                }
+                if (newJoystickX <= 10 && newJoystickX >= -10) {
+                    if (_keyPressed.contains(static_cast<sf::Keyboard::Key>(static_cast<int>(value.left) - 1)))
+                        _keyPressed.erase(static_cast<sf::Keyboard::Key>(static_cast<int>(value.left) - 1));
+                    if (_keyPressed.contains(static_cast<sf::Keyboard::Key>(static_cast<int>(value.right) - 1)))
+                        _keyPressed.erase(static_cast<sf::Keyboard::Key>(static_cast<int>(value.right) - 1));
+                }
+                if (newJoystickY <= 10 && newJoystickY >= -10) {
+                    if (_keyPressed.contains(static_cast<sf::Keyboard::Key>(static_cast<int>(value.up) - 1)))
+                        _keyPressed.erase(static_cast<sf::Keyboard::Key>(static_cast<int>(value.up) - 1));
+                    if (_keyPressed.contains(static_cast<sf::Keyboard::Key>(static_cast<int>(value.down) - 1)))
+                        _keyPressed.erase(static_cast<sf::Keyboard::Key>(static_cast<int>(value.down) - 1));
+                }
+            }
         }
     }
     for (auto keyCode : _keyPressed) {
