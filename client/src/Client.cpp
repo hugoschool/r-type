@@ -189,7 +189,7 @@ void rtype::client::Client::loop() {
                     _exit = true;
                     break;
                 }
-                if (event->getType() == fengine::modules::display::EventType::KeyPressed) {
+                if (_startedPlaying == true && event->getType() == fengine::modules::display::EventType::KeyPressed) {
                     auto control = _clientConfig->get("controls");
                     auto key = event->getKey();
 
@@ -221,8 +221,9 @@ void rtype::client::Client::loop() {
                     }
                 }
                 if (event->getType() == fengine::modules::display::EventType::Click) {
-                    if (event->getMouseButton() == fengine::modules::display::EventMouseButton::Left)
+                    if (_startedPlaying == true  && event->getMouseButton() == fengine::modules::display::EventMouseButton::Left) {
                         _inputs.addElement(event::Event::SHOOT);
+                    }
                     _currentScene->updateButtons(event->getClickCoordinates());
                 }
             }
@@ -320,6 +321,8 @@ void rtype::client::Client::interpretButtonAction(int button) {
         case static_cast<int>(fengine::scene::MenuSceneButtons::PLAY):
             _soundModule->playMusic("./assets/sounds/game.ogg");
             _currentScene = _scenes.back();
+            _inputs.addElement(event::Event::PLAY);
+            _startedPlaying = true;
             break;
         case static_cast<int>(fengine::scene::MenuSceneButtons::PARAMS):
             _soundModule->playMusic("./assets/sounds/params.ogg");

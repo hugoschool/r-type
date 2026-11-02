@@ -46,6 +46,7 @@ namespace rtype::client {
             std::array<std::pair<std::size_t, std::queue<std::string>>, 10> _packetReceived;
             // std::map<std::size_t, std::queue<std::string>> _packetReceived;
             std::size_t _maxTick;
+            bool _startedPlaying;
 
             std::chrono::time_point<std::chrono::steady_clock> _navClock;
 

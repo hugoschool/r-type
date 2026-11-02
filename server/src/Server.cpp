@@ -50,7 +50,9 @@ rtype::server::Server::Server(std::uint32_t port)
       _protocol(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler, _packetBuilder),
       _packetBuilder(_tickHandler),
       // Enemy generation
-      _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0), _resendClock() {
+      _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0), _resendClock(),
+      // Levels handling
+      _gameStarted(false), _level(0) {
 
     _signals.async_wait([&](boost::system::error_code, int) {
         _io_context.stop();
@@ -199,6 +201,14 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
     if (!vel.has_value())
         return;
 
+    // handle the start of the game
+    if (_gameStarted == false) {
+        if (event.event == event::Event::PLAY) {
+            _gameStarted = true;
+        }
+        return;
+    }
+
     switch (event.event) {
         case event::Event::UP:
             handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, -10);
@@ -212,7 +222,7 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
         case event::Event::RIGHT:
             handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, 10);
             break;
-        case event::Event::SHOOT:
+        case event::Event::SHOOT: {
             fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
             fengine::ecs::PositionComponent &pos =
                 _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>()[data.entityId]
@@ -229,8 +239,13 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
             _world._registry.componentManager.addComponent(entity, (fengine::ecs::DefenseComponent) {1, 0});
             _world._registry.componentManager.addComponent(entity,
                 (fengine::ecs::EntityTypeComponent) {fengine::presets::EntityType::BULLETS});
-
             break;
+        }
+        case event::Event::PLAY: {
+            // TODO new client connects but the game has already started
+            // give the player invincibiloty frames
+            break;
+        }
     }
 }
 
@@ -362,7 +377,9 @@ void rtype::server::Server::tickThreadRun() {
                 continue;
             }
         }
-        generateEnemies();
+        if (_gameStarted) {
+            generateEnemies();
+        }
         checkResend();
         _clientHandler.verifyStatus();
         _world._registry.systemManager.update(_world._registry);
