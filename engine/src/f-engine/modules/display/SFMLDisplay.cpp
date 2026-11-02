@@ -175,9 +175,8 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fen
     std::map<int, scene::Button> &buttons = scene->getButtons();
     scene::Background &background =
         scene
-            ->getBackground();// a voir comment definir cela, pour l'instant surement une shape rectangle de la taille de la window + un offset handle dans la scene elle meme
+            ->getBackground();
 
-    // background (a changer aussi)
     sf::RectangleShape bg1 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
     if (_assetManager->textureContains(background.texture) == false) {
         _assetManager->loadTexture(background.texture);
@@ -195,7 +194,6 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fen
         }
     }
 
-    // boutons (a changer)
     for (auto &[type, button] : buttons) {
         sf::RectangleShape rect = sf::RectangleShape(sf::Vector2f(button.length, button.height));
         rect.setPosition(sf::Vector2f(button.pos_x, button.pos_y));
