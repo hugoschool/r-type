@@ -19,7 +19,6 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <any>
-#include <iostream>
 #include <memory>
 #include <optional>
 #include <queue>
@@ -76,7 +75,7 @@ fengine::modules::display::SFMLDisplayModule::pollEvent() {
                 eventQueue.push(std::make_unique<ClickEvent>(mouseButton, mouse->position.x, mouse->position.y));
             }
         } else {
-            if (const sf::Event::JoystickButtonPressed *button = event->getIf<sf::Event::JoystickButtonPressed>()) {
+            if (event->getIf<sf::Event::JoystickButtonPressed>()) {
                 eventQueue.push(std::make_unique<ClickEvent>(EventMouseButton::Left, 0, 0));
             }
             float newJoystickX = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X);
@@ -199,8 +198,8 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fen
     for (auto &[type, button] : buttons) {
         sf::RectangleShape rect = sf::RectangleShape(sf::Vector2f(button.length, button.height));
         rect.setPosition(sf::Vector2f(button.pos_x, button.pos_y));
-
-        sf::Texture texture;
+        if (button.selected)
+            rect.setFillColor(sf::Color::Green);
 
         if (_assetManager->textureContains(button.content) == false) {
             _assetManager->loadTexture(button.content);

@@ -47,6 +47,8 @@ namespace rtype::client {
             // std::map<std::size_t, std::queue<std::string>> _packetReceived;
             std::size_t _maxTick;
 
+            std::chrono::time_point<std::chrono::steady_clock> _navClock;
+
             void loop();
             void sendLoop();
             void readLoop();
@@ -61,6 +63,9 @@ namespace rtype::client {
             void interpretButtonAction(int);
 
             void applyReceivedPackets(void);
+
+            void moveButtonSelection(bool left);
+            void activateSelectedButton(void);
 
         public:
             Client(std::string host, std::string port);

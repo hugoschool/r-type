@@ -11,6 +11,7 @@ fengine::scene::MenuScene::MenuScene(std::string bgTexture, bool paralax) : feng
         {static_cast<int>(MenuSceneButtons::PLAY), Button(200, 150, WINDOW_X / 2 - 100, WINDOW_Y / 2, "PLAY")});
     _buttons.insert({static_cast<int>(MenuSceneButtons::QUIT), Button(200, 150, 100, WINDOW_Y - 200, "QUIT")});
     _buttons.insert({static_cast<int>(MenuSceneButtons::PARAMS), Button(200, 150, WINDOW_X - 250, 100, "PARAMS")});
+    _buttons.at(static_cast<int>(MenuSceneButtons::PLAY)).selected = true;
 }
 
 fengine::scene::MenuScene::~MenuScene() {
