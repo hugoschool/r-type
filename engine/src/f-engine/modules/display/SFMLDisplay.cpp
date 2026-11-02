@@ -7,6 +7,7 @@
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "f-engine/modules/display/SFMLDisplayModule.hpp"
 #include "f-engine/modules/display/events/ClickEvent.hpp"
+#include "f-engine/modules/display/events/EventKey.hpp"
 #include "f-engine/modules/display/events/EventMouseButton.hpp"
 #include "f-engine/modules/display/events/IEvent.hpp"
 #include "f-engine/modules/display/events/KeyPressedEvent.hpp"
@@ -76,7 +77,7 @@ fengine::modules::display::SFMLDisplayModule::pollEvent() {
             }
         } else {
             if (event->getIf<sf::Event::JoystickButtonPressed>()) {
-                eventQueue.push(std::make_unique<ClickEvent>(EventMouseButton::Left, 0, 0));
+                eventQueue.push(std::make_unique<KeyPressedEvent>(EventKey::Enter));
             }
             float newJoystickX = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::X);
             float newJoystickY = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y);
