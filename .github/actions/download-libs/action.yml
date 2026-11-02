@@ -18,4 +18,5 @@ runs:
           libxi-dev \
           libudev-dev \
           libflac-dev \
-          libvorbis-dev
+          libvorbis-dev \
+          protobuf-compiler
