@@ -34,6 +34,8 @@ set(PROTOBUF_VERSION v36.1)
 CPMAddPackage(
     NAME protobuf
     URL https://github.com/protocolbuffers/protobuf/archive/refs/tags/${PROTOBUF_VERSION}.tar.gz
+    OPTIONS
+        "BUILD_SHARED_LIBS OFF"
 )
 
 if (ONLY_BUILD_ENGINE STREQUAL "ON")

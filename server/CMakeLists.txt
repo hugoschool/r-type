@@ -18,7 +18,6 @@ target_include_directories(
 
 target_link_libraries(
     ${BINARY} PUBLIC
-    protobuf
     freaky-engine-ecs
     freaky-engine-observer
     freaky-engine-world
@@ -26,4 +25,11 @@ target_link_libraries(
     r-type_common
     r-type_proto
     Boost::asio Boost::uuid Boost::serialization
+)
+
+# Force the compiler to use the static library
+target_link_directories(${BINARY} PUBLIC ${protobuf_BINARY_DIR})
+target_link_libraries(
+    ${BINARY} PUBLIC
+    protobuf::libprotobuf
 )
