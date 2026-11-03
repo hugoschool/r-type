@@ -1,5 +1,6 @@
 #include "f-engine/scene/AScene.hpp"
 #include "f-engine/scene/SceneObjects.hpp"
+#include <vector>
 
 fengine::scene::AScene::AScene(std::string bgTexture, bool paralax) : _eventQueue(), _buttons(), _background() {
     _background.offset = 0;
@@ -37,4 +38,8 @@ std::map<int, fengine::scene::Button> &fengine::scene::AScene::getButtons() {
 
 fengine::scene::Background &fengine::scene::AScene::getBackground() {
     return _background;
+}
+
+std::vector<fengine::scene::Text> &fengine::scene::AScene::getTexts() {
+    return _texts;
 }

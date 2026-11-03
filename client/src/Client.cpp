@@ -56,7 +56,7 @@ rtype::client::Client::Client(std::string host, std::string port)
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));
     _scenes.push_back(std::make_shared<fengine::scene::ParamScene>("./assets/test.png", false));
-    _scenes.push_back(std::make_shared<fengine::scene::GameScene>(3.0, "./assets/test.png", true));
+    _scenes.push_back(std::make_shared<fengine::scene::GameScene>(3.0, "./assets/test.png", true, _level));
     _currentScene = _scenes.front();
     _displayModule->setConfig(_clientConfig);
     _registery.componentManager.registerComponent<fengine::ecs::PositionComponent>();
@@ -175,7 +175,6 @@ void rtype::client::Client::loop() {
     // when it is fill it will start display with some ticks of difference
 
     while (!_exit) {
-        std::cout << _level << std::endl;
         _displayModule->clear();
 
         applyReceivedPackets();

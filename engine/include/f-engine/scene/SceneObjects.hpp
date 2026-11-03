@@ -29,4 +29,10 @@ namespace fengine::scene {
             float offset;
             std::string texture;
     };
+
+    struct Text {
+        std::string content;
+        float pos_x;
+        float pos_y;
+    };
 }

@@ -24,6 +24,7 @@
 #include <memory>
 #include <optional>
 #include <queue>
+#include <vector>
 
 fengine::modules::display::SFMLDisplayModule::SFMLDisplayModule(
     std::shared_ptr<fengine::asset_manager::SFMLAssetManager> assetManager)
@@ -175,9 +176,8 @@ fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule
 }
 
 void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fengine::scene::IScene> scene) {
-    std::map<int, scene::Button> &buttons = scene->getButtons();
-    scene::Background &background = scene->getBackground();
-
+    scene::Background &background =
+        scene->getBackground();// a voir comment definir cela, pour l'instant surement une shape rectangle de la taille de la window + un offset handle dans la scene elle meme
     sf::RectangleShape bg1 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
     if (_assetManager->textureContains(background.texture) == false) {
         _assetManager->loadTexture(background.texture);
@@ -195,6 +195,8 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fen
         }
     }
 
+    // boutons (a changer)
+    std::map<int, scene::Button> &buttons = scene->getButtons();
     for (auto &[type, button] : buttons) {
         sf::RectangleShape rect = sf::RectangleShape(sf::Vector2f(button.length, button.height));
         rect.setPosition(sf::Vector2f(button.pos_x, button.pos_y));
@@ -218,6 +220,18 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fen
             _window.draw(rect);
             _window.draw(text);
         }
+    }
+
+    // texts
+    std::vector<scene::Text> &texts = scene->getTexts();
+    for (auto &text : texts) {
+        sf::Text sfText(_assetManager->getFont(std::string(FONT)).value());
+
+        sfText.setString(text.content);
+        sfText.setPosition(sf::Vector2f(text.pos_x + 10, text.pos_y + 10));
+        sfText.setFillColor(sf::Color::White);
+        sfText.setCharacterSize(20);
+        _window.draw(sfText);
     }
 }
 
