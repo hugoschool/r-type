@@ -274,7 +274,7 @@ void rtype::server::Server::generateEnemies() {
     fengine::ecs::AttackComponent atk = {{.team = fengine::ecs::team::MONSTERS}, 10};
     fengine::ecs::DefenseComponent def = {150, 0};
 
-    fengine::presets::EntityType type = fengine::presets::EntityType::E_SHOOTER;
+    fengine::presets::EntityType type = (_enemyCounter % 2 == 0) ? fengine::presets::EntityType::E_RUNNER : fengine::presets::EntityType::E_SHOOTER;
     fengine::ecs::EntityTypeComponent typeComponent = {.type = type};
 
     if (_enemyCounter == 5) {
@@ -288,8 +288,15 @@ void rtype::server::Server::generateEnemies() {
         bound.bouncy = true;
         type = fengine::presets::EntityType::E_BOSS;
     } else {
-        // fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER, std::chrono::steady_clock::now()};
-        // _world._registry.componentManager.addComponent(entity, std::move(behaviour));
+        if (type == fengine::presets::EntityType::E_SHOOTER) {
+            bound.size_x = 75;
+            bound.size_y = 100;
+            vel = {0, -5, false};
+            pos.pos_x -= 50;
+            def.health -= 50;
+            fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER, std::chrono::steady_clock::now()};
+            _world._registry.componentManager.addComponent(entity, std::move(behaviour));
+        }
         _enemyCounter++;
     }
 
