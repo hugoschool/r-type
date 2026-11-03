@@ -61,6 +61,7 @@ namespace rtype::client {
             void modifyVelocity(packets::Serialization::deserialize_archive &ar);
 
             void interpretButtonAction(int);
+            bool defineColorblindValue(void);
 
             void applyReceivedPackets(void);
 

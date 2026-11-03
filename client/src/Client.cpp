@@ -324,13 +324,13 @@ void rtype::client::Client::interpretButtonAction(int button) {
             _currentScene = _scenes.front();
             break;
         case static_cast<int>(fengine::scene::ParamSceneButtons::COLORBLIND_1):
-            _clientConfig->set("colorblind", std::pair<bool, int>(true, 1));
+            _clientConfig->set("colorblind", std::pair<bool, int>(defineColorblindValue(), 1));
             break;
         case static_cast<int>(fengine::scene::ParamSceneButtons::COLORBLIND_2):
-            _clientConfig->set("colorblind", std::pair<bool, int>(true, 2));
+            _clientConfig->set("colorblind", std::pair<bool, int>(defineColorblindValue(), 2));
             break;
         case static_cast<int>(fengine::scene::ParamSceneButtons::COLORBLIND_3):
-            _clientConfig->set("colorblind", std::pair<bool, int>(true, 3));
+            _clientConfig->set("colorblind", std::pair<bool, int>(defineColorblindValue(), 3));
             break;
         case static_cast<int>(fengine::scene::ParamSceneButtons::TTS):
             auto ttsConfig = _clientConfig->get("tts");
@@ -402,4 +402,14 @@ void rtype::client::Client::activateSelectedButton() {
     }
     _displayModule->verifyConfig();
     _navClock = std::chrono::steady_clock::now();
+}
+
+bool rtype::client::Client::defineColorblindValue() {
+    bool colorblind = true;
+    auto colorblindConfig = _clientConfig->get("colorblind");
+    if (colorblindConfig && colorblindConfig->has_value()) {
+        auto value = std::any_cast<std::pair<bool, int>>(colorblindConfig.value());
+        colorblind = !value.first;
+    }
+    return colorblind;
 }

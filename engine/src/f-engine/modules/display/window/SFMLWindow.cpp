@@ -62,12 +62,7 @@ void fengine::modules::display::SFMLWindow::changeConfig(std::shared_ptr<config:
     auto colorblindConfig = config->get("colorblind");
     if (colorblindConfig && colorblindConfig->has_value()) {
         auto value = std::any_cast<std::pair<bool, int>>(colorblindConfig.value());
-        // probably change this because right now its not great to do this if
-        if (_colorblind)
-            _colorblind = false;
-        else {
-            _colorblind = value.first;
-            _assetManager->getShader(std::string(CSHADER)).value().setUniform("mode", value.second);
-        }
+        _colorblind = value.first;
+        _assetManager->getShader(std::string(CSHADER)).value().setUniform("mode", value.second);
     }
 }
