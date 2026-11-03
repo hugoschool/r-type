@@ -6,6 +6,7 @@ namespace fengine::presets {
     enum class EntityType {
         PLAYERS,
         BULLETS,
+        E_RUNNER,
         E_SHOOTER,
         E_BOSS,
     };
@@ -23,6 +24,8 @@ namespace fengine::presets {
             int offset_y;
             int cols;
             int rows;
+
+            bool reversable;
     };
 
     struct presets {
@@ -33,10 +36,11 @@ namespace fengine::presets {
 
     // There will also be an Animation Component preset
     constexpr presets EntityPresets[] = {
-        {EntityType::PLAYERS, {"./assets/textures/ships.png", "NONE", "NONE"}, {33, 17, 0, 0, 5, 1}},
+        {EntityType::PLAYERS, {"./assets/textures/ships.png", "NONE", "NONE"}, {33, 17, 0, 0, 5, 1, false}},
         {EntityType::BULLETS, {"./assets/textures/projectile.png", "./assets/sounds/ship_shot.ogg", "NONE"},
-            {50, 18, 0, 0, 2, 1}},
-        {EntityType::E_SHOOTER, {"./assets/textures/e_shooter.png", "NONE", "NONE"}, {33, 33, 0, 33, 3, 1}},
-        {EntityType::E_BOSS, {"./assets/textures/e_boss.png", "NONE", "NONE"}, {264, 143, 0, 0, 2, 4}},
+            {50, 18, 0, 0, 2, 1, true}},
+        {EntityType::E_RUNNER, {"./assets/textures/e_runner.png", "NONE", "NONE"}, {33, 33, 0, 33, 3, 1, true}},
+        {EntityType::E_SHOOTER, {"./assets/textures/e_shooter.png", "NONE", "NONE"}, {57, 47, 0, 0, 2, 1, false}},
+        {EntityType::E_BOSS, {"./assets/textures/e_boss.png", "NONE", "NONE"}, {264, 143, 0, 0, 2, 4, true}},
     };
 }

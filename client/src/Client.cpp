@@ -284,7 +284,7 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
         }
         _registery.componentManager.addComponent(entity,
             (fengine::ecs::AnimationComponent) {preset.values.length, preset.values.height, preset.values.offset_x,
-                preset.values.offset_y, preset.values.cols, preset.values.rows, false,
+                preset.values.offset_y, preset.values.cols, preset.values.rows, false, preset.values.reversable,
                 std::chrono::steady_clock::now()});
         _soundModule->playSound(std::string(preset.preset.apparition_sound));
     }
