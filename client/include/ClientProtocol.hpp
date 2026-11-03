@@ -3,6 +3,7 @@
 #include "CircularBuffer.hpp"
 #include "boost/system/detail/error_code.hpp"
 #include "packets.pb.h"
+#include "r-type/packets/PacketBuilder.hpp"
 #include <boost/asio/io_context.hpp>
 #include <cstddef>
 #include <f-engine/modules/display/events/EventKey.hpp>
@@ -29,7 +30,8 @@ namespace rtype::client {
             boost::asio::io_context _io_context;
             fnetwork::client::UDPProtocol _udp;
 
-            std::string _uuid;
+            packets::PacketBuilder _packetBuilder;
+
             std::size_t &_tick;
     };
 }

@@ -33,6 +33,7 @@ namespace rtype::packets {
             ~PacketBuilder() = default;
 
             PacketBuilderContent create(std::size_t tick, PacketType type);
+            void setUuid(std::string uuid);
 
         private:
             std::string _uuid;

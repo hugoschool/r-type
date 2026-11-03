@@ -1,8 +1,8 @@
 #pragma once
 
 #include "TickHandler.hpp"
-#include <r-type/packets/PacketBuilder.hpp>
 #include <packets.pb.h>
+#include <r-type/packets/PacketBuilder.hpp>
 
 namespace rtype::server {
     class ServerPacketBuilder : public packets::PacketBuilder {

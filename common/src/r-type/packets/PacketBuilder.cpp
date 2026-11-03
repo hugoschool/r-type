@@ -70,3 +70,7 @@ rtype::packets::PacketBuilderContent rtype::packets::PacketBuilder::create(std::
     rtype::packets::PacketType type) {
     return PacketBuilderContent(type, tick, _uuid);
 }
+
+void rtype::packets::PacketBuilder::setUuid(std::string uuid) {
+    _uuid = uuid;
+}

@@ -4,11 +4,11 @@
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/CollisionComponent.hpp"
 #include "f-engine/modules/display/window/IWindow.hpp"
+#include "packets.pb.h"
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/BehaviourComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
 #include "r-type/components/EntityTypeComponent.hpp"
-#include "packets.pb.h"
 #include "r-type/systems/BehaviouralSystem.hpp"
 #include "r-type/systems/CollisionDetectionSystem.hpp"
 #include "r-type/systems/CollisionProcessorSystem.hpp"
@@ -101,8 +101,7 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, rtype::packets
             payload->set_width(boundary->size_x);
             payload->set_height(boundary->size_y);
 
-            std::string content =
-                _packetBuilder.create(packets::TypeEntitySpawn).addHeader().addPayload(payload).get();
+            std::string content = _packetBuilder.create(packets::TypeEntitySpawn).addHeader().addPayload(payload).get();
 
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
