@@ -26,9 +26,11 @@ namespace rtype::server {
             void processMovement(shared_subscriber &subscriber);
             void processKillingSystem(shared_subscriber &subscriber);
             void processCollision(shared_subscriber &subscriber);
+            void processBehav(shared_subscriber &subscriber);
 
             void handlePositionComponent(fengine::ecs::observer::SubscriberContent &content);
             void handleVelocityComponent(fengine::ecs::observer::SubscriberContent &content);
             void handleDeadComponent(fengine::ecs::observer::SubscriberContent &content);
+            void handleEntitySpawn(fengine::ecs::observer::SubscriberContent &content);
     };
 }
