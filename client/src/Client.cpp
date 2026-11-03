@@ -307,6 +307,7 @@ void rtype::client::Client::modifyVelocity(rtype::packets::Serialization::deseri
 
 void rtype::client::Client::interpretButtonAction(int button) {
     switch (button) {
+        // Static casting here is valid as we have 2 different types of enums
         case static_cast<int>(fengine::scene::MenuSceneButtons::PLAY):
             _soundModule->playMusic("./assets/sounds/game.ogg");
             _currentScene = _scenes.back();
