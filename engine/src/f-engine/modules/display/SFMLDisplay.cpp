@@ -259,6 +259,8 @@ void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::Posi
 void fengine::modules::display::SFMLDisplayModule::animateEntity(ecs::AnimationComponent &anim,
     ecs::DrawableComponent &drawable, bool reversed) {
     if (drawable.texture_filepath.has_value()) {
+        if (!_assetManager->textureContains(drawable.texture_filepath.value()))
+            return;
         auto &t = _assetManager->getTexture(drawable.texture_filepath.value());
         if (t.has_value()) {
             drawable.shape->setTextureRect(anim.offset_x, anim.offset_y, anim.length, anim.height, reversed);

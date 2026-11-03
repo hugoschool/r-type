@@ -70,8 +70,6 @@ rtype::client::Client::Client(std::string host, std::string port)
         fengine::modules::display::EventKey::Q, fengine::modules::display::EventKey::S,
         fengine::modules::display::EventKey::D};
 
-    _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule, _camera);
-    _registery.systemManager.addSystem<fengine::ecs::AnimationSystem>(*_displayModule, _camera);
     _soundModule->playMusic("./assets/sounds/title.ogg");
     _clientConfig->set("controls", fengine::ecs::ControllableComponent(control));
     _clientConfig->resetChange();
@@ -336,6 +334,8 @@ void rtype::client::Client::interpretButtonAction(int button) {
             _currentScene = _scenes.back();
             _inputs.addElement(event::Event::PLAY);
             _startedPlaying = true;
+            _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule, _camera);
+            _registery.systemManager.addSystem<fengine::ecs::AnimationSystem>(*_displayModule, _camera);
             break;
         case static_cast<int>(fengine::scene::MenuSceneButtons::PARAMS):
             _soundModule->playMusic("./assets/sounds/params.ogg");
