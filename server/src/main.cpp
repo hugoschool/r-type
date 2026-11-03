@@ -1,8 +1,8 @@
 #include "Server.hpp"
+#include "ServerHelper.hpp"
 #include <boost/asio.hpp>
 #include <boost/asio/thread_pool.hpp>
 #include <iostream>
-#include "ServerHelper.hpp"
 
 int main(int ac, char *av[]) {
     try {
