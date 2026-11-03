@@ -332,7 +332,11 @@ void rtype::client::Client::interpretButtonAction(int button) {
             _clientConfig->set("colorblind", std::pair<bool, int>(true, 3));
             break;
         case static_cast<int>(fengine::scene::ParamSceneButtons::TTS):
-            _clientConfig->set("tts", bool(true));
+            auto ttsConfig = _clientConfig->get("tts");
+            if (ttsConfig && ttsConfig->has_value()) {
+                _clientConfig->set("tts", bool(!std::any_cast<bool>(ttsConfig.value())));
+            } else
+                _clientConfig->set("tts", bool(true));
             break;
     }
     return;
