@@ -5,16 +5,21 @@
 
 namespace rtype::server {
     class Exception : public std::exception {
+        private:
+            std::string _msg;
+
         public:
-            Exception() = delete;
-            explicit Exception(std::string msg) noexcept : _msg(msg) {};
-            ~Exception() override = default;
+            Exception(std::string msg) noexcept : _msg(msg) {};
+            ~Exception() noexcept override {};
 
             const char *what() const noexcept override {
-                return _msg.data();
+                return _msg.c_str();
             };
+    };
 
-        protected:
-            std::string _msg;
+    class ServerException : public Exception {
+        public:
+            ServerException(std::string msg) noexcept : Exception(msg) {};
+            ~ServerException() noexcept override {};
     };
 }
