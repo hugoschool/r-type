@@ -9,6 +9,7 @@ namespace fengine::scene {
         COLORBLIND_1 = 4,
         COLORBLIND_2 = 5,
         COLORBLIND_3 = 6,
+        TTS = 7,
     };
 
     class ParamScene : public AScene {

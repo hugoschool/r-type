@@ -50,7 +50,8 @@ rtype::client::Client::Client(std::string host, std::string port)
       _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>(
           std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager))),
       _registery(), _camera(0.0, 100000), _scenes(), _currentScene(), _writeThread(), _readThread(), _exit(false),
-      _inputs(1024), _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0) {
+      _inputs(1024), _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0),
+      _navClock(std::chrono::steady_clock::now()) {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));
@@ -198,10 +199,16 @@ void rtype::client::Client::loop() {
                             _inputs.addElement(event::Event::UP);
                         else if (key == value.down)
                             _inputs.addElement(event::Event::DOWN);
-                        else if (key == value.left)
+                        else if (key == value.left) {
+                            moveButtonSelection(true);
                             _inputs.addElement(event::Event::LEFT);
-                        else if (key == value.right)
+                        } else if (key == value.right) {
+                            moveButtonSelection(false);
                             _inputs.addElement(event::Event::RIGHT);
+                        } else if (key == fengine::modules::display::EventKey::Enter) {
+                            activateSelectedButton();
+                            _inputs.addElement(event::Event::SHOOT);
+                        }
                     }
                 }
                 if (event->getType() == fengine::modules::display::EventType::Click) {
@@ -259,6 +266,9 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
             (fengine::ecs::DrawableComponent) {std::string(preset.preset.texture),
                 std::make_shared<fengine::modules::display::SFMLRectangle>(payload.width, payload.height),
                 std::nullopt});
+        if (payload.entityType == fengine::presets::EntityType::PLAYERS) {
+            preset.values.offset_y += (preset.values.height * (payload.entityId + 1));
+        }
         _registery.componentManager.addComponent(entity,
             (fengine::ecs::AnimationComponent) {preset.values.length, preset.values.height, preset.values.offset_x,
                 preset.values.offset_y, preset.values.cols, preset.values.rows, false,
@@ -297,6 +307,7 @@ void rtype::client::Client::modifyVelocity(rtype::packets::Serialization::deseri
 
 void rtype::client::Client::interpretButtonAction(int button) {
     switch (button) {
+        // Static casting here is valid as we have 2 different types of enums
         case static_cast<int>(fengine::scene::MenuSceneButtons::PLAY):
             _soundModule->playMusic("./assets/sounds/game.ogg");
             _currentScene = _scenes.back();
@@ -313,14 +324,92 @@ void rtype::client::Client::interpretButtonAction(int button) {
             _currentScene = _scenes.front();
             break;
         case static_cast<int>(fengine::scene::ParamSceneButtons::COLORBLIND_1):
-            _clientConfig->set("colorblind", std::pair<bool, int>(true, 1));
+            _clientConfig->set("colorblind", std::pair<bool, int>(defineColorblindValue(), 1));
             break;
         case static_cast<int>(fengine::scene::ParamSceneButtons::COLORBLIND_2):
-            _clientConfig->set("colorblind", std::pair<bool, int>(true, 2));
+            _clientConfig->set("colorblind", std::pair<bool, int>(defineColorblindValue(), 2));
             break;
         case static_cast<int>(fengine::scene::ParamSceneButtons::COLORBLIND_3):
-            _clientConfig->set("colorblind", std::pair<bool, int>(true, 3));
+            _clientConfig->set("colorblind", std::pair<bool, int>(defineColorblindValue(), 3));
+            break;
+        case static_cast<int>(fengine::scene::ParamSceneButtons::TTS):
+            auto ttsConfig = _clientConfig->get("tts");
+            if (ttsConfig && ttsConfig->has_value()) {
+                _clientConfig->set("tts", bool(!std::any_cast<bool>(ttsConfig.value())));
+            } else
+                _clientConfig->set("tts", bool(true));
             break;
     }
     return;
+}
+
+void rtype::client::Client::moveButtonSelection(bool left) {
+    std::chrono::time_point<std::chrono::steady_clock> elapsedTime = std::chrono::steady_clock::now();
+    std::chrono::duration<double> time = elapsedTime - _navClock;
+    std::chrono::milliseconds var(200);
+
+    if (time < var)
+        return;
+
+    auto &map = _currentScene->getButtons();
+
+    if (map.empty())
+        return;
+    auto ttsConfig = _clientConfig->get("tts");
+    bool ttsSet = false;
+    if (ttsConfig && ttsConfig->has_value()) {
+        auto tts = std::any_cast<bool>(ttsConfig.value());
+        ttsSet = tts;
+    }
+    for (auto &[val, button] : map) {
+        if (button.selected) {
+            button.selected = false;
+            try {
+                if (left) {
+                    map.at(val + 1).selected = true;
+                    if (ttsSet)
+                        _soundModule->playSound(map.at(val + 1).tts);
+                } else {
+                    map.at(val - 1).selected = true;
+                    if (ttsSet)
+                        _soundModule->playSound(map.at(val - 1).tts);
+                }
+            } catch (std::exception &) { button.selected = true; }
+            break;
+        }
+    }
+    _navClock = std::chrono::steady_clock::now();
+}
+
+void rtype::client::Client::activateSelectedButton() {
+    std::chrono::time_point<std::chrono::steady_clock> elapsedTime = std::chrono::steady_clock::now();
+    std::chrono::duration<double> time = elapsedTime - _navClock;
+    std::chrono::milliseconds var(200);
+
+    if (time < var)
+        return;
+
+    auto &map = _currentScene->getButtons();
+
+    if (map.empty())
+        return;
+
+    for (auto &[val, button] : map) {
+        if (button.selected) {
+            interpretButtonAction(val);
+            break;
+        }
+    }
+    _displayModule->verifyConfig();
+    _navClock = std::chrono::steady_clock::now();
+}
+
+bool rtype::client::Client::defineColorblindValue() {
+    bool colorblind = true;
+    auto colorblindConfig = _clientConfig->get("colorblind");
+    if (colorblindConfig && colorblindConfig->has_value()) {
+        auto value = std::any_cast<std::pair<bool, int>>(colorblindConfig.value());
+        colorblind = !value.first;
+    }
+    return colorblind;
 }
