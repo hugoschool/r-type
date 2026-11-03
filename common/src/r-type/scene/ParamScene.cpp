@@ -8,10 +8,14 @@ fengine::scene::ParamScene::ParamScene(std::string bgTexture, bool paralax)
     _background.texture = bgTexture;
     _background.paralax = paralax;
 
-    _buttons.insert({static_cast<int>(ParamSceneButtons::MENU), Button(200, 150, WINDOW_X - 250, 100, "MENU", "./assets/sounds/menu.ogg")});
-    _buttons.insert({static_cast<int>(ParamSceneButtons::COLORBLIND_1), Button(200, 150, 100, 100, "Protanopia", "./assets/sounds/protanopia.ogg")});
-    _buttons.insert({static_cast<int>(ParamSceneButtons::COLORBLIND_2), Button(200, 150, 100, 300, "Deuteranopia", "./assets/sounds/deuteranopia.ogg")});
-    _buttons.insert({static_cast<int>(ParamSceneButtons::COLORBLIND_3), Button(200, 150, 100, 500, "Tritanopia", "./assets/sounds/tritanopia.ogg")});
+    _buttons.insert({static_cast<int>(ParamSceneButtons::MENU),
+        Button(200, 150, WINDOW_X - 250, 100, "MENU", "./assets/sounds/menu.ogg")});
+    _buttons.insert({static_cast<int>(ParamSceneButtons::COLORBLIND_1),
+        Button(200, 150, 100, 100, "Protanopia", "./assets/sounds/protanopia.ogg")});
+    _buttons.insert({static_cast<int>(ParamSceneButtons::COLORBLIND_2),
+        Button(200, 150, 100, 300, "Deuteranopia", "./assets/sounds/deuteranopia.ogg")});
+    _buttons.insert({static_cast<int>(ParamSceneButtons::COLORBLIND_3),
+        Button(200, 150, 100, 500, "Tritanopia", "./assets/sounds/tritanopia.ogg")});
     _buttons.insert({static_cast<int>(ParamSceneButtons::TTS), Button(200, 150, 500, 500, "TTS", "NONE")});
     _buttons.at(static_cast<int>(ParamSceneButtons::MENU)).selected = true;
 }

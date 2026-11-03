@@ -6,8 +6,7 @@ namespace fengine::scene {
     class Button {
         public:
             Button(float l, float h, float x, float y, std::string str, std::string ttsPath)
-                : length(l), height(h), pos_x(x), pos_y(y), content(str),
-                selected(false), tts(ttsPath) {};
+                : length(l), height(h), pos_x(x), pos_y(y), content(str), selected(false), tts(ttsPath) {};
             ~Button() {};
 
             float length;

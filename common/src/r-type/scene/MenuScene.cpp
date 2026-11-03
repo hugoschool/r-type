@@ -7,10 +7,12 @@ fengine::scene::MenuScene::MenuScene(std::string bgTexture, bool paralax) : feng
     _background.texture = bgTexture;
     _background.paralax = paralax;
 
-    _buttons.insert(
-        {static_cast<int>(MenuSceneButtons::PLAY), Button(200, 150, WINDOW_X / 2 - 100, WINDOW_Y / 2, "PLAY", "./assets/sounds/play.ogg")});
-    _buttons.insert({static_cast<int>(MenuSceneButtons::QUIT), Button(200, 150, 100, WINDOW_Y - 200, "QUIT", "./assets/sounds/quit.ogg")});
-    _buttons.insert({static_cast<int>(MenuSceneButtons::PARAMS), Button(200, 150, WINDOW_X - 250, 100, "PARAMS", "./assets/sounds/params_tts.ogg")});
+    _buttons.insert({static_cast<int>(MenuSceneButtons::PLAY),
+        Button(200, 150, WINDOW_X / 2 - 100, WINDOW_Y / 2, "PLAY", "./assets/sounds/play.ogg")});
+    _buttons.insert({static_cast<int>(MenuSceneButtons::QUIT),
+        Button(200, 150, 100, WINDOW_Y - 200, "QUIT", "./assets/sounds/quit.ogg")});
+    _buttons.insert({static_cast<int>(MenuSceneButtons::PARAMS),
+        Button(200, 150, WINDOW_X - 250, 100, "PARAMS", "./assets/sounds/params_tts.ogg")});
     _buttons.at(static_cast<int>(MenuSceneButtons::PLAY)).selected = true;
 }
 

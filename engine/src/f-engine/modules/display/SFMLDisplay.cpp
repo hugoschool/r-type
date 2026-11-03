@@ -173,9 +173,7 @@ fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule
 
 void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fengine::scene::IScene> scene) {
     std::map<int, scene::Button> &buttons = scene->getButtons();
-    scene::Background &background =
-        scene
-            ->getBackground();
+    scene::Background &background = scene->getBackground();
 
     sf::RectangleShape bg1 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
     if (_assetManager->textureContains(background.texture) == false) {

@@ -360,7 +360,7 @@ void rtype::client::Client::moveButtonSelection(bool left) {
         auto tts = std::any_cast<bool>(ttsConfig.value());
         ttsSet = tts;
     }
-    for (auto &[val, button]: map) {
+    for (auto &[val, button] : map) {
         if (button.selected) {
             button.selected = false;
             try {
@@ -373,9 +373,7 @@ void rtype::client::Client::moveButtonSelection(bool left) {
                     if (ttsSet)
                         _soundModule->playSound(map.at(val - 1).tts);
                 }
-            } catch (std::exception &) {
-                button.selected = true;
-            }
+            } catch (std::exception &) { button.selected = true; }
             break;
         }
     }
@@ -395,7 +393,7 @@ void rtype::client::Client::activateSelectedButton() {
     if (map.empty())
         return;
 
-    for (auto &[val, button]: map) {
+    for (auto &[val, button] : map) {
         if (button.selected) {
             interpretButtonAction(val);
             break;
