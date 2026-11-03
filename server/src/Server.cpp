@@ -17,6 +17,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <ctime>
 #include <f-engine/ecs/Entity.hpp>
 #include <f-engine/ecs/components/BoundaryComponent.hpp>
 #include <f-engine/ecs/components/ControllableComponent.hpp>
@@ -58,6 +59,8 @@ rtype::server::Server::Server(std::uint32_t port)
         _io_context.stop();
         _stop = true;
     });
+
+    std::srand(std::time(nullptr));
 
     _world._registry.componentManager.registerComponent<fengine::ecs::PositionComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
