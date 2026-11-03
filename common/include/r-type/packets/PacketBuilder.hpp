@@ -11,7 +11,7 @@ namespace rtype::packets {
             PacketBuilderContent(PacketType type, std::size_t tick, std::string uuid);
             ~PacketBuilderContent() = default;
 
-            PacketBuilderContent &addHeader();
+            PacketBuilderContent &addHeader(rtype::packets::PacketPriority);
 
             template <class T>
             PacketBuilderContent &addPayload(T payload) {

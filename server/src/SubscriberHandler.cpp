@@ -107,8 +107,7 @@ void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observe
     packets::EntityDied payload = {
         .entityId = dead.entityId,
     };
-
-    std::string str = _packetBuilder.create(packets::PacketType::EntityDied).addHeader().addPayload(payload).get();
+    std::string str = _packetBuilder.create(packets::PacketType::EntityDied).addHeader(packets::PacketPriority::High).addPayload(payload).get();
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
@@ -124,7 +123,7 @@ void rtype::server::SubscriberHandler::handleVelocityComponent(fengine::ecs::obs
         .velocity = packets::Vector2D(velocity.vel_x, velocity.vel_y),
     };
     std::string str =
-        _packetBuilder.create(packets::PacketType::EntityVelocityChange).addHeader().addPayload(payload).get();
+        _packetBuilder.create(packets::PacketType::EntityVelocityChange).addHeader(packets::PacketPriority::Low).addPayload(payload).get();
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
@@ -140,7 +139,7 @@ void rtype::server::SubscriberHandler::handlePositionComponent(fengine::ecs::obs
         .coordinates = packets::Vector2D(position.pos_x, position.pos_y),
     };
 
-    std::string str = _packetBuilder.create(packets::PacketType::EntityMove).addHeader().addPayload(payload).get();
+    std::string str = _packetBuilder.create(packets::PacketType::EntityMove).addHeader(packets::PacketPriority::Low).addPayload(payload).get();
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
