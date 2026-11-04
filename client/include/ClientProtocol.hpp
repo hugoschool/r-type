@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CircularBuffer.hpp"
+#include "ClientPacketBuilder.hpp"
 #include "boost/system/detail/error_code.hpp"
 #include "r-type/event/PlayerEvent.hpp"
 #include <boost/asio/io_context.hpp>
@@ -29,7 +30,8 @@ namespace rtype::client {
             boost::asio::io_context _io_context;
             fnetwork::client::UDPProtocol _udp;
 
-            std::string _uuid;
+            ClientPacketBuilder _packetBuilder;
+
             std::size_t &_tick;
     };
 }
