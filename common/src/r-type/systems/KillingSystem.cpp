@@ -50,14 +50,13 @@ void fengine::ecs::KillingSystem::update(Registry &manager) {
                     manager.componentManager.addComponent(e, std::move(newDef));
                     manager.componentManager.addComponent(e, std::move(newType));
                     auto bonusType = static_cast<presets::BonusTypes>(std::rand() % 5);
-                    manager.componentManager.addComponent(e, (BonusComponent){bonusType});
+                    manager.componentManager.addComponent(e, (BonusComponent) {bonusType});
 
                     newContent.add<PositionComponent>(newPos);
                     newContent.add<VelocityComponent>(newVel);
                     newContent.add<BoundaryComponent>(newBound);
                     newContent.add<EntityTypeComponent>(newType);
                     updateSubscribers(newContent);
-
                 }
                 DeadComponent deadComp = {entity.value().getId()};
                 manager.entityManager.killEntity(entity.value());

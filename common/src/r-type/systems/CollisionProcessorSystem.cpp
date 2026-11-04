@@ -55,8 +55,7 @@ void fengine::ecs::CollisionProcessorSystem::update(Registry &manager) {
         auto &type = types[i];
         auto &otherType = types[j];
 
-        if (type.value().type == presets::EntityType::BONUS
-            || otherType.value().type == presets::EntityType::BONUS) {
+        if (type.value().type == presets::EntityType::BONUS || otherType.value().type == presets::EntityType::BONUS) {
             if (verifyBonusCollision(type.value(), otherType.value())) {
                 playerBonusOther.value()._bonusDuration = std::chrono::steady_clock::now();
                 playerBonusOther.value().type = bonuses[i].value().type;
@@ -80,9 +79,10 @@ void fengine::ecs::CollisionProcessorSystem::update(Registry &manager) {
     }
 }
 
-bool fengine::ecs::CollisionProcessorSystem::verifyBonusCollision(EntityTypeComponent &type, EntityTypeComponent &otherType) {
+bool fengine::ecs::CollisionProcessorSystem::verifyBonusCollision(EntityTypeComponent &type,
+    EntityTypeComponent &otherType) {
     if ((type.type == presets::EntityType::BONUS && otherType.type == presets::EntityType::PLAYERS)) {
-            return true;
+        return true;
     }
     return false;
 }

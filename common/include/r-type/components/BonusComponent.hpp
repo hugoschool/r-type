@@ -4,6 +4,6 @@
 
 namespace fengine::ecs {
     struct BonusComponent {
-        presets::BonusTypes type;
+            presets::BonusTypes type;
     };
 }

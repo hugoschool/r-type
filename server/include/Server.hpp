@@ -65,7 +65,8 @@ namespace rtype::server {
             void userLoginPacket(std::size_t tick, std::string uuid);
             void handlePlayerEvents(packets::Serialization::deserialize_archive &ar, packets::PacketHeader &header);
             void handleVelocityChanges(float &velocity, float counterVelocity, float value);
-            void handlePlayerShots(fengine::ecs::PositionComponent &pos, fengine::ecs::AttackComponent &att, fengine::ecs::PlayerBonusComponent &bonus, float velX, float velY);
+            void handlePlayerShots(fengine::ecs::PositionComponent &pos, fengine::ecs::AttackComponent &att,
+                fengine::ecs::PlayerBonusComponent &bonus, float velX, float velY);
             void resetPlayerBonus(fengine::ecs::PlayerBonusComponent &);
 
             std::chrono::steady_clock::time_point _resendClock;
