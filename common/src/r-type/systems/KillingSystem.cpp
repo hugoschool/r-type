@@ -37,7 +37,7 @@ void fengine::ecs::KillingSystem::update(Registry &manager) {
 
                     observer::SubscriberContent newContent(e.getId());
                     PositionComponent newPos = {pos.value().pos_x, pos.value().pos_y, true};
-                    VelocityComponent newVel = {0, 0, false};
+                    VelocityComponent newVel = {-1, 0, false};
                     BoundaryComponent newBound = {30, 30, false, true, std::nullopt};
                     AttackComponent newAtk = {{.team = team::MONSTERS}, 0, std::nullopt};
                     DefenseComponent newDef = {1, 0};
