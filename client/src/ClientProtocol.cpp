@@ -10,7 +10,7 @@
 
 rtype::client::ClientProtocol::ClientProtocol(rtype::client::CircularBuffer<PlayerEvent> &inputs, std::string host,
     std::string port, std::size_t &tick)
-    : _inputs(inputs), _io_context(), _udp(_io_context, host, std::stoi(port)), _uuid(), _tick(tick) {
+    : _inputs(inputs), _io_context(), _udp(_io_context, host, std::stoi(port)), _packetBuilder(), _tick(tick) {
     _udp.connect();
     sendConnectionPackets();
 }
@@ -21,20 +21,9 @@ rtype::client::ClientProtocol::~ClientProtocol() {
 
 void rtype::client::ClientProtocol::sendConnectionPackets() {
     {
-        std::stringstream ss;
+        std::string content = _packetBuilder.create(packets::PacketType::LoginRequest).addHeader().get();
 
-        packets::PacketHeader header = {
-            .type = packets::PacketType::LoginRequest,
-            .size = 0,
-            .tick = _tick,
-            .playerUuid = "",
-        };
-
-        auto ar = packets::Serialization::createSerializeArchive(ss);
-        packets::Serialization::serialize(ar, header);
-
-        std::string send = ss.str();
-        _udp.send(send);
+        _udp.send(content);
     }
 
     {
@@ -48,9 +37,11 @@ void rtype::client::ClientProtocol::sendConnectionPackets() {
 
         packets::Serialization::deserialize(ar, header);
         packets::Serialization::deserialize(ar, payload);
-        _uuid = payload.uuid;
 
-        std::cout << "UUID: " << _uuid << std::endl;
+        std::string uuid = payload.uuid;
+        _packetBuilder.setUuid(uuid);
+
+        std::cout << "UUID: " << uuid << std::endl;
     }
 }
 
@@ -61,42 +52,18 @@ std::string rtype::client::ClientProtocol::read(boost::system::error_code &error
 void rtype::client::ClientProtocol::sendMessage() {
     try {
         if (_inputs.canRead()) {
-            std::stringstream ss;
-
-            packets::PacketHeader header = {
-                .type = packets::PacketType::PlayerEvent,
-                .size = sizeof(packets::PlayerEvent),
-                .tick = _tick,
-                .playerUuid = "",
-            };
-            header.setUuid(_uuid);
-
             rtype::event::Event input = _inputs.getElem();
-            packets::PlayerEvent newInput = {input};
+            packets::PlayerEvent payload = {input};
 
-            auto ar = packets::Serialization::createSerializeArchive(ss);
-            packets::Serialization::serialize(ar, header);
-            packets::Serialization::serialize(ar, newInput);
+            std::string content =
+                _packetBuilder.create(packets::PacketType::PlayerEvent).addHeader().addPayload(payload).get();
 
-            std::string buf = ss.str();
-            _udp.send(buf);
+            _udp.send(content);
         } else {
             // Send Ack if nothing else
-            std::stringstream ss;
+            std::string content = _packetBuilder.create(packets::PacketType::Ack).addHeader().get();
 
-            packets::PacketHeader header = {
-                .type = packets::PacketType::Ack,
-                .size = 0,
-                .tick = _tick,
-                .playerUuid = "",
-            };
-            header.setUuid(_uuid);
-
-            auto ar = packets::Serialization::createSerializeArchive(ss);
-            packets::Serialization::serialize(ar, header);
-
-            std::string buf = ss.str();
-            _udp.send(buf);
+            _udp.send(content);
         }
     } catch (std::exception &) {}
 }
