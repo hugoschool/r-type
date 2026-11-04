@@ -1,6 +1,8 @@
 #pragma once
 
+#include <chrono>
 #include <cstddef>
+#include <optional>
 
 namespace fengine::ecs {
     enum class team {
@@ -16,5 +18,7 @@ namespace fengine::ecs {
     struct AttackComponent {
             union relation relation;
             float damage;
+
+            std::optional<std::chrono::time_point<std::chrono::steady_clock>> _shootCooldown;
     };
 }

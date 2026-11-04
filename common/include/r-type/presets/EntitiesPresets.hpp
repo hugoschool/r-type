@@ -9,6 +9,7 @@ namespace fengine::presets {
         E_RUNNER,
         E_SHOOTER,
         E_BOSS,
+        BONUS,
     };
 
     struct EntityPreset {
@@ -42,5 +43,6 @@ namespace fengine::presets {
         {EntityType::E_RUNNER, {"./assets/textures/e_runner.png", "NONE", "NONE"}, {33, 33, 0, 33, 3, 1, true}},
         {EntityType::E_SHOOTER, {"./assets/textures/e_shooter.png", "NONE", "NONE"}, {57, 47, 0, 0, 2, 1, false}},
         {EntityType::E_BOSS, {"./assets/textures/e_boss.png", "NONE", "NONE"}, {264, 143, 0, 0, 2, 4, true}},
+        {EntityType::BONUS, {"./assets/textures/bonus.png", "NONE", "NONE"}, {17, 18, 0, 0, 12, 1, true}},
     };
 }

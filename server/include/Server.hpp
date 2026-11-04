@@ -4,6 +4,9 @@
 #include "ServerProtocol.hpp"
 #include "SubscriberHandler.hpp"
 #include "TickHandler.hpp"
+#include "f-engine/ecs/components/PositionComponent.hpp"
+#include "r-type/components/AttackComponent.hpp"
+#include "r-type/components/PlayerBonusComponent.hpp"
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/signal_set.hpp>
 #include <boost/asio/thread_pool.hpp>
@@ -62,6 +65,9 @@ namespace rtype::server {
             void userLoginPacket(std::size_t tick, std::string uuid);
             void handlePlayerEvents(packets::Serialization::deserialize_archive &ar, packets::PacketHeader &header);
             void handleVelocityChanges(float &velocity, float counterVelocity, float value);
+            void handlePlayerShots(fengine::ecs::PositionComponent &pos, fengine::ecs::AttackComponent &att,
+                fengine::ecs::PlayerBonusComponent &bonus, float velX, float velY);
+            void resetPlayerBonus(fengine::ecs::PlayerBonusComponent &);
 
             std::chrono::steady_clock::time_point _resendClock;
             void checkResend();

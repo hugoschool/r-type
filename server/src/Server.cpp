@@ -6,9 +6,12 @@
 #include "f-engine/modules/display/window/IWindow.hpp"
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/BehaviourComponent.hpp"
+#include "r-type/components/BonusComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
 #include "r-type/components/EntityTypeComponent.hpp"
+#include "r-type/components/PlayerBonusComponent.hpp"
 #include "r-type/event/PlayerEvent.hpp"
+#include "r-type/presets/BonusTypes.hpp"
 #include "r-type/presets/EntitiesPresets.hpp"
 #include "r-type/systems/BehaviouralSystem.hpp"
 #include "r-type/systems/CollisionDetectionSystem.hpp"
@@ -70,6 +73,8 @@ rtype::server::Server::Server(std::uint32_t port)
     _world._registry.componentManager.registerComponent<fengine::ecs::BehaviourComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::CollisionComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::EntityTypeComponent>();
+    _world._registry.componentManager.registerComponent<fengine::ecs::BonusComponent>();
+    _world._registry.componentManager.registerComponent<fengine::ecs::PlayerBonusComponent>();
 
     _world._registry.systemManager.addSystem<fengine::ecs::MovementSystem>(_world._camera);
     _world._registry.systemManager.addSystem<fengine::ecs::CollisionDetectionSystem>();
@@ -200,7 +205,10 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
         return;
 
     auto &vel = _world._registry.componentManager.getComponents<fengine::ecs::VelocityComponent>()[data.entityId];
+    auto &playerBonus =
+        _world._registry.componentManager.getComponents<fengine::ecs::PlayerBonusComponent>()[data.entityId];
 
+    resetPlayerBonus(playerBonus.value());
     if (!vel.has_value())
         return;
 
@@ -212,37 +220,36 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
         }
         return;
     }
-
+    float velocityValue = playerBonus.value().type == fengine::presets::BonusTypes::THE_SPEED ? 15 : 10;
     switch (event.event) {
         case event::Event::UP:
-            handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, -10);
+            handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, -velocityValue);
             break;
         case event::Event::LEFT:
-            handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, -10);
+            handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, -velocityValue);
             break;
         case event::Event::DOWN:
-            handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, 10);
+            handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, velocityValue);
             break;
         case event::Event::RIGHT:
-            handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, 10);
+            handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, velocityValue);
             break;
         case event::Event::SHOOT: {
-            fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
             fengine::ecs::PositionComponent &pos =
                 _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>()[data.entityId]
                     .value();
             fengine::ecs::AttackComponent &att =
                 _world._registry.componentManager.getComponents<fengine::ecs::AttackComponent>()[data.entityId].value();
-            _world._registry.componentManager.addComponent(entity,
-                (fengine::ecs::PositionComponent) {pos.pos_x, pos.pos_y, true});
-            _world._registry.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent) {30, 0, false});
-            _world._registry.componentManager.addComponent(entity,
-                (fengine::ecs::BoundaryComponent) {10, 5, false, true, std::nullopt});
-            _world._registry.componentManager.addComponent(entity,
-                (fengine::ecs::AttackComponent) {{.team = fengine::ecs::team::ALLIES}, att.damage});
-            _world._registry.componentManager.addComponent(entity, (fengine::ecs::DefenseComponent) {1, 0});
-            _world._registry.componentManager.addComponent(entity,
-                (fengine::ecs::EntityTypeComponent) {fengine::presets::EntityType::BULLETS});
+            std::chrono::duration<double> duration = std::chrono::steady_clock::now() - att._shootCooldown.value();
+            if (duration > std::chrono::milliseconds(150)
+                || playerBonus.value().type == fengine::presets::BonusTypes::RAPID_FIRE) {
+                if (playerBonus.value().type == fengine::presets::BonusTypes::TWIN_FIRE) {
+                    handlePlayerShots(pos, att, playerBonus.value(), 30, 2);
+                    handlePlayerShots(pos, att, playerBonus.value(), 30, -2);
+                } else
+                    handlePlayerShots(pos, att, playerBonus.value(), 30, 0);
+                att._shootCooldown.value() = std::chrono::steady_clock::now();
+            }
             break;
         }
         case event::Event::PLAY: {
@@ -261,6 +268,31 @@ void rtype::server::Server::handleVelocityChanges(float &velocity, float counter
     }
 }
 
+void rtype::server::Server::handlePlayerShots(fengine::ecs::PositionComponent &pos, fengine::ecs::AttackComponent &att,
+    fengine::ecs::PlayerBonusComponent &bonus, float velX, float velY) {
+    fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
+    _world._registry.componentManager.addComponent(entity,
+        (fengine::ecs::PositionComponent) {pos.pos_x, pos.pos_y, true});
+    _world._registry.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent) {velX, velY, false});
+    _world._registry.componentManager.addComponent(entity,
+        (fengine::ecs::BoundaryComponent) {10, 5, false, true, std::nullopt});
+    _world._registry.componentManager.addComponent(entity,
+        (fengine::ecs::AttackComponent) {{.team = fengine::ecs::team::ALLIES},
+            bonus.type == fengine::presets::BonusTypes::THE_FORCE ? att.damage * 2 : att.damage, std::nullopt});
+    _world._registry.componentManager.addComponent(entity, (fengine::ecs::DefenseComponent) {1, 0});
+    _world._registry.componentManager.addComponent(entity,
+        (fengine::ecs::EntityTypeComponent) {fengine::presets::EntityType::BULLETS});
+}
+
+void rtype::server::Server::resetPlayerBonus(fengine::ecs::PlayerBonusComponent &playerBonus) {
+    if (playerBonus.type != fengine::presets::BonusTypes::NONE) {
+        std::chrono::duration<double> duration = std::chrono::steady_clock::now() - playerBonus._bonusDuration;
+        if (duration > std::chrono::seconds(15)) {
+            playerBonus.type = fengine::presets::BonusTypes::NONE;
+        }
+    }
+}
+
 void rtype::server::Server::generateEnemies() {
     std::chrono::steady_clock::time_point elapsedTime = std::chrono::steady_clock::now();
     std::chrono::duration<double> spawnTime = elapsedTime - _spawnClock;
@@ -268,18 +300,16 @@ void rtype::server::Server::generateEnemies() {
 
     if (spawnTime < var)
         return;
-
     fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
 
     fengine::ecs::PositionComponent pos = {WINDOW_X, static_cast<float>(rand() % (WINDOW_Y - 100) + 100), false};
     fengine::ecs::VelocityComponent vel = {-5, 0, false};
     fengine::ecs::BoundaryComponent bound = {100, 50, false, true, std::nullopt};
-    fengine::ecs::AttackComponent atk = {{.team = fengine::ecs::team::MONSTERS}, 10};
+    fengine::ecs::AttackComponent atk = {{.team = fengine::ecs::team::MONSTERS}, 10, std::nullopt};
     fengine::ecs::DefenseComponent def = {150, 0};
 
     fengine::presets::EntityType type =
         (_enemyCounter % 2 == 0) ? fengine::presets::EntityType::E_RUNNER : fengine::presets::EntityType::E_SHOOTER;
-    fengine::ecs::EntityTypeComponent typeComponent = {.type = type};
 
     if (_enemyCounter == 5) {
         _level += 1;
@@ -305,6 +335,7 @@ void rtype::server::Server::generateEnemies() {
         _enemyCounter++;
     }
 
+    fengine::ecs::EntityTypeComponent typeComponent = {.type = type};
     _world._registry.componentManager.addComponent(entity, std::move(pos));
     _world._registry.componentManager.addComponent(entity, std::move(vel));
     _world._registry.componentManager.addComponent(entity, std::move(bound));
@@ -372,10 +403,13 @@ void rtype::server::Server::tickThreadRun() {
 
             fengine::ecs::PositionComponent pos = {50, 50, false};
             fengine::ecs::VelocityComponent vel = {0, 0, true};
-            fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10};
+            fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10,
+                std::chrono::steady_clock::now()};
             fengine::ecs::DefenseComponent def = {100, 0};
             fengine::ecs::BoundaryComponent bound = {100, 50, false, true, std::nullopt};
             fengine::ecs::EntityTypeComponent type = {fengine::presets::EntityType::PLAYERS};
+            fengine::ecs::PlayerBonusComponent bonus = {fengine::presets::BonusTypes::NONE,
+                std::chrono::steady_clock::now()};
 
             _world._registry.componentManager.addComponent(entity.value(), std::move(pos));
             _world._registry.componentManager.addComponent(entity.value(), std::move(vel));
@@ -383,6 +417,7 @@ void rtype::server::Server::tickThreadRun() {
             _world._registry.componentManager.addComponent(entity.value(), std::move(def));
             _world._registry.componentManager.addComponent(entity.value(), std::move(bound));
             _world._registry.componentManager.addComponent(entity.value(), std::move(type));
+            _world._registry.componentManager.addComponent(entity.value(), std::move(bonus));
         }
         while (!_tickHandler.getMessageQueue().empty()) {
             std::string msg = _tickHandler.getMessageQueue().pop();
