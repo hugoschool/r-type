@@ -31,8 +31,8 @@ namespace fengine::scene {
     };
 
     struct Text {
-        std::string content;
-        float pos_x;
-        float pos_y;
+            std::string content;
+            float pos_x;
+            float pos_y;
     };
 }

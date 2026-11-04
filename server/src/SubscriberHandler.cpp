@@ -137,8 +137,7 @@ void rtype::server::SubscriberHandler::handleEntitySpawn(fengine::ecs::observer:
     fengine::ecs::EntityTypeComponent type;
     fengine::ecs::BoundaryComponent bound;
 
-    if (!content.existsAndRetrieve(type)
-        || !content.existsAndRetrieve(bound))
+    if (!content.existsAndRetrieve(type) || !content.existsAndRetrieve(bound))
         return;
 
     packets::EntitySpawn payload = {

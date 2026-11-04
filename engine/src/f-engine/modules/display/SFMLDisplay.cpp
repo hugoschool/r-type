@@ -59,7 +59,7 @@ fengine::modules::display::SFMLDisplayModule::pollEvent() {
                 }
             }
             if (const sf::Event::KeyReleased *key = event->getIf<sf::Event::KeyReleased>()) {
-                if (key != nullptr  && _keyPressed.contains(key->code) == true) {
+                if (key != nullptr && _keyPressed.contains(key->code) == true) {
                     _keyPressed.erase(key->code);
                 }
             }
@@ -76,7 +76,8 @@ fengine::modules::display::SFMLDisplayModule::pollEvent() {
                         break;
                 }
                 if (mouseButton.has_value()) {
-                    eventQueue.push(std::make_unique<ClickEvent>(mouseButton.value(), mouse->position.x, mouse->position.y));
+                    eventQueue.push(
+                        std::make_unique<ClickEvent>(mouseButton.value(), mouse->position.x, mouse->position.y));
                 }
             }
         } else {
@@ -177,7 +178,8 @@ fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule
 
 void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fengine::scene::IScene> scene) {
     scene::Background &background =
-        scene->getBackground();// a voir comment definir cela, pour l'instant surement une shape rectangle de la taille de la window + un offset handle dans la scene elle meme
+        scene
+            ->getBackground();// a voir comment definir cela, pour l'instant surement une shape rectangle de la taille de la window + un offset handle dans la scene elle meme
     sf::RectangleShape bg1 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
     if (_assetManager->textureContains(background.texture) == false) {
         _assetManager->loadTexture(background.texture);

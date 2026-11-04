@@ -277,7 +277,8 @@ void rtype::server::Server::generateEnemies() {
     fengine::ecs::AttackComponent atk = {{.team = fengine::ecs::team::MONSTERS}, 10};
     fengine::ecs::DefenseComponent def = {150, 0};
 
-    fengine::presets::EntityType type = (_enemyCounter % 2 == 0) ? fengine::presets::EntityType::E_RUNNER : fengine::presets::EntityType::E_SHOOTER;
+    fengine::presets::EntityType type =
+        (_enemyCounter % 2 == 0) ? fengine::presets::EntityType::E_RUNNER : fengine::presets::EntityType::E_SHOOTER;
     fengine::ecs::EntityTypeComponent typeComponent = {.type = type};
 
     if (_enemyCounter == 5) {
@@ -297,7 +298,8 @@ void rtype::server::Server::generateEnemies() {
             vel = {0, -5, false};
             pos.pos_x -= 50;
             def.health -= 50;
-            fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER, std::chrono::steady_clock::now()};
+            fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER,
+                std::chrono::steady_clock::now()};
             _world._registry.componentManager.addComponent(entity, std::move(behaviour));
         }
         _enemyCounter++;
@@ -348,8 +350,7 @@ void rtype::server::Server::checkResend() {
         .level = _level,
     };
 
-    std::string content =
-        _packetBuilder.create(packets::PacketType::Level).addHeader().addPayload(payload).get();
+    std::string content = _packetBuilder.create(packets::PacketType::Level).addHeader().addPayload(payload).get();
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(content);
 
