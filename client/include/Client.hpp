@@ -23,6 +23,7 @@
 #include <vector>
 
 constexpr std::size_t INTERPOLATION_TICK = 5;
+constexpr std::size_t CIRCULAR_BUFFER_SIZE = 1024;
 
 namespace rtype::client {
     class Client {
@@ -41,6 +42,7 @@ namespace rtype::client {
             bool _exit;
             rtype::client::CircularBuffer<rtype::event::Event> _inputs;
             std::string _uuid;
+            rtype::client::CircularBuffer<size_t> _acks;
             ClientProtocol _protocol;
             std::shared_ptr<fengine::config::IConfig> _clientConfig;
             std::array<std::pair<std::size_t, std::queue<std::string>>, 10> _packetReceived;

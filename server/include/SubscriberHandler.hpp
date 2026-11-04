@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ClientHandler.hpp"
+#include "PriorityHandler.hpp"
 #include "f-engine/ecs/observer/SubscriberContent.hpp"
 #include <cstddef>
 #include <f-engine/ecs/Registry.hpp>
@@ -12,7 +13,7 @@ namespace rtype::server {
     class SubscriberHandler {
         public:
             SubscriberHandler(ClientHandler &clientHandler, ServerPacketBuilder &packetBuilder,
-                std::size_t &enemyAlive);
+                PriorityHandler &priorityHandler, std::size_t &enemyAlive);
             ~SubscriberHandler() = default;
 
             void add(fengine::ecs::Registry &registry);
@@ -23,9 +24,10 @@ namespace rtype::server {
             ClientHandler &_clientHandler;
             ServerPacketBuilder &_packetBuilder;
 
-            std::size_t &_enemyAlive;
-
             std::vector<std::pair<shared_subscriber, std::function<void(shared_subscriber &subscriber)>>> _subscribers;
+            PriorityHandler &_priorityHandler;
+
+            std::size_t &_enemyAlive;
 
             void processMovement(shared_subscriber &subscriber);
             void processKillingSystem(shared_subscriber &subscriber);

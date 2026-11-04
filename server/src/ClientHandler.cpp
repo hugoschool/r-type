@@ -1,5 +1,6 @@
 #include "ClientHandler.hpp"
 #include "Exception.hpp"
+#include "PriorityHandler.hpp"
 #include "SafeQueue.hpp"
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/generators.hpp>
@@ -83,13 +84,14 @@ void rtype::server::ClientMessageQueueHandler::disconnectClient(std::string uuid
 }
 
 rtype::server::ClientHandler::ClientHandler(std::queue<std::size_t> entityIds, SafeQueue<std::size_t> &newClientQueue,
-    ServerPacketBuilder &packetBuilder)
+    ServerPacketBuilder &packetBuilder, PriorityHandler &priorityHandler)
     : _mutex(), _maxStatusSecondsMap({
                     {ClientStatus::Disconnected, std::chrono::seconds(MAX_DISCONNECTED_SECONDS)},
                     {ClientStatus::Connecting, std::chrono::seconds(MAX_CONNECTING_SECONDS)},
                     {ClientStatus::Connected, std::chrono::seconds(MAX_CONNECTED_SECONDS)},
                 }),
-      _clients(), _entityIds(entityIds), _uuids(), _newClientQueue(newClientQueue), _packetBuilder(packetBuilder) {
+      _clients(), _entityIds(entityIds), _uuids(), _newClientQueue(newClientQueue), _packetBuilder(packetBuilder),
+      _priorityHandler(priorityHandler) {
     for (std::size_t i = 0; i < MAX_PLAYERS; i++) {
         _uuids.push(generateUuid());
     }
@@ -128,6 +130,7 @@ std::string rtype::server::ClientHandler::newClient() {
 
     packets::LoginAnswer payload;
     payload.setUuid(uuid);
+    _priorityHandler.addClient(uuid);
 
     size_t id = _packetBuilder.getCurrentId();
     std::string content = _packetBuilder.create(packets::PacketType::LoginAnswer).addHeader(packets::PacketPriority::Low, id).addPayload(payload).get();

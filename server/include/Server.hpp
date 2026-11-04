@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ClientHandler.hpp"
+#include "PriorityHandler.hpp"
 #include "ServerProtocol.hpp"
 #include "SubscriberHandler.hpp"
 #include "TickHandler.hpp"
@@ -47,8 +48,6 @@ namespace rtype::server {
             SafeQueue<std::size_t> _newClientQueue;
 
             TickHandler _tickHandler;
-            ClientHandler _clientHandler;
-            SubscriberHandler _subscriberHandler;
 
             ServerProtocol _protocol;
             ServerPacketBuilder _packetBuilder;
@@ -75,5 +74,10 @@ namespace rtype::server {
             bool _gameStarted;
             std::size_t _level;
             std::size_t _enemyAlive;
+
+            void addPriorityMessages();
+            rtype::server::PriorityHandler _priorityHandler;
+            ClientHandler _clientHandler;
+            SubscriberHandler _subscriberHandler;
     };
 }

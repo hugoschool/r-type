@@ -1,5 +1,6 @@
 #include "Server.hpp"
 #include "ClientHandler.hpp"
+#include "PriorityHandler.hpp"
 #include "TickHandler.hpp"
 #include "f-engine/ecs/Registry.hpp"
 #include "f-engine/ecs/components/CollisionComponent.hpp"
@@ -21,6 +22,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <ctime>
+#include <exception>
 #include <f-engine/ecs/Entity.hpp>
 #include <f-engine/ecs/components/BoundaryComponent.hpp>
 #include <f-engine/ecs/components/ControllableComponent.hpp>
@@ -37,6 +39,7 @@
 #include <r-type/packets/Serialization.hpp>
 #include <sstream>
 #include <thread>
+#include <variant>
 
 rtype::server::Server::Server(std::uint32_t port)
     : _port(port), _io_context(),
@@ -48,15 +51,17 @@ rtype::server::Server::Server(std::uint32_t port)
       // Engine
       _world(1.0, 10000), _newClientQueue(),
       // Handlers
-      _tickHandler(), _clientHandler(generateClientQueue(), _newClientQueue, _packetBuilder),
-      _subscriberHandler(_clientHandler, _packetBuilder, _enemyAlive),
+      _tickHandler(),
       // Protocols
       _protocol(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler, _packetBuilder),
       _packetBuilder(_tickHandler), _resendClock(),
       // Enemy generation
       _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0),
       // Levels handling
-      _gameStarted(false), _level(0), _enemyAlive(0) {
+      _gameStarted(false), _level(0),
+      // priority handler
+      _priorityHandler(), _clientHandler(generateClientQueue(), _newClientQueue, _packetBuilder, _priorityHandler),
+      _subscriberHandler(_clientHandler, _packetBuilder, _priorityHandler, _enemyAlive) {
 
     _signals.async_wait([&](boost::system::error_code, int) {
         _io_context.stop();
@@ -117,9 +122,12 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
 
             size_t id = _packetBuilder.getCurrentId();
 
-            std::string content =
-                _packetBuilder.create(packets::PacketType::EntitySpawn).addHeader(packets::PacketPriority::High, id).addPayload(payload).get();
+            std::string content = _packetBuilder.create(packets::PacketType::EntitySpawn)
+                                      .addHeader(packets::PacketPriority::High, id)
+                                      .addPayload(payload)
+                                      .get();
 
+            // rtype::server::payloadType sendPayload = payload;
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
     }
@@ -136,8 +144,10 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
 
             size_t id = _packetBuilder.getCurrentId();
 
-            std::string content =
-                _packetBuilder.create(packets::PacketType::EntityVelocityChange).addHeader(packets::PacketPriority::Low, id).addPayload(payload).get();
+            std::string content = _packetBuilder.create(packets::PacketType::EntityVelocityChange)
+                                      .addHeader(packets::PacketPriority::Low, id)
+                                      .addPayload(payload)
+                                      .get();
 
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
@@ -153,8 +163,10 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
 
             size_t id = _packetBuilder.getCurrentId();
 
-            std::string content =
-                _packetBuilder.create(packets::PacketType::EntityMove).addHeader(packets::PacketPriority::Low, id).addPayload(payload).get();
+            std::string content = _packetBuilder.create(packets::PacketType::EntityMove)
+                                      .addHeader(packets::PacketPriority::Low, id)
+                                      .addPayload(payload)
+                                      .get();
 
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
@@ -183,6 +195,7 @@ void rtype::server::Server::interpretPacket(packets::Serialization::deserialize_
     switch (header.type) {
         case packets::PacketType::Ack: {
             std::string uuid(header.playerUuid);
+            _priorityHandler.removeMessage(header.playerUuid, header.id);
             _clientHandler.setAlive(uuid);
             break;
         }
@@ -415,7 +428,10 @@ void rtype::server::Server::checkResend() {
     };
 
     size_t id = _packetBuilder.getCurrentId();
-    std::string content = _packetBuilder.create(packets::PacketType::Level).addHeader(packets::PacketPriority::High, id).addPayload(payload).get();
+    std::string content = _packetBuilder.create(packets::PacketType::Level)
+                              .addHeader(packets::PacketPriority::High, id)
+                              .addPayload(payload)
+                              .get();
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(content);
 
@@ -475,7 +491,32 @@ void rtype::server::Server::tickThreadRun() {
         _clientHandler.verifyStatus();
         _world._registry.systemManager.update(_world._registry);
         _subscriberHandler.process();
+        addPriorityMessages();
     }
+}
+
+void rtype::server::Server::addPriorityMessages() {
+    try {
+        auto &messageQueue = _clientHandler.getMessageQueueHandler();
+        for (auto client : _clientHandler.getClients()) {
+            auto queue = _priorityHandler.getMessage(client.first);
+            for (auto message : queue) {
+                std::string content;
+                if (std::holds_alternative<packets::EntitySpawn>(message.second.second)) {
+                    content = _packetBuilder.create(message.second.first)
+                                  .addHeader(packets::PacketPriority::High, message.first)
+                                  .addPayload(std::get<packets::EntitySpawn>(message.second.second))
+                                  .get();
+                } else if (std::holds_alternative<packets::EntityDied>(message.second.second)) {
+                    content = _packetBuilder.create(message.second.first)
+                                  .addHeader(packets::PacketPriority::High, message.first)
+                                  .addPayload(std::get<packets::EntityDied>(message.second.second))
+                                  .get();
+                }
+                messageQueue.addMessage(client.first, content);
+            }
+        }
+    } catch (std::exception &) {}
 }
 
 void rtype::server::Server::run() {
