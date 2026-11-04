@@ -81,8 +81,5 @@ void fengine::ecs::CollisionProcessorSystem::update(Registry &manager) {
 
 bool fengine::ecs::CollisionProcessorSystem::verifyBonusCollision(EntityTypeComponent &type,
     EntityTypeComponent &otherType) {
-    if ((type.type == presets::EntityType::BONUS && otherType.type == presets::EntityType::PLAYERS)) {
-        return true;
-    }
-    return false;
+    return type.type == presets::EntityType::BONUS && otherType.type == presets::EntityType::PLAYERS;
 }
