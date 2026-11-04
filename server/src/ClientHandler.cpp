@@ -188,6 +188,7 @@ void rtype::server::ClientHandler::verifyStatus() {
                 const std::string uuidCopy = uuid;
                 data.status = ClientStatus::Removed;
                 _messageQueueHandler.disconnectClient(uuidCopy);
+                _priorityHandler.removeClient(uuidCopy);
                 std::cout << "Client " << uuidCopy << " erased" << std::endl;
                 break;
             }
