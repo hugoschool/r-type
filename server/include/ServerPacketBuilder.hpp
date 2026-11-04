@@ -2,6 +2,8 @@
 
 #include "TickHandler.hpp"
 #include "r-type/packets/Packet.hpp"
+#include <cstddef>
+#include <mutex>
 #include <r-type/packets/PacketBuilder.hpp>
 
 namespace rtype::server {
@@ -11,8 +13,12 @@ namespace rtype::server {
             ~ServerPacketBuilder() = default;
 
             packets::PacketBuilderContent create(packets::PacketType type);
+            size_t getCurrentId();
 
-        private:
+            private:
             TickHandler &_tick;
-    };
+            std::mutex _mutex;
+            int _id;
+            void incrementID();
+        };
 }

@@ -1,10 +1,11 @@
 #include "r-type/packets/Packet.hpp"
+#include <cstddef>
 #include <r-type/packets/PacketBuilder.hpp>
 
 rtype::packets::PacketBuilderContent::PacketBuilderContent(PacketType type, std::size_t tick, std::string uuid)
     : _ss(), _ar(_ss), _type(type), _tick(tick), _uuid(uuid) {};
 
-rtype::packets::PacketBuilderContent &rtype::packets::PacketBuilderContent::addHeader(rtype::packets::PacketPriority priority) {
+rtype::packets::PacketBuilderContent &rtype::packets::PacketBuilderContent::addHeader(rtype::packets::PacketPriority priority, size_t id) {
     PacketHeader header;
 
     header.size = 0;
@@ -12,6 +13,7 @@ rtype::packets::PacketBuilderContent &rtype::packets::PacketBuilderContent::addH
     header.tick = _tick;
     header.setUuid(_uuid);
     header.priority = priority;
+    header.id = id;
     Serialization::serialize(_ar, header);
 
     return *this;

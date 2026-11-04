@@ -33,6 +33,7 @@ namespace rtype::packets {
             std::size_t tick;
             char playerUuid[UUID_SIZE + 1];
             PacketPriority priority;
+            size_t id;
 
             template <class Archive>
             void serialize(Archive &ar, const unsigned int) {
@@ -41,6 +42,7 @@ namespace rtype::packets {
                 ar & tick;
                 ar & playerUuid;
                 ar & priority;
+                ar & id;
             }
 
             void setUuid(std::string uuid) {

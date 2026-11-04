@@ -2,6 +2,7 @@
 
 #include "r-type/packets/Packet.hpp"
 #include "r-type/packets/Serialization.hpp"
+#include <cstddef>
 #include <sstream>
 #include <string>
 
@@ -11,7 +12,7 @@ namespace rtype::packets {
             PacketBuilderContent(PacketType type, std::size_t tick, std::string uuid);
             ~PacketBuilderContent() = default;
 
-            PacketBuilderContent &addHeader(rtype::packets::PacketPriority);
+            PacketBuilderContent &addHeader(rtype::packets::PacketPriority, size_t id);
 
             template <class T>
             PacketBuilderContent &addPayload(T payload) {

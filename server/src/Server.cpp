@@ -115,8 +115,10 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
                 .height = boundary->size_y,
             };
 
+            size_t id = _packetBuilder.getCurrentId();
+
             std::string content =
-                _packetBuilder.create(packets::PacketType::EntitySpawn).addHeader(packets::PacketPriority::High).addPayload(payload).get();
+                _packetBuilder.create(packets::PacketType::EntitySpawn).addHeader(packets::PacketPriority::High, id).addPayload(payload).get();
 
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
@@ -132,8 +134,10 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
                 .velocity = packets::Vector2D(velocity->vel_x, velocity->vel_y),
             };
 
+            size_t id = _packetBuilder.getCurrentId();
+
             std::string content =
-                _packetBuilder.create(packets::PacketType::EntityVelocityChange).addHeader(packets::PacketPriority::Low).addPayload(payload).get();
+                _packetBuilder.create(packets::PacketType::EntityVelocityChange).addHeader(packets::PacketPriority::Low, id).addPayload(payload).get();
 
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
@@ -147,8 +151,10 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
                 .coordinates = packets::Vector2D(position->pos_x, position->pos_y),
             };
 
+            size_t id = _packetBuilder.getCurrentId();
+
             std::string content =
-                _packetBuilder.create(packets::PacketType::EntityMove).addHeader(packets::PacketPriority::Low).addPayload(payload).get();
+                _packetBuilder.create(packets::PacketType::EntityMove).addHeader(packets::PacketPriority::Low, id).addPayload(payload).get();
 
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
