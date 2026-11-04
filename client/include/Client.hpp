@@ -46,6 +46,8 @@ namespace rtype::client {
             std::array<std::pair<std::size_t, std::queue<std::string>>, 10> _packetReceived;
             // std::map<std::size_t, std::queue<std::string>> _packetReceived;
             std::size_t _maxTick;
+            bool _startedPlaying;
+            std::size_t _level;
 
             std::chrono::time_point<std::chrono::steady_clock> _navClock;
 
@@ -59,6 +61,7 @@ namespace rtype::client {
             void addEntity(packets::Serialization::deserialize_archive &ar);
             void moveEntity(packets::Serialization::deserialize_archive &ar);
             void modifyVelocity(packets::Serialization::deserialize_archive &ar);
+            void modifyLevel(rtype::packets::Serialization::deserialize_archive &ar);
 
             void interpretButtonAction(int);
             bool defineColorblindValue(void);

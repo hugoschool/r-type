@@ -44,7 +44,10 @@ void fengine::ecs::AnimationSystem::update(Registry &manager) {
                     }
                 }
                 bool reversed = (vel.value().vel_x < 0);
-                _displayModule.animateEntity(anim.value(), drawable.value(), reversed);
+                if (anim.value().reversable)
+                    _displayModule.animateEntity(anim.value(), drawable.value(), reversed);
+                else
+                    _displayModule.animateEntity(anim.value(), drawable.value(), true);
             }
             anim.value().anim_clock = std::chrono::steady_clock::now();
         }

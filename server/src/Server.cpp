@@ -17,6 +17,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <ctime>
 #include <f-engine/ecs/Entity.hpp>
 #include <f-engine/ecs/components/BoundaryComponent.hpp>
 #include <f-engine/ecs/components/ControllableComponent.hpp>
@@ -50,12 +51,16 @@ rtype::server::Server::Server(std::uint32_t port)
       _protocol(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler, _packetBuilder),
       _packetBuilder(_tickHandler),
       // Enemy generation
-      _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0), _resendClock() {
+      _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0), _resendClock(),
+      // Levels handling
+      _gameStarted(false), _level(0) {
 
     _signals.async_wait([&](boost::system::error_code, int) {
         _io_context.stop();
         _stop = true;
     });
+
+    std::srand(std::time(nullptr));
 
     _world._registry.componentManager.registerComponent<fengine::ecs::PositionComponent>();
     _world._registry.componentManager.registerComponent<fengine::ecs::VelocityComponent>();
@@ -199,6 +204,15 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
     if (!vel.has_value())
         return;
 
+    // handle the start of the game
+    if (_gameStarted == false) {
+        if (event.event == event::Event::PLAY) {
+            _gameStarted = true;
+            _level = 1;
+        }
+        return;
+    }
+
     switch (event.event) {
         case event::Event::UP:
             handleVelocityChanges(vel.value().vel_y, vel.value().vel_x, -10);
@@ -212,7 +226,7 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
         case event::Event::RIGHT:
             handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, 10);
             break;
-        case event::Event::SHOOT:
+        case event::Event::SHOOT: {
             fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
             fengine::ecs::PositionComponent &pos =
                 _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>()[data.entityId]
@@ -229,8 +243,13 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
             _world._registry.componentManager.addComponent(entity, (fengine::ecs::DefenseComponent) {1, 0});
             _world._registry.componentManager.addComponent(entity,
                 (fengine::ecs::EntityTypeComponent) {fengine::presets::EntityType::BULLETS});
-
             break;
+        }
+        case event::Event::PLAY: {
+            // TODO new client connects but the game has already started
+            // give the player invincibiloty frames
+            break;
+        }
     }
 }
 
@@ -258,10 +277,12 @@ void rtype::server::Server::generateEnemies() {
     fengine::ecs::AttackComponent atk = {{.team = fengine::ecs::team::MONSTERS}, 10};
     fengine::ecs::DefenseComponent def = {150, 0};
 
-    fengine::presets::EntityType type = fengine::presets::EntityType::E_SHOOTER;
+    fengine::presets::EntityType type =
+        (_enemyCounter % 2 == 0) ? fengine::presets::EntityType::E_RUNNER : fengine::presets::EntityType::E_SHOOTER;
     fengine::ecs::EntityTypeComponent typeComponent = {.type = type};
 
     if (_enemyCounter == 5) {
+        _level += 1;
         _enemyCounter = 0;
         vel = {-5, 2, false};
         atk.damage += 15;
@@ -271,8 +292,16 @@ void rtype::server::Server::generateEnemies() {
         bound.bouncy = true;
         type = fengine::presets::EntityType::E_BOSS;
     } else {
-        // fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER, std::chrono::steady_clock::now()};
-        // _world._registry.componentManager.addComponent(entity, std::move(behaviour));
+        if (type == fengine::presets::EntityType::E_SHOOTER) {
+            bound.size_x = 75;
+            bound.size_y = 100;
+            vel = {0, -5, false};
+            pos.pos_x -= 50;
+            def.health -= 50;
+            fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER,
+                std::chrono::steady_clock::now()};
+            _world._registry.componentManager.addComponent(entity, std::move(behaviour));
+        }
         _enemyCounter++;
     }
 
@@ -316,6 +345,14 @@ void rtype::server::Server::checkResend() {
             }
         }
     }
+
+    packets::Level payload = {
+        .level = _level,
+    };
+
+    std::string content = _packetBuilder.create(packets::PacketType::Level).addHeader().addPayload(payload).get();
+
+    _clientHandler.getMessageQueueHandler().sendToAllClients(content);
 
     _resendClock = elapsedTime;
 }
@@ -362,7 +399,9 @@ void rtype::server::Server::tickThreadRun() {
                 continue;
             }
         }
-        generateEnemies();
+        if (_gameStarted) {
+            generateEnemies();
+        }
         checkResend();
         _clientHandler.verifyStatus();
         _world._registry.systemManager.update(_world._registry);

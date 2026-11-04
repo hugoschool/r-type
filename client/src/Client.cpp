@@ -50,13 +50,13 @@ rtype::client::Client::Client(std::string host, std::string port)
       _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>(
           std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager))),
       _registery(), _camera(0.0, 100000), _scenes(), _currentScene(), _writeThread(), _readThread(), _exit(false),
-      _inputs(1024), _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0),
-      _navClock(std::chrono::steady_clock::now()) {
+      _inputs(1024), _protocol(_inputs, host, port, _maxTick), _packetReceived(), _maxTick(0), _startedPlaying(false),
+      _level(0), _navClock(std::chrono::steady_clock::now()) {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));
     _scenes.push_back(std::make_shared<fengine::scene::ParamScene>("./assets/test.png", false));
-    _scenes.push_back(std::make_shared<fengine::scene::GameScene>(3.0, "./assets/test.png", true));
+    _scenes.push_back(std::make_shared<fengine::scene::GameScene>(3.0, "./assets/test.png", true, _level));
     _currentScene = _scenes.front();
     _displayModule->setConfig(_clientConfig);
     _registery.componentManager.registerComponent<fengine::ecs::PositionComponent>();
@@ -70,8 +70,6 @@ rtype::client::Client::Client(std::string host, std::string port)
         fengine::modules::display::EventKey::Q, fengine::modules::display::EventKey::S,
         fengine::modules::display::EventKey::D};
 
-    _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule, _camera);
-    _registery.systemManager.addSystem<fengine::ecs::AnimationSystem>(*_displayModule, _camera);
     _soundModule->playMusic("./assets/sounds/title.ogg");
     _clientConfig->set("controls", fengine::ecs::ControllableComponent(control));
     _clientConfig->resetChange();
@@ -160,6 +158,9 @@ void rtype::client::Client::interpretMsg(std::string msg) {
             case rtype::packets::PacketType::EntityVelocityChange:
                 modifyVelocity(ar);
                 break;
+            case rtype::packets::PacketType::Level:
+                modifyLevel(ar);
+                break;
             default:
                 break;
         }
@@ -195,25 +196,36 @@ void rtype::client::Client::loop() {
 
                     if (control->has_value()) {
                         auto value = std::any_cast<fengine::ecs::ControllableComponent>(control.value());
-                        if (key == value.up)
+                        if (_startedPlaying == true && key == value.up)
                             _inputs.addElement(event::Event::UP);
                         else if (key == value.down)
                             _inputs.addElement(event::Event::DOWN);
                         else if (key == value.left) {
-                            moveButtonSelection(true);
-                            _inputs.addElement(event::Event::LEFT);
+                            if (_startedPlaying == true) {
+                                _inputs.addElement(event::Event::LEFT);
+                            } else {
+                                moveButtonSelection(true);
+                            }
                         } else if (key == value.right) {
-                            moveButtonSelection(false);
-                            _inputs.addElement(event::Event::RIGHT);
+                            if (_startedPlaying == true) {
+                                _inputs.addElement(event::Event::RIGHT);
+                            } else {
+                                moveButtonSelection(false);
+                            }
                         } else if (key == fengine::modules::display::EventKey::Enter) {
-                            activateSelectedButton();
-                            _inputs.addElement(event::Event::SHOOT);
+                            if (_startedPlaying == true) {
+                                _inputs.addElement(event::Event::SHOOT);
+                            } else {
+                                activateSelectedButton();
+                            }
                         }
                     }
                 }
                 if (event->getType() == fengine::modules::display::EventType::Click) {
-                    if (event->getMouseButton() == fengine::modules::display::EventMouseButton::Left)
+                    if (_startedPlaying == true
+                        && event->getMouseButton() == fengine::modules::display::EventMouseButton::Left) {
                         _inputs.addElement(event::Event::SHOOT);
+                    }
                     _currentScene->updateButtons(event->getClickCoordinates());
                 }
             }
@@ -271,7 +283,7 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
         }
         _registery.componentManager.addComponent(entity,
             (fengine::ecs::AnimationComponent) {preset.values.length, preset.values.height, preset.values.offset_x,
-                preset.values.offset_y, preset.values.cols, preset.values.rows, false,
+                preset.values.offset_y, preset.values.cols, preset.values.rows, false, preset.values.reversable,
                 std::chrono::steady_clock::now()});
         _soundModule->playSound(std::string(preset.preset.apparition_sound));
     }
@@ -305,12 +317,26 @@ void rtype::client::Client::modifyVelocity(rtype::packets::Serialization::deseri
     } catch (std::exception &) {}
 }
 
+void rtype::client::Client::modifyLevel(rtype::packets::Serialization::deserialize_archive &ar) {
+    packets::Level payload;
+
+    packets::Serialization::deserialize(ar, payload);
+
+    try {
+        _level = payload.level;
+    } catch (std::exception &) {}
+}
+
 void rtype::client::Client::interpretButtonAction(int button) {
     switch (button) {
         // Static casting here is valid as we have 2 different types of enums
         case static_cast<int>(fengine::scene::MenuSceneButtons::PLAY):
             _soundModule->playMusic("./assets/sounds/game.ogg");
             _currentScene = _scenes.back();
+            _inputs.addElement(event::Event::PLAY);
+            _startedPlaying = true;
+            _registery.systemManager.addSystem<fengine::ecs::DisplaySystem>(*_displayModule, _camera);
+            _registery.systemManager.addSystem<fengine::ecs::AnimationSystem>(*_displayModule, _camera);
             break;
         case static_cast<int>(fengine::scene::MenuSceneButtons::PARAMS):
             _soundModule->playMusic("./assets/sounds/params.ogg");

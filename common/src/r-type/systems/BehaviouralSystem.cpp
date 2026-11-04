@@ -5,6 +5,8 @@
 #include "r-type/components/AttackComponent.hpp"
 #include "r-type/components/BehaviourComponent.hpp"
 #include "r-type/components/DefenseComponent.hpp"
+#include "r-type/components/EntityTypeComponent.hpp"
+#include "r-type/presets/EntitiesPresets.hpp"
 
 fengine::ecs::BehaviouralSystem::BehaviouralSystem() {};
 
@@ -38,22 +40,21 @@ void fengine::ecs::BehaviouralSystem::update(Registry &manager) {
             BoundaryComponent newBound = {10, 5, false, true, std::nullopt};
             AttackComponent newAtk = {atk.value().relation, atk.value().damage};
             DefenseComponent newDef = {1, 0};
-            // TODO: might be needed to add a EntityTypeComponent here
+            EntityTypeComponent newType = {presets::EntityType::BULLETS};
 
             manager.componentManager.addComponent(e, std::move(newPos));
             manager.componentManager.addComponent(e, std::move(newVel));
-            // prevenir ici qu'il faut envoyer un drawable -> surement ajouter une methode pour les IShape de create (create rectangle etc..) afin de creer un drawable (donc faudra surement register un drawable component dans le registry du serveur)
             manager.componentManager.addComponent(e, std::move(newBound));
             manager.componentManager.addComponent(e, std::move(newAtk));
             manager.componentManager.addComponent(e, std::move(newDef));
+            manager.componentManager.addComponent(e, std::move(newType));
 
             content.add<PositionComponent>(newPos);
             content.add<VelocityComponent>(newVel);
             content.add<BoundaryComponent>(newBound);
-            content.add<AttackComponent>(newAtk);
-            content.add<DefenseComponent>(newDef);
-            // creation component ?
+            content.add<EntityTypeComponent>(newType);
             updateSubscribers(content);
+            behav.value().behaviourClock = std::chrono::steady_clock::now();
         }
     }
 }

@@ -20,9 +20,11 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <any>
+#include <cstddef>
 #include <memory>
 #include <optional>
 #include <queue>
+#include <vector>
 
 fengine::modules::display::SFMLDisplayModule::SFMLDisplayModule(
     std::shared_ptr<fengine::asset_manager::SFMLAssetManager> assetManager)
@@ -52,17 +54,17 @@ fengine::modules::display::SFMLDisplayModule::pollEvent() {
         }
         if (!sf::Joystick::isConnected(0)) {
             if (const sf::Event::KeyPressed *key = event->getIf<sf::Event::KeyPressed>()) {
-                if (_keyPressed.contains(key->code) == false) {
+                if (key != nullptr && _keyPressed.contains(key->code) == false) {
                     _keyPressed.insert(key->code);
                 }
             }
             if (const sf::Event::KeyReleased *key = event->getIf<sf::Event::KeyReleased>()) {
-                if (_keyPressed.contains(key->code) == true) {
+                if (key != nullptr && _keyPressed.contains(key->code) == true) {
                     _keyPressed.erase(key->code);
                 }
             }
             if (const sf::Event::MouseButtonPressed *mouse = event->getIf<sf::Event::MouseButtonPressed>()) {
-                EventMouseButton mouseButton;
+                std::optional<EventMouseButton> mouseButton = std::nullopt;
                 switch (mouse->button) {
                     case sf::Mouse::Button::Left:
                         mouseButton = EventMouseButton::Left;
@@ -73,7 +75,10 @@ fengine::modules::display::SFMLDisplayModule::pollEvent() {
                     default:
                         break;
                 }
-                eventQueue.push(std::make_unique<ClickEvent>(mouseButton, mouse->position.x, mouse->position.y));
+                if (mouseButton.has_value()) {
+                    eventQueue.push(
+                        std::make_unique<ClickEvent>(mouseButton.value(), mouse->position.x, mouse->position.y));
+                }
             }
         } else {
             if (event->getIf<sf::Event::JoystickButtonPressed>()) {
@@ -172,9 +177,9 @@ fengine::modules::display::EventKey fengine::modules::display::SFMLDisplayModule
 }
 
 void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fengine::scene::IScene> scene) {
-    std::map<int, scene::Button> &buttons = scene->getButtons();
-    scene::Background &background = scene->getBackground();
-
+    scene::Background &background =
+        scene
+            ->getBackground();// a voir comment definir cela, pour l'instant surement une shape rectangle de la taille de la window + un offset handle dans la scene elle meme
     sf::RectangleShape bg1 = sf::RectangleShape(sf::Vector2f(WINDOW_X, WINDOW_Y));
     if (_assetManager->textureContains(background.texture) == false) {
         _assetManager->loadTexture(background.texture);
@@ -192,6 +197,8 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fen
         }
     }
 
+    // boutons (a changer)
+    std::map<int, scene::Button> &buttons = scene->getButtons();
     for (auto &[type, button] : buttons) {
         sf::RectangleShape rect = sf::RectangleShape(sf::Vector2f(button.length, button.height));
         rect.setPosition(sf::Vector2f(button.pos_x, button.pos_y));
@@ -215,6 +222,18 @@ void fengine::modules::display::SFMLDisplayModule::drawScene(std::shared_ptr<fen
             _window.draw(rect);
             _window.draw(text);
         }
+    }
+
+    // texts
+    std::vector<scene::Text> &texts = scene->getTexts();
+    for (auto &text : texts) {
+        sf::Text sfText(_assetManager->getFont(std::string(FONT)).value());
+
+        sfText.setString(text.content);
+        sfText.setPosition(sf::Vector2f(text.pos_x + 10, text.pos_y + 10));
+        sfText.setFillColor(sf::Color::White);
+        sfText.setCharacterSize(20);
+        _window.draw(sfText);
     }
 }
 
@@ -242,6 +261,8 @@ void fengine::modules::display::SFMLDisplayModule::drawEntity(fengine::ecs::Posi
 void fengine::modules::display::SFMLDisplayModule::animateEntity(ecs::AnimationComponent &anim,
     ecs::DrawableComponent &drawable, bool reversed) {
     if (drawable.texture_filepath.has_value()) {
+        if (!_assetManager->textureContains(drawable.texture_filepath.value()))
+            return;
         auto &t = _assetManager->getTexture(drawable.texture_filepath.value());
         if (t.has_value()) {
             drawable.shape->setTextureRect(anim.offset_x, anim.offset_y, anim.length, anim.height, reversed);

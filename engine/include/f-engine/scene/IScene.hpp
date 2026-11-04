@@ -2,6 +2,7 @@
 
 #include "f-engine/scene/SceneObjects.hpp"
 #include <map>
+#include <vector>
 
 namespace fengine::scene {
     // Only the IScene and the Scene Objects should be in the engine
@@ -11,6 +12,7 @@ namespace fengine::scene {
 
             virtual std::map<int, Button> &getButtons() = 0;
             virtual Background &getBackground() = 0;
+            virtual std::vector<Text> &getTexts() = 0;
 
             virtual void update() = 0;
 

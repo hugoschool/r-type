@@ -12,6 +12,7 @@ namespace fengine::ecs {
             int rows;
 
             bool immobile;
+            bool reversable;
 
             std::chrono::time_point<std::chrono::steady_clock> anim_clock;
     };
