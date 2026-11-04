@@ -70,6 +70,7 @@ void rtype::server::SubscriberHandler::processMovement(shared_subscriber &subscr
 void rtype::server::SubscriberHandler::processKillingSystem(shared_subscriber &subscriber) {
     fengine::ecs::observer::SubscriberContent content = subscriber->getContent();
 
+    handleEntitySpawn(content);
     handleDeadComponent(content);
 }
 
