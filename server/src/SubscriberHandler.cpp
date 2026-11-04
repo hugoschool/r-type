@@ -161,7 +161,8 @@ void rtype::server::SubscriberHandler::handleEntitySpawn(fengine::ecs::observer:
         .height = bound.size_y,
     };
 
-    std::string str = _packetBuilder.create(packets::PacketType::EntitySpawn).addHeader().addPayload(payload).get();
+    size_t id = _packetBuilder.getCurrentId();
+    std::string str = _packetBuilder.create(packets::PacketType::EntitySpawn).addHeader(packets::PacketPriority::High, id).addPayload(payload).get();
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }

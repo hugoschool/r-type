@@ -21,7 +21,7 @@ rtype::client::ClientProtocol::~ClientProtocol() {
 
 void rtype::client::ClientProtocol::sendConnectionPackets() {
     {
-        std::string content = _packetBuilder.create(packets::PacketType::LoginRequest).addHeader().get();
+        std::string content = _packetBuilder.create(packets::PacketType::LoginRequest).addHeader(packets::PacketPriority::Low, 0).get();
 
         _udp.send(content);
     }
@@ -56,12 +56,12 @@ void rtype::client::ClientProtocol::sendMessage() {
             packets::PlayerEvent payload = {input};
 
             std::string content =
-                _packetBuilder.create(packets::PacketType::PlayerEvent).addHeader().addPayload(payload).get();
+                _packetBuilder.create(packets::PacketType::PlayerEvent).addHeader(packets::PacketPriority::Low, 0).addPayload(payload).get();
 
             _udp.send(content);
         } else {
             // Send Ack if nothing else
-            std::string content = _packetBuilder.create(packets::PacketType::Ack).addHeader().get();
+            std::string content = _packetBuilder.create(packets::PacketType::Ack).addHeader(packets::PacketPriority::Low, 0).get();
 
             _udp.send(content);
         }

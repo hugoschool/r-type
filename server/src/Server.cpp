@@ -414,7 +414,8 @@ void rtype::server::Server::checkResend() {
         .level = _level,
     };
 
-    std::string content = _packetBuilder.create(packets::PacketType::Level).addHeader().addPayload(payload).get();
+    size_t id = _packetBuilder.getCurrentId();
+    std::string content = _packetBuilder.create(packets::PacketType::Level).addHeader(packets::PacketPriority::High, id).addPayload(payload).get();
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(content);
 
