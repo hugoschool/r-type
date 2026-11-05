@@ -18,7 +18,7 @@ namespace rtype::server {
         private:
             TickHandler &_tick;
             std::mutex _mutex;
-            int _id;
+            size_t _id;
             void incrementID();
     };
 }
