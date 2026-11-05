@@ -3,10 +3,11 @@
 #include "TickHandler.hpp"
 #include "r-type/packets/PacketBuilder.hpp"
 #include <cstddef>
+#include <cstdint>
 #include <mutex>
 
 rtype::server::ServerPacketBuilder::ServerPacketBuilder(rtype::server::TickHandler &tick)
-    : packets::PacketBuilder(DUMMY_UUID), _tick(tick), _mutex(), _id(0) {
+    : packets::PacketBuilder(DUMMY_UUID), _tick(tick), _mutex(), _id(1) {
 }
 
 rtype::packets::PacketBuilderContent rtype::server::ServerPacketBuilder::create(rtype::packets::PacketType type) {
@@ -16,7 +17,10 @@ rtype::packets::PacketBuilderContent rtype::server::ServerPacketBuilder::create(
 void rtype::server::ServerPacketBuilder::incrementID() {
     std::unique_lock lock(_mutex);
 
-    _id++;
+    if (_id < INT32_MAX)
+        _id++;
+    else
+        _id = 1;
 }
 size_t rtype::server::ServerPacketBuilder::getCurrentId() {
     size_t id = _id;
