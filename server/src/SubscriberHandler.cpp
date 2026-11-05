@@ -3,9 +3,11 @@
 #include "f-engine/ecs/components/BoundaryComponent.hpp"
 #include "f-engine/ecs/observer/SubscriberContent.hpp"
 #include "r-type/components/EntityTypeComponent.hpp"
+#include "r-type/presets/EntitiesPresets.hpp"
 #include "r-type/systems/BehaviouralSystem.hpp"
 #include "r-type/systems/CollisionProcessorSystem.hpp"
 #include "r-type/systems/KillingSystem.hpp"
+#include <cstddef>
 #include <f-engine/ecs/components/DeadComponent.hpp>
 #include <f-engine/ecs/components/PositionComponent.hpp>
 #include <f-engine/ecs/components/VelocityComponent.hpp>
@@ -20,8 +22,8 @@
 #include <r-type/packets/Serialization.hpp>
 
 rtype::server::SubscriberHandler::SubscriberHandler(rtype::server::ClientHandler &clientHandler,
-    ServerPacketBuilder &packetBuilder)
-    : _clientHandler(clientHandler), _packetBuilder(packetBuilder) {
+    ServerPacketBuilder &packetBuilder, std::size_t &enemyAlive)
+    : _clientHandler(clientHandler), _packetBuilder(packetBuilder), _enemyAlive(enemyAlive) {
     shared_subscriber movement = std::make_shared<fengine::ecs::observer::Subscriber>();
     shared_subscriber killing = std::make_shared<fengine::ecs::observer::Subscriber>();
     shared_subscriber collision = std::make_shared<fengine::ecs::observer::Subscriber>();
@@ -90,13 +92,23 @@ void rtype::server::SubscriberHandler::processBehav(shared_subscriber &subscribe
 
 void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observer::SubscriberContent &content) {
     fengine::ecs::DeadComponent dead;
+    fengine::ecs::EntityTypeComponent type;
 
     if (!content.existsAndRetrieve(dead))
         return;
 
+    if (content.existsAndRetrieve(type)) {
+        if (type.type == fengine::presets::EntityType::E_RUNNER ||
+            type.type == fengine::presets::EntityType::E_SHOOTER ||
+            type.type == fengine::presets::EntityType::E_BOSS) {
+            _enemyAlive--;
+        }
+    }
+
     packets::EntityDied payload = {
         .entityId = dead.entityId,
     };
+
     std::string str = _packetBuilder.create(packets::PacketType::EntityDied).addHeader().addPayload(payload).get();
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
