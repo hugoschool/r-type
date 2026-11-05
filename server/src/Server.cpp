@@ -122,8 +122,8 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
 
             size_t id = _packetBuilder.getCurrentId();
 
-            std::string content = _packetBuilder.create(packets::PacketType::EntitySpawn)
-                                      .addHeader(packets::PacketPriority::High, id)
+            std::string content = _packetBuilder.create(packets::PacketType::EntitySpawn, packets::PacketPriority::High, id)
+                                      .addHeader()
                                       .addPayload(payload)
                                       .get();
 
@@ -144,8 +144,8 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
 
             size_t id = _packetBuilder.getCurrentId();
 
-            std::string content = _packetBuilder.create(packets::PacketType::EntityVelocityChange)
-                                      .addHeader(packets::PacketPriority::Low, id)
+            std::string content = _packetBuilder.create(packets::PacketType::EntityVelocityChange, packets::PacketPriority::Low, id)
+                                      .addHeader()
                                       .addPayload(payload)
                                       .get();
 
@@ -163,8 +163,8 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
 
             size_t id = _packetBuilder.getCurrentId();
 
-            std::string content = _packetBuilder.create(packets::PacketType::EntityMove)
-                                      .addHeader(packets::PacketPriority::Low, id)
+            std::string content = _packetBuilder.create(packets::PacketType::EntityMove, packets::PacketPriority::Low, id)
+                                      .addHeader()
                                       .addPayload(payload)
                                       .get();
 
@@ -428,8 +428,8 @@ void rtype::server::Server::checkResend() {
     };
 
     size_t id = _packetBuilder.getCurrentId();
-    std::string content = _packetBuilder.create(packets::PacketType::Level)
-                              .addHeader(packets::PacketPriority::High, id)
+    std::string content = _packetBuilder.create(packets::PacketType::Level, packets::PacketPriority::High, id)
+                              .addHeader()
                               .addPayload(payload)
                               .get();
 
@@ -503,13 +503,13 @@ void rtype::server::Server::addPriorityMessages() {
             for (auto message : queue) {
                 std::string content;
                 if (std::holds_alternative<packets::EntitySpawn>(message.second.second)) {
-                    content = _packetBuilder.create(message.second.first)
-                                  .addHeader(packets::PacketPriority::High, message.first)
+                    content = _packetBuilder.create(message.second.first, packets::PacketPriority::High, message.first)
+                                  .addHeader()
                                   .addPayload(std::get<packets::EntitySpawn>(message.second.second))
                                   .get();
                 } else if (std::holds_alternative<packets::EntityDied>(message.second.second)) {
-                    content = _packetBuilder.create(message.second.first)
-                                  .addHeader(packets::PacketPriority::High, message.first)
+                    content = _packetBuilder.create(message.second.first, packets::PacketPriority::High, message.first)
+                                  .addHeader()
                                   .addPayload(std::get<packets::EntityDied>(message.second.second))
                                   .get();
                 }

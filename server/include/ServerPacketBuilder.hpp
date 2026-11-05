@@ -12,7 +12,7 @@ namespace rtype::server {
             ServerPacketBuilder(TickHandler &tick);
             ~ServerPacketBuilder() = default;
 
-            packets::PacketBuilderContent create(packets::PacketType type);
+            packets::PacketBuilderContent create(packets::PacketType type, packets::PacketPriority, size_t);
             size_t getCurrentId();
 
         private:

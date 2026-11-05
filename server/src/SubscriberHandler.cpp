@@ -110,8 +110,8 @@ void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observe
         .entityId = dead.entityId,
     };
     size_t id = _packetBuilder.getCurrentId();
-    std::string str = _packetBuilder.create(packets::PacketType::EntityDied)
-                          .addHeader(packets::PacketPriority::High, id)
+    std::string str = _packetBuilder.create(packets::PacketType::EntityDied, packets::PacketPriority::High, id)
+                          .addHeader()
                           .addPayload(payload)
                           .get();
     _priorityHandler.addAll(id, packets::PacketType::EntityDied, payload);
@@ -129,8 +129,8 @@ void rtype::server::SubscriberHandler::handleVelocityComponent(fengine::ecs::obs
         .velocity = packets::Vector2D(velocity.vel_x, velocity.vel_y),
     };
     size_t id = _packetBuilder.getCurrentId();
-    std::string str = _packetBuilder.create(packets::PacketType::EntityVelocityChange)
-                          .addHeader(packets::PacketPriority::Low, id)
+    std::string str = _packetBuilder.create(packets::PacketType::EntityVelocityChange, packets::PacketPriority::Low, id)
+                          .addHeader()
                           .addPayload(payload)
                           .get();
 
@@ -149,8 +149,8 @@ void rtype::server::SubscriberHandler::handlePositionComponent(fengine::ecs::obs
     };
     size_t id = _packetBuilder.getCurrentId();
 
-    std::string str = _packetBuilder.create(packets::PacketType::EntityMove)
-                          .addHeader(packets::PacketPriority::Low, id)
+    std::string str = _packetBuilder.create(packets::PacketType::EntityMove, packets::PacketPriority::Low, id)
+                          .addHeader()
                           .addPayload(payload)
                           .get();
 
@@ -172,8 +172,8 @@ void rtype::server::SubscriberHandler::handleEntitySpawn(fengine::ecs::observer:
     };
 
     size_t id = _packetBuilder.getCurrentId();
-    std::string str = _packetBuilder.create(packets::PacketType::EntitySpawn)
-                          .addHeader(packets::PacketPriority::High, id)
+    std::string str = _packetBuilder.create(packets::PacketType::EntitySpawn, packets::PacketPriority::High, id)
+                          .addHeader()
                           .addPayload(payload)
                           .get();
     _priorityHandler.addAll(id, packets::PacketType::EntitySpawn, payload);

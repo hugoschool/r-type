@@ -24,7 +24,7 @@ rtype::client::ClientProtocol::~ClientProtocol() {
 void rtype::client::ClientProtocol::sendConnectionPackets() {
     {
         std::string content =
-            _packetBuilder.create(packets::PacketType::LoginRequest).addHeader(packets::PacketPriority::Low, 0).get();
+            _packetBuilder.create(packets::PacketType::LoginRequest, packets::PacketPriority::Low, 0).addHeader().get();
 
         _udp.send(content);
     }
@@ -58,8 +58,8 @@ void rtype::client::ClientProtocol::sendMessage() {
             rtype::event::Event input = _inputs.getElem();
             packets::PlayerEvent payload = {input};
 
-            std::string content = _packetBuilder.create(packets::PacketType::PlayerEvent)
-                                      .addHeader(packets::PacketPriority::Low, 0)
+            std::string content = _packetBuilder.create(packets::PacketType::PlayerEvent, packets::PacketPriority::Low, 0)
+                                      .addHeader()
                                       .addPayload(payload)
                                       .get();
 
@@ -68,12 +68,12 @@ void rtype::client::ClientProtocol::sendMessage() {
             // Send Ack if nothing else
             std::string content;
             if (_acks.canRead())
-                content = _packetBuilder.create(packets::PacketType::Ack)
-                              .addHeader(packets::PacketPriority::Low, _acks.getElem())
+                content = _packetBuilder.create(packets::PacketType::Ack, packets::PacketPriority::Low, _acks.getElem())
+                              .addHeader()
                               .get();
             else
                 content =
-                    _packetBuilder.create(packets::PacketType::Ack).addHeader(packets::PacketPriority::Low, 0).get();
+                    _packetBuilder.create(packets::PacketType::Ack, packets::PacketPriority::Low, 0).addHeader().get();
 
             _udp.send(content);
         }

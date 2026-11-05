@@ -9,10 +9,10 @@
 namespace rtype::packets {
     class PacketBuilderContent {
         public:
-            PacketBuilderContent(PacketType type, std::size_t tick, std::string uuid);
+            PacketBuilderContent(PacketType type, std::size_t tick, std::string uuid, rtype::packets::PacketPriority, size_t id);
             ~PacketBuilderContent() = default;
 
-            PacketBuilderContent &addHeader(rtype::packets::PacketPriority, size_t id);
+            PacketBuilderContent &addHeader();
 
             template <class T>
             PacketBuilderContent &addPayload(T payload) {
@@ -29,6 +29,8 @@ namespace rtype::packets {
             PacketType _type;
             std::size_t _tick;
             std::string _uuid;
+            rtype::packets::PacketPriority _priority;
+            size_t _id;
     };
 
     class PacketBuilder {
@@ -36,7 +38,7 @@ namespace rtype::packets {
             PacketBuilder(std::string uuid);
             ~PacketBuilder() = default;
 
-            PacketBuilderContent create(std::size_t tick, PacketType type);
+            PacketBuilderContent create(std::size_t tick, PacketType type, PacketPriority, size_t);
             void setUuid(std::string uuid);
 
         private:
