@@ -5,7 +5,8 @@
 rtype::packets::PacketBuilderContent::PacketBuilderContent(PacketType type, std::size_t tick, std::string uuid)
     : _ss(), _ar(_ss), _type(type), _tick(tick), _uuid(uuid) {};
 
-rtype::packets::PacketBuilderContent &rtype::packets::PacketBuilderContent::addHeader(rtype::packets::PacketPriority priority, size_t id) {
+rtype::packets::PacketBuilderContent &rtype::packets::PacketBuilderContent::addHeader(
+    rtype::packets::PacketPriority priority, size_t id) {
     PacketHeader header;
 
     header.size = 0;

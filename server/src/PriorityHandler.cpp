@@ -20,14 +20,14 @@ void rtype::server::PriorityHandler::addClient(std::string uuid) {
     }
 }
 
-void rtype::server::PriorityHandler::addMessage(std::string uuid, size_t id, rtype::packets::PacketType type, payloadType message) {
+void rtype::server::PriorityHandler::addMessage(std::string uuid, size_t id, rtype::packets::PacketType type,
+    payloadType message) {
 
     try {
         std::unique_lock lock(_mutex);
         auto &queue = _playersHighPriorityMsg.at(uuid);
         queue.insert({id, {type, message}});
-    } catch (std::exception &) {
-    }
+    } catch (std::exception &) {}
 }
 
 void rtype::server::PriorityHandler::addAll(size_t id, rtype::packets::PacketType type, payloadType message) {
@@ -44,11 +44,11 @@ void rtype::server::PriorityHandler::removeClient(std::string uuid) {
         auto &queue = _playersHighPriorityMsg.at(uuid);
         queue.clear();
         _playersHighPriorityMsg.erase(uuid);
-    } catch (std::exception &) {
-    }
+    } catch (std::exception &) {}
 }
 
-std::map<size_t, std::pair<rtype::packets::PacketType, rtype::server::payloadType>> rtype::server::PriorityHandler::getMessage(std::string uuid) {
+std::map<size_t, std::pair<rtype::packets::PacketType, rtype::server::payloadType>>
+rtype::server::PriorityHandler::getMessage(std::string uuid) {
     auto &queue = _playersHighPriorityMsg.at(uuid);
     return queue;
 }
@@ -58,6 +58,5 @@ void rtype::server::PriorityHandler::removeMessage(std::string uuid, size_t id) 
         std::unique_lock lock(_mutex);
         auto &map = _playersHighPriorityMsg.at(uuid);
         map.erase(id);
-    } catch (std::exception &) {
-    }
+    } catch (std::exception &) {}
 }

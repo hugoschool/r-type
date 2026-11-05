@@ -42,7 +42,9 @@ void rtype::server::ServerProtocol::handleReceive(const boost::system::error_cod
                 // TODO: handle a reconnecting player
                 if (_clientHandler.getClientsAmount() + 1 > MAX_PLAYERS) {
                     size_t id = _packetBuilder.getCurrentId();
-                    instantQueue.push(_packetBuilder.create(packets::PacketType::LoginFailed).addHeader(packets::PacketPriority::High, id).get());
+                    instantQueue.push(_packetBuilder.create(packets::PacketType::LoginFailed)
+                            .addHeader(packets::PacketPriority::High, id)
+                            .get());
 
                     addMessageToQueue = false;
                 } else {
@@ -71,8 +73,10 @@ void rtype::server::ServerProtocol::handleReceive(const boost::system::error_cod
                 // Always respond even if the queue is empty as to not block the client
                 if (clientMessageQueue.isClientEmpty(playerUuid)) {
                     std::size_t id = _packetBuilder.getCurrentId();
-                    std::shared_ptr<std::string> message = std::make_shared<std::string>(
-                        _packetBuilder.create(packets::PacketType::Ack).addHeader(packets::PacketPriority::Low, id).get());
+                    std::shared_ptr<std::string> message =
+                        std::make_shared<std::string>(_packetBuilder.create(packets::PacketType::Ack)
+                                .addHeader(packets::PacketPriority::Low, id)
+                                .get());
 
                     _socket.async_send_to(boost::asio::buffer(*message), _endpoint,
                         std::bind(&UDPProtocol::handleSend, this, message, boost::asio::placeholders::error,

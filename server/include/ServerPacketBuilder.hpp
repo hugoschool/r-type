@@ -15,10 +15,10 @@ namespace rtype::server {
             packets::PacketBuilderContent create(packets::PacketType type);
             size_t getCurrentId();
 
-            private:
+        private:
             TickHandler &_tick;
             std::mutex _mutex;
             int _id;
             void incrementID();
-        };
+    };
 }

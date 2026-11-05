@@ -133,7 +133,10 @@ std::string rtype::server::ClientHandler::newClient() {
     _priorityHandler.addClient(uuid);
 
     size_t id = _packetBuilder.getCurrentId();
-    std::string content = _packetBuilder.create(packets::PacketType::LoginAnswer).addHeader(packets::PacketPriority::Low, id).addPayload(payload).get();
+    std::string content = _packetBuilder.create(packets::PacketType::LoginAnswer)
+                              .addHeader(packets::PacketPriority::Low, id)
+                              .addPayload(payload)
+                              .get();
     _messageQueueHandler.addMessage(uuid, content);
 
     return uuid;

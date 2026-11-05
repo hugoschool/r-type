@@ -50,8 +50,8 @@ rtype::client::Client::Client(std::string host, std::string port)
       _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>(
           std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager))),
       _registery(), _camera(0.0, 100000), _scenes(), _currentScene(), _writeThread(), _readThread(), _exit(false),
-      _inputs(CIRCULAR_BUFFER_SIZE), _acks(CIRCULAR_BUFFER_SIZE), _protocol(_inputs, host, port, _maxTick, _acks), _packetReceived(), _maxTick(0), _startedPlaying(false),
-      _level(0), _navClock(std::chrono::steady_clock::now()) {
+      _inputs(CIRCULAR_BUFFER_SIZE), _acks(CIRCULAR_BUFFER_SIZE), _protocol(_inputs, host, port, _maxTick, _acks),
+      _packetReceived(), _maxTick(0), _startedPlaying(false), _level(0), _navClock(std::chrono::steady_clock::now()) {
 
     _clientConfig = std::make_shared<fengine::config::ClientConfig>();
     _scenes.push_back(std::make_shared<fengine::scene::MenuScene>("./assets/test.png", false));

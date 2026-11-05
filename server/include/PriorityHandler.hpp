@@ -4,10 +4,10 @@
 #include <cstddef>
 #include <map>
 #include <mutex>
+#include <r-type/packets/Payload.hpp>
 #include <string>
 #include <utility>
 #include <variant>
-#include <r-type/packets/Payload.hpp>
 
 namespace rtype::server {
     using payloadType = std::variant<packets::EntitySpawn, packets::EntityDied>;
@@ -24,7 +24,8 @@ namespace rtype::server {
             void removeMessage(std::string uuid, size_t id);
 
         private:
-            std::map<std::string, std::map<size_t, std::pair<packets::PacketType, payloadType>>> _playersHighPriorityMsg;
+            std::map<std::string, std::map<size_t, std::pair<packets::PacketType, payloadType>>>
+                _playersHighPriorityMsg;
             std::mutex _mutex;
     };
 }
