@@ -11,7 +11,8 @@
 namespace rtype::server {
     class SubscriberHandler {
         public:
-            SubscriberHandler(ClientHandler &clientHandler, ServerPacketBuilder &packetBuilder, std::size_t &enemyAlive);
+            SubscriberHandler(ClientHandler &clientHandler, ServerPacketBuilder &packetBuilder,
+                std::size_t &enemyAlive);
             ~SubscriberHandler() = default;
 
             void add(fengine::ecs::Registry &registry);

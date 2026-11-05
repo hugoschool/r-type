@@ -98,9 +98,8 @@ void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observe
         return;
 
     if (content.existsAndRetrieve(type)) {
-        if (type.type == fengine::presets::EntityType::E_RUNNER ||
-            type.type == fengine::presets::EntityType::E_SHOOTER ||
-            type.type == fengine::presets::EntityType::E_BOSS) {
+        if (type.type == fengine::presets::EntityType::E_RUNNER || type.type == fengine::presets::EntityType::E_SHOOTER
+            || type.type == fengine::presets::EntityType::E_BOSS) {
             _enemyAlive--;
         }
     }
