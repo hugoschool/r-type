@@ -38,7 +38,7 @@ void fengine::ecs::BehaviouralSystem::update(Registry &manager) {
             PositionComponent newPos = {pos.value().pos_x, pos.value().pos_y, true};
             VelocityComponent newVel = {-30, 0, false};
             BoundaryComponent newBound = {10, 5, false, true, std::nullopt};
-            AttackComponent newAtk = {atk.value().relation, atk.value().damage};
+            AttackComponent newAtk = {atk.value().relation, atk.value().damage, std::nullopt};
             DefenseComponent newDef = {1, 0};
             EntityTypeComponent newType = {presets::EntityType::BULLETS};
 
