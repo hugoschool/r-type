@@ -235,11 +235,16 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
             handleVelocityChanges(vel.value().vel_x, vel.value().vel_y, velocityValue);
             break;
         case event::Event::SHOOT: {
-            fengine::ecs::PositionComponent &pos =
-                _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>()[data.entityId]
-                    .value();
-            fengine::ecs::AttackComponent &att =
-                _world._registry.componentManager.getComponents<fengine::ecs::AttackComponent>()[data.entityId].value();
+            auto &positions = _world._registry.componentManager.getComponents<fengine::ecs::PositionComponent>();
+            auto &attacks = _world._registry.componentManager.getComponents<fengine::ecs::AttackComponent>();
+
+            if (!positions.containsAndHasValue(data.entityId) || !attacks.containsAndHasValue(data.entityId)) {
+                break;
+            }
+
+            fengine::ecs::PositionComponent &pos = positions[data.entityId].value();
+            fengine::ecs::AttackComponent &att = attacks[data.entityId].value();
+
             std::chrono::duration<double> duration = std::chrono::steady_clock::now() - att._shootCooldown.value();
             if (duration > std::chrono::milliseconds(150)
                 || playerBonus.value().type == fengine::presets::BonusTypes::RAPID_FIRE) {
@@ -248,7 +253,16 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
                     handlePlayerShots(pos, att, playerBonus.value(), 30, -2);
                 } else
                     handlePlayerShots(pos, att, playerBonus.value(), 30, 0);
-                att._shootCooldown.value() = std::chrono::steady_clock::now();
+
+                // I have no idea why, but modifying directly the reference OR the optional value
+                // generates an invalid read/write to the optional value.
+                // Is it me or is it the compiler having issues? (probably me)
+                //
+                // TODO: future me, investigate this further, isolate the issue
+                // I want to get to the bottom of this
+                //
+                // Anyways, the fix I found is directly modifying the value present in the component manager itself
+                attacks[data.entityId].value()._shootCooldown = std::chrono::steady_clock::now();
             }
             break;
         }
