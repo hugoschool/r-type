@@ -286,7 +286,8 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
             }
             // TODO the player needs not te be displayed when not in game
             playerBonus->_shouldExpire = true;
-            playerBonus->_bonusDuration = std::chrono::steady_clock::now() - std::chrono::seconds(12); // minus 12 seconds so its only 3 intangible seconds
+            playerBonus->_bonusDuration = std::chrono::steady_clock::now()
+                - std::chrono::seconds(12);// minus 12 seconds so its only 3 intangible seconds
             break;
         }
     }
@@ -464,7 +465,8 @@ void rtype::server::Server::tickThreadRun() {
             fengine::ecs::DefenseComponent def = {100, 0};
             fengine::ecs::BoundaryComponent bound = {100, 50, false, true, std::nullopt};
             fengine::ecs::EntityTypeComponent type = {fengine::presets::EntityType::PLAYERS};
-            fengine::ecs::PlayerBonusComponent bonus = {fengine::presets::BonusTypes::INTANGIBLE, std::chrono::steady_clock::now(), false};
+            fengine::ecs::PlayerBonusComponent bonus = {fengine::presets::BonusTypes::INTANGIBLE,
+                std::chrono::steady_clock::now(), false};
             // fengine::ecs::PlayerBonusComponent bonus = {fengine::presets::BonusTypes::NONE,
             //     std::chrono::steady_clock::now()};
 

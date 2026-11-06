@@ -8,6 +8,6 @@ namespace fengine::presets {
         THE_SPEED,
         THE_SHIELD,
         NONE,
-        INTANGIBLE // kind of invulnerability but different use when the player connects, he cannot be touched the bullet goes through
+        INTANGIBLE// kind of invulnerability but different use when the player connects, he cannot be touched the bullet goes through
     };
 }
