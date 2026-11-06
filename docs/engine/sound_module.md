@@ -6,7 +6,7 @@ This engine implements a pure virtual Sound module in order to play sounds and m
 
 The ISoundModule interface implements three functions :
 
-```c++
+```cpp
     virtual void playSound(std::string) = 0;
     virtual void playMusic(std::string) = 0;
     virtual void stopMusic(std::string) = 0;

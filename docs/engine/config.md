@@ -4,7 +4,7 @@
 
 This engine implements a pure virtual interface named IConfig. It contains :
 
-```c++
+```cpp
     virtual void set(std::string, std::any) = 0;
     virtual std::optional<std::any> get(std::string) = 0;
     virtual bool hasChanged() = 0;

@@ -12,7 +12,7 @@ Buttons is a class that has a function isInBounds, indicating if our mouse is on
 
 The IScene has pure virtual functions implemented by the AScene, that are :
 
-```c++
+```cpp
     virtual std::map<int, Button> &getButtons() = 0;
     virtual Background &getBackground() = 0;
     virtual std::vector<Text> &getTexts() = 0;

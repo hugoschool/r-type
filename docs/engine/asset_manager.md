@@ -12,7 +12,7 @@ Since it does not declare any functions, the classes inheriting from the IAssetM
 
 As an exemple, the SFMLAssetManager looks like this :
 
-```c++
+```cpp
     void loadType(std::string filepath);
     std::optional<sf::Texture> &getType(std::string filepath);
     bool textureType(std::string filepath);
@@ -22,7 +22,7 @@ Type is here an object that represents an SFML Object. It could be a sf::Texture
 
 For each of these function and the map, there is a type attached. If you want to load Textures and Musics, you would have to do :
 
-```c++
+```cpp
     void loadTexture(std::string filepath);
     void loadMusic(std::string filepath);
 ```
