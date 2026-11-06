@@ -56,6 +56,7 @@ export default defineConfig({
                     { text: "Asset Manager", link: "/engine/asset_manager" },
                     { text: "Configurations", link: "/engine/config" },
                     { text: "Scenes", link: "/engine/scenes" },
+                    { text: "Subscribers", link: "/engine/subscribers" },
                 ]
             },
             {
