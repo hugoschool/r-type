@@ -53,9 +53,6 @@ namespace rtype::server {
             ServerProtocol _protocol;
             ServerPacketBuilder _packetBuilder;
 
-            std::chrono::steady_clock::time_point _spawnClock;
-            short _enemyCounter;
-
             void generateEnemies();
 
             std::queue<std::size_t> generateClientQueue();
@@ -72,7 +69,11 @@ namespace rtype::server {
             std::chrono::steady_clock::time_point _resendClock;
             void checkResend();
 
+            std::chrono::steady_clock::time_point _spawnClock;
+            std::size_t _enemyCounter;
+
             bool _gameStarted;
             std::size_t _level;
+            std::size_t _enemyAlive;
     };
 }

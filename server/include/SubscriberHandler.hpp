@@ -2,6 +2,7 @@
 
 #include "ClientHandler.hpp"
 #include "f-engine/ecs/observer/SubscriberContent.hpp"
+#include <cstddef>
 #include <f-engine/ecs/Registry.hpp>
 #include <f-engine/ecs/observer/Subscriber.hpp>
 #include <functional>
@@ -10,7 +11,8 @@
 namespace rtype::server {
     class SubscriberHandler {
         public:
-            SubscriberHandler(ClientHandler &clientHandler, ServerPacketBuilder &packetBuilder);
+            SubscriberHandler(ClientHandler &clientHandler, ServerPacketBuilder &packetBuilder,
+                std::size_t &enemyAlive);
             ~SubscriberHandler() = default;
 
             void add(fengine::ecs::Registry &registry);
@@ -20,6 +22,8 @@ namespace rtype::server {
             using shared_subscriber = std::shared_ptr<fengine::ecs::observer::Subscriber>;
             ClientHandler &_clientHandler;
             ServerPacketBuilder &_packetBuilder;
+
+            std::size_t &_enemyAlive;
 
             std::vector<std::pair<shared_subscriber, std::function<void(shared_subscriber &subscriber)>>> _subscribers;
 

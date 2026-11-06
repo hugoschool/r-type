@@ -49,14 +49,14 @@ rtype::server::Server::Server(std::uint32_t port)
       _world(1.0, 10000), _newClientQueue(),
       // Handlers
       _tickHandler(), _clientHandler(generateClientQueue(), _newClientQueue, _packetBuilder),
-      _subscriberHandler(_clientHandler, _packetBuilder),
+      _subscriberHandler(_clientHandler, _packetBuilder, _enemyAlive),
       // Protocols
       _protocol(_io_context, _port, _tickHandler.getMessageQueue(), _clientHandler, _packetBuilder),
-      _packetBuilder(_tickHandler),
+      _packetBuilder(_tickHandler), _resendClock(),
       // Enemy generation
-      _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0), _resendClock(),
+      _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0),
       // Levels handling
-      _gameStarted(false), _level(0) {
+      _gameStarted(false), _level(0), _enemyAlive(0) {
 
     _signals.async_wait([&](boost::system::error_code, int) {
         _io_context.stop();
@@ -308,45 +308,56 @@ void rtype::server::Server::resetPlayerBonus(fengine::ecs::PlayerBonusComponent 
 }
 
 void rtype::server::Server::generateEnemies() {
+    // level changing block
+    if (_enemyCounter == _level) {
+        // all enemies have spawned
+        if (_enemyAlive == 0) {
+            _level += 1;
+            _enemyCounter = 0;
+        } else {
+            return;
+        }
+    }
+
     std::chrono::steady_clock::time_point elapsedTime = std::chrono::steady_clock::now();
     std::chrono::duration<double> spawnTime = elapsedTime - _spawnClock;
-    std::chrono::milliseconds var(4000);
+    std::chrono::milliseconds var(3000);
 
     if (spawnTime < var)
         return;
+
+    // spawn the entity
     fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
 
+    // set base property (runner's property)
     fengine::ecs::PositionComponent pos = {WINDOW_X, static_cast<float>(rand() % (WINDOW_Y - 100) + 100), false};
     fengine::ecs::VelocityComponent vel = {-5, 0, false};
     fengine::ecs::BoundaryComponent bound = {100, 50, false, true, std::nullopt};
     fengine::ecs::AttackComponent atk = {{.team = fengine::ecs::team::MONSTERS}, 10, std::nullopt};
     fengine::ecs::DefenseComponent def = {150, 0};
 
-    fengine::presets::EntityType type =
-        (_enemyCounter % 2 == 0) ? fengine::presets::EntityType::E_RUNNER : fengine::presets::EntityType::E_SHOOTER;
-
-    if (_enemyCounter == 5) {
-        _level += 1;
-        _enemyCounter = 0;
+    fengine::presets::EntityType type;
+    _enemyCounter++;
+    if (_enemyCounter % 5 == 0) {
+        type = fengine::presets::EntityType::E_BOSS;
         vel = {-5, 2, false};
         atk.damage += 15;
         def = {300, 20};
         bound.size_x += 100;
         bound.size_y += 50;
         bound.bouncy = true;
-        type = fengine::presets::EntityType::E_BOSS;
+    } else if (_enemyCounter % 3 == 0) {
+        type = fengine::presets::EntityType::E_SHOOTER;
+        bound.size_x = 75;
+        bound.size_y = 100;
+        vel = {0, -5, false};
+        pos.pos_x -= 50;
+        def.health -= 50;
+        fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER,
+            std::chrono::steady_clock::now()};
+        _world._registry.componentManager.addComponent(entity, std::move(behaviour));
     } else {
-        if (type == fengine::presets::EntityType::E_SHOOTER) {
-            bound.size_x = 75;
-            bound.size_y = 100;
-            vel = {0, -5, false};
-            pos.pos_x -= 50;
-            def.health -= 50;
-            fengine::ecs::BehaviourComponent behaviour = {fengine::ecs::behaviour::SHOOTER,
-                std::chrono::steady_clock::now()};
-            _world._registry.componentManager.addComponent(entity, std::move(behaviour));
-        }
-        _enemyCounter++;
+        type = fengine::presets::EntityType::E_RUNNER;
     }
 
     fengine::ecs::EntityTypeComponent typeComponent = {.type = type};
@@ -356,6 +367,8 @@ void rtype::server::Server::generateEnemies() {
     _world._registry.componentManager.addComponent(entity, std::move(atk));
     _world._registry.componentManager.addComponent(entity, std::move(def));
     _world._registry.componentManager.addComponent(entity, std::move(typeComponent));
+
+    _enemyAlive++;
 
     auto &clients = _clientHandler.getClients();
     const std::size_t entityId = entity.getId();

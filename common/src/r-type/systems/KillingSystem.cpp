@@ -61,6 +61,7 @@ void fengine::ecs::KillingSystem::update(Registry &manager) {
                 DeadComponent deadComp = {entity.value().getId()};
                 manager.entityManager.killEntity(entity.value());
                 content.add<DeadComponent>(deadComp);
+                content.add<EntityTypeComponent>(type.value());
                 updateSubscribers(content);
             }
         }
