@@ -9,7 +9,8 @@
 namespace rtype::packets {
     class PacketBuilderContent {
         public:
-            PacketBuilderContent(PacketType type, std::size_t tick, std::string uuid, rtype::packets::PacketPriority, size_t id);
+            PacketBuilderContent(PacketType type, std::size_t tick, std::string uuid, rtype::packets::PacketPriority,
+                size_t id);
             ~PacketBuilderContent() = default;
 
             PacketBuilderContent &addHeader();

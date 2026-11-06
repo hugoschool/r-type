@@ -58,10 +58,11 @@ void rtype::client::ClientProtocol::sendMessage() {
             rtype::event::Event input = _inputs.getElem();
             packets::PlayerEvent payload = {input};
 
-            std::string content = _packetBuilder.create(packets::PacketType::PlayerEvent, packets::PacketPriority::Low, 0)
-                                      .addHeader()
-                                      .addPayload(payload)
-                                      .get();
+            std::string content =
+                _packetBuilder.create(packets::PacketType::PlayerEvent, packets::PacketPriority::Low, 0)
+                    .addHeader()
+                    .addPayload(payload)
+                    .get();
 
             _udp.send(content);
         } else {

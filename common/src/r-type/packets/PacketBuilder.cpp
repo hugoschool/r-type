@@ -2,7 +2,8 @@
 #include <cstddef>
 #include <r-type/packets/PacketBuilder.hpp>
 
-rtype::packets::PacketBuilderContent::PacketBuilderContent(PacketType type, std::size_t tick, std::string uuid, PacketPriority priority, size_t id)
+rtype::packets::PacketBuilderContent::PacketBuilderContent(PacketType type, std::size_t tick, std::string uuid,
+    PacketPriority priority, size_t id)
     : _ss(), _ar(_ss), _type(type), _tick(tick), _uuid(uuid), _priority(priority), _id(id) {};
 
 rtype::packets::PacketBuilderContent &rtype::packets::PacketBuilderContent::addHeader() {
