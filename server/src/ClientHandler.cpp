@@ -107,6 +107,16 @@ std::unordered_map<std::string, rtype::server::ClientData> &rtype::server::Clien
     return _clients;
 }
 
+std::vector<std::string> rtype::server::ClientHandler::getClientsUuids() {
+    std::unique_lock lock(_mutex);
+    std::vector<std::string> uuids;
+
+    for (auto &[uuid, _] : _clients) {
+        uuids.push_back(uuid);
+    }
+    return uuids;
+}
+
 std::string rtype::server::ClientHandler::newClient() {
     std::unique_lock lock(_mutex);
 

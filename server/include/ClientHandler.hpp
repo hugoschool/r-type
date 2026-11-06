@@ -73,6 +73,8 @@ namespace rtype::server {
             void setAlive(std::string &uuid);
 
             std::unordered_map<std::string, ClientData> &getClients();
+            std::vector<std::string> getClientsUuids();
+
             bool clientExists(std::string &uuid);
             std::size_t getClientsAmount();
 

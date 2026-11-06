@@ -492,8 +492,10 @@ void rtype::server::Server::tickThreadRun() {
 void rtype::server::Server::addPriorityMessages() {
     try {
         auto &messageQueue = _clientHandler.getMessageQueueHandler();
-        for (auto client : _clientHandler.getClients()) {
-            auto queue = _priorityHandler.getMessage(client.first);
+        auto uuids = _clientHandler.getClientsUuids();
+
+        for (auto &uuid : uuids) {
+            auto queue = _priorityHandler.getMessage(uuid);
             for (auto message : queue) {
                 std::string content;
                 if (std::holds_alternative<packets::EntitySpawn>(message.second.second)) {
@@ -507,7 +509,7 @@ void rtype::server::Server::addPriorityMessages() {
                                   .addPayload(std::get<packets::EntityDied>(message.second.second))
                                   .get();
                 }
-                messageQueue.addMessage(client.first, content);
+                messageQueue.addMessage(uuid, content);
             }
         }
     } catch (std::exception &) {}
