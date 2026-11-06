@@ -50,8 +50,13 @@ export default defineConfig({
                 text: "Engine",
                 items: [
                     { text: "ECS", link: "/engine/ecs" },
-                    { text: "Display Module", link: "/engine/display_module" },
                     { text: "Architecture", link: "/engine/architecture" },
+                    { text: "Display Module", link: "/engine/display_module" },
+                    { text: "Sound Module", link: "/engine/sound_module" },
+                    { text: "Asset Manager", link: "/engine/asset_manager" },
+                    { text: "Configurations", link: "/engine/config" },
+                    { text: "Scenes", link: "/engine/scenes" },
+                    { text: "Subscribers", link: "/engine/subscribers" },
                 ]
             },
             {
