@@ -232,7 +232,6 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
             _gameStarted = true;
             _level = 1;
         }
-        return;
     }
     float velocityValue = playerBonus.value().type == fengine::presets::BonusTypes::THE_SPEED ? 15 : 10;
     switch (event.event) {
@@ -281,8 +280,13 @@ void rtype::server::Server::handlePlayerEvents(packets::Serialization::deseriali
             break;
         }
         case event::Event::PLAY: {
-            // TODO new client connects but the game has already started
-            // give the player invincibiloty frames
+            if (_gameStarted == false) {
+                _gameStarted = true;
+                _level = 1;
+            }
+            // TODO the player needs not te be displayed when not in game
+            playerBonus->_shouldExpire = true;
+            playerBonus->_bonusDuration = std::chrono::steady_clock::now() - std::chrono::seconds(12); // minus 12 seconds so its only 3 intangible seconds
             break;
         }
     }
@@ -298,6 +302,11 @@ void rtype::server::Server::handleVelocityChanges(float &velocity, float counter
 
 void rtype::server::Server::handlePlayerShots(fengine::ecs::PositionComponent &pos, fengine::ecs::AttackComponent &att,
     fengine::ecs::PlayerBonusComponent &bonus, float velX, float velY) {
+    if (bonus.type == fengine::presets::BonusTypes::INTANGIBLE) {
+        // the player cannot shoot while intangible
+        return;
+    }
+
     fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
     _world._registry.componentManager.addComponent(entity,
         (fengine::ecs::PositionComponent) {pos.pos_x, pos.pos_y, true});
@@ -313,6 +322,9 @@ void rtype::server::Server::handlePlayerShots(fengine::ecs::PositionComponent &p
 }
 
 void rtype::server::Server::resetPlayerBonus(fengine::ecs::PlayerBonusComponent &playerBonus) {
+    if (playerBonus._shouldExpire == false) {
+        return;
+    }
     if (playerBonus.type != fengine::presets::BonusTypes::NONE) {
         std::chrono::duration<double> duration = std::chrono::steady_clock::now() - playerBonus._bonusDuration;
         if (duration > std::chrono::seconds(15)) {
@@ -445,15 +457,16 @@ void rtype::server::Server::tickThreadRun() {
             std::size_t entityId = _newClientQueue.pop();
             std::optional<fengine::ecs::Entity> &entity = _world._registry.entityManager.entityFromIndex(entityId);
 
-            fengine::ecs::PositionComponent pos = {50, 50, false};
+            fengine::ecs::PositionComponent pos = {50, static_cast<float>(rand() % (WINDOW_Y - 100) + 100), false};
             fengine::ecs::VelocityComponent vel = {0, 0, true};
             fengine::ecs::AttackComponent att = {{.team = fengine::ecs::team::ALLIES}, 10,
                 std::chrono::steady_clock::now()};
             fengine::ecs::DefenseComponent def = {100, 0};
             fengine::ecs::BoundaryComponent bound = {100, 50, false, true, std::nullopt};
             fengine::ecs::EntityTypeComponent type = {fengine::presets::EntityType::PLAYERS};
-            fengine::ecs::PlayerBonusComponent bonus = {fengine::presets::BonusTypes::NONE,
-                std::chrono::steady_clock::now()};
+            fengine::ecs::PlayerBonusComponent bonus = {fengine::presets::BonusTypes::INTANGIBLE, std::chrono::steady_clock::now(), false};
+            // fengine::ecs::PlayerBonusComponent bonus = {fengine::presets::BonusTypes::NONE,
+            //     std::chrono::steady_clock::now()};
 
             _world._registry.componentManager.addComponent(entity.value(), std::move(pos));
             _world._registry.componentManager.addComponent(entity.value(), std::move(vel));
