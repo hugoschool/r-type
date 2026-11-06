@@ -120,13 +120,10 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
                 .height = boundary->size_y,
             };
 
-            size_t id = _packetBuilder.getCurrentId();
-
-            std::string content =
-                _packetBuilder.create(packets::PacketType::EntitySpawn, packets::PacketPriority::High, id)
-                    .addHeader()
-                    .addPayload(payload)
-                    .get();
+            std::string content = _packetBuilder.create(packets::PacketType::EntitySpawn, packets::PacketPriority::High)
+                                      .addHeader()
+                                      .addPayload(payload)
+                                      .get();
 
             // rtype::server::payloadType sendPayload = payload;
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
@@ -143,10 +140,8 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
                 .velocity = packets::Vector2D(velocity->vel_x, velocity->vel_y),
             };
 
-            size_t id = _packetBuilder.getCurrentId();
-
             std::string content =
-                _packetBuilder.create(packets::PacketType::EntityVelocityChange, packets::PacketPriority::Low, id)
+                _packetBuilder.create(packets::PacketType::EntityVelocityChange, packets::PacketPriority::Low)
                     .addHeader()
                     .addPayload(payload)
                     .get();
@@ -163,13 +158,10 @@ void rtype::server::Server::newEntityPacket(std::size_t entityId, fengine::prese
                 .coordinates = packets::Vector2D(position->pos_x, position->pos_y),
             };
 
-            size_t id = _packetBuilder.getCurrentId();
-
-            std::string content =
-                _packetBuilder.create(packets::PacketType::EntityMove, packets::PacketPriority::Low, id)
-                    .addHeader()
-                    .addPayload(payload)
-                    .get();
+            std::string content = _packetBuilder.create(packets::PacketType::EntityMove, packets::PacketPriority::Low)
+                                      .addHeader()
+                                      .addPayload(payload)
+                                      .get();
 
             _clientHandler.getMessageQueueHandler().addMessage(uuid, content);
         }
@@ -430,8 +422,7 @@ void rtype::server::Server::checkResend() {
         .level = _level,
     };
 
-    size_t id = _packetBuilder.getCurrentId();
-    std::string content = _packetBuilder.create(packets::PacketType::Level, packets::PacketPriority::High, id)
+    std::string content = _packetBuilder.create(packets::PacketType::Level, packets::PacketPriority::High)
                               .addHeader()
                               .addPayload(payload)
                               .get();

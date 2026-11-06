@@ -12,11 +12,20 @@ rtype::server::ServerPacketBuilder::ServerPacketBuilder(rtype::server::TickHandl
 }
 
 rtype::packets::PacketBuilderContent rtype::server::ServerPacketBuilder::create(rtype::packets::PacketType type,
-    packets::PacketPriority priority, size_t id) {
+    packets::PacketPriority priority) {
+    std::size_t id = getCurrentId();
+
+    incrementId();
+
     return packets::PacketBuilder::create(_tick.getTick(), type, priority, id);
 }
 
-void rtype::server::ServerPacketBuilder::incrementID() {
+rtype::packets::PacketBuilderContent rtype::server::ServerPacketBuilder::create(rtype::packets::PacketType type,
+    packets::PacketPriority priority, std::size_t id) {
+    return packets::PacketBuilder::create(_tick.getTick(), type, priority, id);
+}
+
+void rtype::server::ServerPacketBuilder::incrementId() {
     std::unique_lock lock(_mutex);
 
     if (_id < INT32_MAX)
@@ -24,9 +33,9 @@ void rtype::server::ServerPacketBuilder::incrementID() {
     else
         _id = 1;
 }
-size_t rtype::server::ServerPacketBuilder::getCurrentId() {
-    size_t id = _id;
 
-    incrementID();
-    return id;
+std::size_t rtype::server::ServerPacketBuilder::getCurrentId() {
+    std::unique_lock lock(_mutex);
+
+    return _id;
 }

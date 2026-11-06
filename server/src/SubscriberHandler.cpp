@@ -109,11 +109,16 @@ void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observe
     packets::EntityDied payload = {
         .entityId = dead.entityId,
     };
+
     size_t id = _packetBuilder.getCurrentId();
+
     std::string str = _packetBuilder.create(packets::PacketType::EntityDied, packets::PacketPriority::High, id)
                           .addHeader()
                           .addPayload(payload)
                           .get();
+
+    _packetBuilder.incrementId();
+
     _priorityHandler.addAll(id, packets::PacketType::EntityDied, payload);
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
@@ -128,8 +133,8 @@ void rtype::server::SubscriberHandler::handleVelocityComponent(fengine::ecs::obs
         .entityId = content.getEntityId(),
         .velocity = packets::Vector2D(velocity.vel_x, velocity.vel_y),
     };
-    size_t id = _packetBuilder.getCurrentId();
-    std::string str = _packetBuilder.create(packets::PacketType::EntityVelocityChange, packets::PacketPriority::Low, id)
+
+    std::string str = _packetBuilder.create(packets::PacketType::EntityVelocityChange, packets::PacketPriority::Low)
                           .addHeader()
                           .addPayload(payload)
                           .get();
@@ -147,9 +152,8 @@ void rtype::server::SubscriberHandler::handlePositionComponent(fengine::ecs::obs
         .entityId = content.getEntityId(),
         .coordinates = packets::Vector2D(position.pos_x, position.pos_y),
     };
-    size_t id = _packetBuilder.getCurrentId();
 
-    std::string str = _packetBuilder.create(packets::PacketType::EntityMove, packets::PacketPriority::Low, id)
+    std::string str = _packetBuilder.create(packets::PacketType::EntityMove, packets::PacketPriority::Low)
                           .addHeader()
                           .addPayload(payload)
                           .get();
@@ -172,10 +176,14 @@ void rtype::server::SubscriberHandler::handleEntitySpawn(fengine::ecs::observer:
     };
 
     size_t id = _packetBuilder.getCurrentId();
-    std::string str = _packetBuilder.create(packets::PacketType::EntitySpawn, packets::PacketPriority::High, id)
+
+    std::string str = _packetBuilder.create(packets::PacketType::EntitySpawn, packets::PacketPriority::High)
                           .addHeader()
                           .addPayload(payload)
                           .get();
+
+    _packetBuilder.incrementId();
+
     _priorityHandler.addAll(id, packets::PacketType::EntitySpawn, payload);
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
