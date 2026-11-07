@@ -140,6 +140,7 @@ std::string rtype::server::ClientHandler::newClient() {
 
     packets::LoginAnswer payload;
     payload.setUuid(uuid);
+    payload.entityId = entityId;
     _priorityHandler.addClient(uuid);
 
     std::string content = _packetBuilder.create(packets::PacketType::LoginAnswer, packets::PacketPriority::Low)

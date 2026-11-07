@@ -24,10 +24,12 @@ namespace rtype::packets {
     struct LoginAnswer {
         public:
             char uuid[UUID_SIZE + 1];
+            std::size_t entityId;
 
             template <class Archive>
             void serialize(Archive &ar, unsigned int) {
                 ar & uuid;
+                ar & entityId;
             }
 
             void setUuid(std::string newUuid) {

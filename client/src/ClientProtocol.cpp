@@ -44,6 +44,7 @@ void rtype::client::ClientProtocol::sendConnectionPackets() {
         std::string uuid = payload.uuid;
         _packetBuilder.setUuid(uuid);
 
+        std::cout << "Entity ID: " << payload.entityId << std::endl;
         std::cout << "UUID: " << uuid << std::endl;
     }
 }
