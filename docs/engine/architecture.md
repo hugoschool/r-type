@@ -1,3 +1,7 @@
+# Architecture
+
+This document represents the architecture of the Engine part of the r-type.
+
 ```mermaid
 flowchart TD
 

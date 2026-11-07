@@ -2,6 +2,11 @@
 
 This project is C++20, uses CMake and CPM as a package manager.
 
+> [!NOTE]
+> This document talks about how to use the **ENTIRE** projet.
+>
+> If you wish to build only the game engine and use it as a standalone (example: for your own game), [consult this document instead.](engine/building.md)
+
 Below is an informative guide on how to build it.
 
 ## Tools

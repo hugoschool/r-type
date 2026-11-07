@@ -49,6 +49,7 @@ export default defineConfig({
             {
                 text: "Engine",
                 items: [
+                    { text: "Building", link: "/engine/building" },
                     { text: "ECS", link: "/engine/ecs" },
                     { text: "Architecture", link: "/engine/architecture" },
                     { text: "Display Module", link: "/engine/display_module" },
