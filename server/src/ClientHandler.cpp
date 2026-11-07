@@ -1,8 +1,7 @@
 #include "ClientHandler.hpp"
 #include "Exception.hpp"
+#include "PriorityHandler.hpp"
 #include "SafeQueue.hpp"
-#include "r-type/components/AttackComponent.hpp"
-#include "r-type/components/DefenseComponent.hpp"
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/generators.hpp>
 #include <boost/uuid/uuid.hpp>
@@ -85,13 +84,14 @@ void rtype::server::ClientMessageQueueHandler::disconnectClient(std::string uuid
 }
 
 rtype::server::ClientHandler::ClientHandler(std::queue<std::size_t> entityIds, SafeQueue<std::size_t> &newClientQueue,
-    ServerPacketBuilder &packetBuilder)
+    ServerPacketBuilder &packetBuilder, PriorityHandler &priorityHandler)
     : _mutex(), _maxStatusSecondsMap({
                     {ClientStatus::Disconnected, std::chrono::seconds(MAX_DISCONNECTED_SECONDS)},
                     {ClientStatus::Connecting, std::chrono::seconds(MAX_CONNECTING_SECONDS)},
                     {ClientStatus::Connected, std::chrono::seconds(MAX_CONNECTED_SECONDS)},
                 }),
-      _clients(), _entityIds(entityIds), _uuids(), _newClientQueue(newClientQueue), _packetBuilder(packetBuilder) {
+      _clients(), _entityIds(entityIds), _uuids(), _newClientQueue(newClientQueue), _packetBuilder(packetBuilder),
+      _priorityHandler(priorityHandler) {
     for (std::size_t i = 0; i < MAX_PLAYERS; i++) {
         _uuids.push(generateUuid());
     }
@@ -105,6 +105,16 @@ std::unordered_map<std::string, rtype::server::ClientData> &rtype::server::Clien
     std::unique_lock lock(_mutex);
 
     return _clients;
+}
+
+std::vector<std::string> rtype::server::ClientHandler::getClientsUuids() {
+    std::unique_lock lock(_mutex);
+    std::vector<std::string> uuids;
+
+    for (auto &[uuid, _] : _clients) {
+        uuids.push_back(uuid);
+    }
+    return uuids;
 }
 
 std::string rtype::server::ClientHandler::newClient() {
@@ -130,8 +140,12 @@ std::string rtype::server::ClientHandler::newClient() {
 
     packets::LoginAnswer payload;
     payload.setUuid(uuid);
+    _priorityHandler.addClient(uuid);
 
-    std::string content = _packetBuilder.create(packets::PacketType::LoginAnswer).addHeader().addPayload(payload).get();
+    std::string content = _packetBuilder.create(packets::PacketType::LoginAnswer, packets::PacketPriority::Low)
+                              .addHeader()
+                              .addPayload(payload)
+                              .get();
     _messageQueueHandler.addMessage(uuid, content);
 
     return uuid;
@@ -186,6 +200,7 @@ void rtype::server::ClientHandler::verifyStatus() {
                 const std::string uuidCopy = uuid;
                 data.status = ClientStatus::Removed;
                 _messageQueueHandler.disconnectClient(uuidCopy);
+                _priorityHandler.removeClient(uuidCopy);
                 std::cout << "Client " << uuidCopy << " erased" << std::endl;
                 break;
             }

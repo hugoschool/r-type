@@ -1,5 +1,6 @@
 #pragma once
 
+#include "PriorityHandler.hpp"
 #include "SafeQueue.hpp"
 #include "ServerPacketBuilder.hpp"
 #include <chrono>
@@ -61,7 +62,7 @@ namespace rtype::server {
     class ClientHandler {
         public:
             explicit ClientHandler(std::queue<std::size_t> entityIds, SafeQueue<std::size_t> &newClientQueue,
-                ServerPacketBuilder &packetBuilder);
+                ServerPacketBuilder &packetBuilder, PriorityHandler &priorityHandler);
             ~ClientHandler() = default;
 
             static std::string generateUuid();
@@ -72,6 +73,8 @@ namespace rtype::server {
             void setAlive(std::string &uuid);
 
             std::unordered_map<std::string, ClientData> &getClients();
+            std::vector<std::string> getClientsUuids();
+
             bool clientExists(std::string &uuid);
             std::size_t getClientsAmount();
 
@@ -98,5 +101,6 @@ namespace rtype::server {
             ServerPacketBuilder &_packetBuilder;
 
             ClientMessageQueueHandler _messageQueueHandler;
+            PriorityHandler &_priorityHandler;
     };
 }

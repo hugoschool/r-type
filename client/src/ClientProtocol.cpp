@@ -7,10 +7,12 @@
 #include "r-type/packets/Serialization.hpp"
 #include <cstddef>
 #include <iostream>
+#include <string>
 
 rtype::client::ClientProtocol::ClientProtocol(rtype::client::CircularBuffer<PlayerEvent> &inputs, std::string host,
-    std::string port, std::size_t &tick)
-    : _inputs(inputs), _io_context(), _udp(_io_context, host, std::stoi(port)), _packetBuilder(), _tick(tick) {
+    std::string port, std::size_t &tick, CircularBuffer<size_t> &acks)
+    : _inputs(inputs), _io_context(), _udp(_io_context, host, std::stoi(port)), _packetBuilder(), _tick(tick),
+      _acks(acks) {
     _udp.connect();
     sendConnectionPackets();
 }
@@ -21,7 +23,8 @@ rtype::client::ClientProtocol::~ClientProtocol() {
 
 void rtype::client::ClientProtocol::sendConnectionPackets() {
     {
-        std::string content = _packetBuilder.create(packets::PacketType::LoginRequest).addHeader().get();
+        std::string content =
+            _packetBuilder.create(packets::PacketType::LoginRequest, packets::PacketPriority::Low, 0).addHeader().get();
 
         _udp.send(content);
     }
@@ -56,12 +59,22 @@ void rtype::client::ClientProtocol::sendMessage() {
             packets::PlayerEvent payload = {input};
 
             std::string content =
-                _packetBuilder.create(packets::PacketType::PlayerEvent).addHeader().addPayload(payload).get();
+                _packetBuilder.create(packets::PacketType::PlayerEvent, packets::PacketPriority::Low, 0)
+                    .addHeader()
+                    .addPayload(payload)
+                    .get();
 
             _udp.send(content);
         } else {
             // Send Ack if nothing else
-            std::string content = _packetBuilder.create(packets::PacketType::Ack).addHeader().get();
+            std::string content;
+            if (_acks.canRead())
+                content = _packetBuilder.create(packets::PacketType::Ack, packets::PacketPriority::Low, _acks.getElem())
+                              .addHeader()
+                              .get();
+            else
+                content =
+                    _packetBuilder.create(packets::PacketType::Ack, packets::PacketPriority::Low, 0).addHeader().get();
 
             _udp.send(content);
         }

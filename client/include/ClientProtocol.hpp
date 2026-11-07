@@ -15,7 +15,7 @@ namespace rtype::client {
             using PlayerEvent = rtype::event::Event;
 
             ClientProtocol(rtype::client::CircularBuffer<PlayerEvent> &inputs, std::string host, std::string port,
-                std::size_t &tick);
+                std::size_t &tick, CircularBuffer<size_t> &acks);
             ~ClientProtocol();
 
             void sendConnectionPackets();
@@ -33,5 +33,6 @@ namespace rtype::client {
             ClientPacketBuilder _packetBuilder;
 
             std::size_t &_tick;
+            rtype::client::CircularBuffer<size_t> &_acks;
     };
 }

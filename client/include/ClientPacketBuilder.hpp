@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <r-type/packets/Packet.hpp>
 #include <r-type/packets/PacketBuilder.hpp>
 
@@ -9,6 +10,6 @@ namespace rtype::client {
             ClientPacketBuilder();
             ~ClientPacketBuilder() = default;
 
-            packets::PacketBuilderContent create(packets::PacketType type);
+            packets::PacketBuilderContent create(packets::PacketType type, packets::PacketPriority, size_t);
     };
 }

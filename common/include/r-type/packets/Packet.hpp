@@ -21,12 +21,19 @@ namespace rtype::packets {
         Level,
     };
 
+    enum class PacketPriority {
+        High,
+        Low
+    };
+
     struct PacketHeader {
         public:
             PacketType type;
             std::size_t size;
             std::size_t tick;
             char playerUuid[UUID_SIZE + 1];
+            PacketPriority priority;
+            size_t id;
 
             template <class Archive>
             void serialize(Archive &ar, const unsigned int) {
@@ -34,6 +41,8 @@ namespace rtype::packets {
                 ar & size;
                 ar & tick;
                 ar & playerUuid;
+                ar & priority;
+                ar & id;
             }
 
             void setUuid(std::string uuid) {

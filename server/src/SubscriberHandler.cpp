@@ -1,5 +1,6 @@
 #include "SubscriberHandler.hpp"
 #include "ClientHandler.hpp"
+#include "PriorityHandler.hpp"
 #include "f-engine/ecs/components/BoundaryComponent.hpp"
 #include "f-engine/ecs/observer/SubscriberContent.hpp"
 #include "r-type/components/EntityTypeComponent.hpp"
@@ -22,8 +23,9 @@
 #include <r-type/packets/Serialization.hpp>
 
 rtype::server::SubscriberHandler::SubscriberHandler(rtype::server::ClientHandler &clientHandler,
-    ServerPacketBuilder &packetBuilder, std::size_t &enemyAlive)
-    : _clientHandler(clientHandler), _packetBuilder(packetBuilder), _enemyAlive(enemyAlive) {
+    ServerPacketBuilder &packetBuilder, PriorityHandler &priorityHandler, std::size_t &enemyAlive)
+    : _clientHandler(clientHandler), _packetBuilder(packetBuilder), _priorityHandler(priorityHandler),
+      _enemyAlive(enemyAlive) {
     shared_subscriber movement = std::make_shared<fengine::ecs::observer::Subscriber>();
     shared_subscriber killing = std::make_shared<fengine::ecs::observer::Subscriber>();
     shared_subscriber collision = std::make_shared<fengine::ecs::observer::Subscriber>();
@@ -108,8 +110,16 @@ void rtype::server::SubscriberHandler::handleDeadComponent(fengine::ecs::observe
         .entityId = dead.entityId,
     };
 
-    std::string str = _packetBuilder.create(packets::PacketType::EntityDied).addHeader().addPayload(payload).get();
+    size_t id = _packetBuilder.getCurrentId();
 
+    std::string str = _packetBuilder.create(packets::PacketType::EntityDied, packets::PacketPriority::High, id)
+                          .addHeader()
+                          .addPayload(payload)
+                          .get();
+
+    _packetBuilder.incrementId();
+
+    _priorityHandler.addAll(id, packets::PacketType::EntityDied, payload);
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
 
@@ -123,8 +133,11 @@ void rtype::server::SubscriberHandler::handleVelocityComponent(fengine::ecs::obs
         .entityId = content.getEntityId(),
         .velocity = packets::Vector2D(velocity.vel_x, velocity.vel_y),
     };
-    std::string str =
-        _packetBuilder.create(packets::PacketType::EntityVelocityChange).addHeader().addPayload(payload).get();
+
+    std::string str = _packetBuilder.create(packets::PacketType::EntityVelocityChange, packets::PacketPriority::Low)
+                          .addHeader()
+                          .addPayload(payload)
+                          .get();
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
@@ -140,7 +153,10 @@ void rtype::server::SubscriberHandler::handlePositionComponent(fengine::ecs::obs
         .coordinates = packets::Vector2D(position.pos_x, position.pos_y),
     };
 
-    std::string str = _packetBuilder.create(packets::PacketType::EntityMove).addHeader().addPayload(payload).get();
+    std::string str = _packetBuilder.create(packets::PacketType::EntityMove, packets::PacketPriority::Low)
+                          .addHeader()
+                          .addPayload(payload)
+                          .get();
 
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
@@ -159,7 +175,15 @@ void rtype::server::SubscriberHandler::handleEntitySpawn(fengine::ecs::observer:
         .height = bound.size_y,
     };
 
-    std::string str = _packetBuilder.create(packets::PacketType::EntitySpawn).addHeader().addPayload(payload).get();
+    size_t id = _packetBuilder.getCurrentId();
 
+    std::string str = _packetBuilder.create(packets::PacketType::EntitySpawn, packets::PacketPriority::High)
+                          .addHeader()
+                          .addPayload(payload)
+                          .get();
+
+    _packetBuilder.incrementId();
+
+    _priorityHandler.addAll(id, packets::PacketType::EntitySpawn, payload);
     _clientHandler.getMessageQueueHandler().sendToAllClients(str);
 }
