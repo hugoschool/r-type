@@ -18,7 +18,8 @@
 namespace fengine::modules::display {
     class SFMLDisplayModule : public ADisplayModule {
         public:
-            SFMLDisplayModule(std::shared_ptr<asset_manager::SFMLAssetManager> assetManager);
+            SFMLDisplayModule(std::shared_ptr<asset_manager::SFMLAssetManager> assetManager,
+                std::string title = "Freaky Engine");
             ~SFMLDisplayModule() override;
 
             void clear() override;

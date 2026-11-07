@@ -27,8 +27,8 @@
 #include <vector>
 
 fengine::modules::display::SFMLDisplayModule::SFMLDisplayModule(
-    std::shared_ptr<fengine::asset_manager::SFMLAssetManager> assetManager)
-    : _window(assetManager), _keyPressed(), _assetManager(assetManager) {
+    std::shared_ptr<fengine::asset_manager::SFMLAssetManager> assetManager, std::string title)
+    : _window(assetManager, title), _keyPressed(), _assetManager(assetManager) {
 }
 
 fengine::modules::display::SFMLDisplayModule::~SFMLDisplayModule() {
