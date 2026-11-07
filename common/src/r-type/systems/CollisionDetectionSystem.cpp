@@ -3,6 +3,8 @@
 #include "f-engine/ecs/components/CollisionComponent.hpp"
 #include "f-engine/ecs/components/PositionComponent.hpp"
 #include "r-type/components/AttackComponent.hpp"
+#include "r-type/components/PlayerBonusComponent.hpp"
+#include "r-type/presets/BonusTypes.hpp"
 
 fengine::ecs::CollisionDetectionSystem::CollisionDetectionSystem() {};
 
@@ -13,6 +15,7 @@ void fengine::ecs::CollisionDetectionSystem::update(Registry &manager) {
     auto &boundaries = manager.componentManager.getComponents<BoundaryComponent>();
     auto &colliders = manager.componentManager.getComponents<CollisionComponent>();
     auto &attacks = manager.componentManager.getComponents<AttackComponent>();
+    auto &bonuses = manager.componentManager.getComponents<PlayerBonusComponent>();
 
     for (std::size_t i = 0; i < manager.entityManager.size(); i++) {
         if (!manager.entityManager.entityFromIndex(i).has_value())
@@ -21,7 +24,11 @@ void fengine::ecs::CollisionDetectionSystem::update(Registry &manager) {
         auto &bound = boundaries[i];
         auto &collision = colliders[i];
         auto &att = attacks[i];
+        auto &bonus = bonuses[i];
 
+        if (bonus->type == fengine::presets::BonusTypes::INTANGIBLE) {
+            continue;
+        }
         if (!pos.has_value() || !bound.has_value() || !bound.value().hittable || !att.has_value()
             || (collision.has_value() && collision.value().set))
             continue;
