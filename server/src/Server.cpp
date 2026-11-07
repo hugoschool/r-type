@@ -58,7 +58,7 @@ rtype::server::Server::Server(std::uint32_t port)
       // Enemy generation
       _spawnClock(std::chrono::steady_clock::now()), _enemyCounter(0),
       // Levels handling
-      _gameStarted(false), _level(0),
+      _gameStarted(false), _level(0), _enemyAlive(0),
       // priority handler
       _priorityHandler(), _clientHandler(generateClientQueue(), _newClientQueue, _packetBuilder, _priorityHandler),
       _subscriberHandler(_clientHandler, _packetBuilder, _priorityHandler, _enemyAlive) {
