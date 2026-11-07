@@ -1,10 +1,14 @@
-# R-Type
+# ![A ship from the game](./docs/assets/ship.png) R-Type
+
+![An example of the game, a simple ship shooting at an enemy](./docs/assets/gameplay.gif)
+> An example of the game, a simple ship shooting at an enemy
 
 A multi-threaded server and a graphical client for the "R-Type" game using a homemade game engine.
 
 Fully made in **C++**, this project was realized in the `Software Architecture Engineering` module (G-ING-500) at Epitech. (Subjects available in [subject folder](./subject/))
 
-Main repository url: https://github.com/hugoschool/r-type
+> [!NOTE]
+> Main repository url: https://github.com/hugoschool/r-type
 
 ## Building from source
 
@@ -15,6 +19,8 @@ It can be easily compiled with these commands:
 cmake -B build .
 cmake --build build
 ```
+
+You will find more information in our [building documentation](https://hugoschool.github.io/r-type/building.html).
 
 ## Download
 
@@ -35,7 +41,7 @@ Documentation is hosted at https://hugoschool.github.io/r-type
 
 ## Contributing
 
-Wish to contribute? See more in the [CONTRIBUTING.md](./CONTRIBUTING.md) file or on the Contributing section in our docs site.
+Wish to contribute? See more in the [CONTRIBUTING.md](./docs/contributing.md) file or on the [Contributing section in our docs site](https://hugoschool.github.io/r-type/contributing.html).
 
 ## Authors
 
