@@ -16,7 +16,7 @@ constexpr std::string_view CSHADER = "./assets/shaders/colorblind.glsl";
 namespace fengine::modules::display {
     class SFMLWindow : public IWindow {
         public:
-            SFMLWindow(std::shared_ptr<asset_manager::SFMLAssetManager> assetManager);
+            SFMLWindow(std::shared_ptr<asset_manager::SFMLAssetManager> assetManager, std::string title);
             ~SFMLWindow() override;
 
             void drawShape(std::shared_ptr<IShape> shape) override;
