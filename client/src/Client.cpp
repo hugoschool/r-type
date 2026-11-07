@@ -267,29 +267,39 @@ void rtype::client::Client::addEntity(packets::Serialization::deserialize_archiv
 
     packets::Serialization::deserialize(ar, payload);
 
-    try {
-        auto &_ = _registery.entityManager.getEntities().at(payload.entityId);
-        static_cast<void>(_);
-    } catch (std::exception &) {
-        fengine::ecs::Entity entity = _registery.entityManager.createEntity(payload.entityId);
-        struct fengine::presets::presets preset = fengine::presets::EntityPresets[static_cast<int>(payload.entityType)];
+    std::optional<fengine::ecs::Entity> temporaryEntity;
 
-        _registery.componentManager.addComponent(entity, (fengine::ecs::EntityTypeComponent) {payload.entityType});
-        _registery.componentManager.addComponent(entity, (fengine::ecs::PositionComponent) {200, 200, false});
-        _registery.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent) {0, 0, false});
-        _registery.componentManager.addComponent(entity,
-            (fengine::ecs::DrawableComponent) {std::string(preset.preset.texture),
-                std::make_shared<fengine::modules::display::SFMLRectangle>(payload.width, payload.height),
-                std::nullopt});
-        if (payload.entityType == fengine::presets::EntityType::PLAYERS) {
-            preset.values.offset_y += (preset.values.height * (payload.entityId + 1));
+    try {
+        auto &foundEntity = _registery.entityManager.getEntities().at(payload.entityId);
+
+        if (foundEntity.has_value()) {
+            return;
         }
-        _registery.componentManager.addComponent(entity,
-            (fengine::ecs::AnimationComponent) {preset.values.length, preset.values.height, preset.values.offset_x,
-                preset.values.offset_y, preset.values.cols, preset.values.rows, false, preset.values.reversable,
-                std::chrono::steady_clock::now()});
-        _soundModule->playSound(std::string(preset.preset.apparition_sound));
+
+        temporaryEntity = foundEntity.value();
+    } catch (std::exception &) {
+        fengine::ecs::Entity createdEntity = _registery.entityManager.createEntity(payload.entityId);
+        temporaryEntity = createdEntity;
     }
+
+    fengine::ecs::Entity entity = temporaryEntity.value();
+
+    struct fengine::presets::presets preset = fengine::presets::EntityPresets[static_cast<int>(payload.entityType)];
+
+    _registery.componentManager.addComponent(entity, (fengine::ecs::EntityTypeComponent) {payload.entityType});
+    _registery.componentManager.addComponent(entity, (fengine::ecs::PositionComponent) {200, 200, false});
+    _registery.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent) {0, 0, false});
+    _registery.componentManager.addComponent(entity,
+        (fengine::ecs::DrawableComponent) {std::string(preset.preset.texture),
+            std::make_shared<fengine::modules::display::SFMLRectangle>(payload.width, payload.height), std::nullopt});
+    if (payload.entityType == fengine::presets::EntityType::PLAYERS) {
+        preset.values.offset_y += (preset.values.height * (payload.entityId + 1));
+    }
+    _registery.componentManager.addComponent(entity,
+        (fengine::ecs::AnimationComponent) {preset.values.length, preset.values.height, preset.values.offset_x,
+            preset.values.offset_y, preset.values.cols, preset.values.rows, false, preset.values.reversable,
+            std::chrono::steady_clock::now()});
+    _soundModule->playSound(std::string(preset.preset.apparition_sound));
 }
 
 void rtype::client::Client::moveEntity(rtype::packets::Serialization::deserialize_archive &ar) {
