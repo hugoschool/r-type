@@ -46,7 +46,7 @@
 rtype::client::Client::Client(std::string host, std::string port)
     : _assetManager(std::make_shared<fengine::asset_manager::SFMLAssetManager>()),
       _displayModule(std::make_unique<fengine::modules::display::SFMLDisplayModule>(
-          std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager))),
+          std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager), "R-Type")),
       _soundModule(std::make_unique<fengine::modules::sound::SFMLSoundModule>(
           std::static_pointer_cast<fengine::asset_manager::SFMLAssetManager>(_assetManager))),
       _registery(), _camera(0.0, 100000), _scenes(), _currentScene(), _writeThread(), _readThread(), _exit(false),
