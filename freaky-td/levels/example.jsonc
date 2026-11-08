@@ -1,0 +1,32 @@
+// This is a commented example, remove them or the parser won't handle them.
+
+[
+    {
+        // There can be multiple paths on the map
+        // Make sure they don't collide between each other!
+        "paths": [
+            // All tiles of the path that all entites step through
+            // The first one is the start of the path (where entities spawn)
+            // The last one is the end of the path (where entities die / hurt you)
+            [
+                // This represents a single point of the path
+                {"x": 0, "y": 20}
+            ]
+        ],
+
+        "entities": {
+            // Total amount of enemies in the level
+            "total_amount": 150,
+            // How many seconds between each entity
+            "spawn_rate": 1,
+            // The types of entities that can spawn
+            "types": [
+                "shooter"
+            ]
+        },
+
+        "player": {
+            "health_points": 100
+        }
+    }
+]

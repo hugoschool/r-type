@@ -15,9 +15,9 @@ endif()
 include(cmake/CPM.cmake)
 
 # Currently pinned to a commit
-set(FENGINE_VERSION 281db85da4d8c00ca5c76f03979c85bd6ade233b)
+set(FENGINE_VERSION bce89e1b0e0fecf58dc2a158c4eaa6015f894aa3)
 CPMAddPackage(
-    NAME freaky-engine
+    NAME f-engine
     URL https://github.com/hugoschool/r-type/archive/${FENGINE_VERSION}.tar.gz
     OPTIONS "ONLY_BUILD_ENGINE ON"
 )
@@ -38,4 +38,15 @@ target_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_link_libraries(${BINARY} PUBLIC freaky-engine)
+target_link_libraries(
+    ${BINARY} PUBLIC
+    Boost::json
+    freaky-engine-asset-manager
+    freaky-engine-world
+    freaky-engine-camera
+    freaky-engine-ecs
+    freaky-engine-scene
+    freaky-engine-observer
+    freaky-engine-module-display
+    freaky-engine-module-sound
+)
