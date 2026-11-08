@@ -310,7 +310,7 @@ void rtype::server::Server::handlePlayerShots(fengine::ecs::PositionComponent &p
 
     fengine::ecs::Entity entity = _world._registry.entityManager.spawnEntity();
     _world._registry.componentManager.addComponent(entity,
-        (fengine::ecs::PositionComponent) {pos.pos_x, pos.pos_y, true});
+        (fengine::ecs::PositionComponent) {pos.pos_x, pos.pos_y + 25, true});
     _world._registry.componentManager.addComponent(entity, (fengine::ecs::VelocityComponent) {velX, velY, false});
     _world._registry.componentManager.addComponent(entity,
         (fengine::ecs::BoundaryComponent) {10, 5, false, true, std::nullopt});
