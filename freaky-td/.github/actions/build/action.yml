@@ -87,9 +87,9 @@ runs:
         mkdir $FOLDER_NAME
 
         if [ "$RUNNER_OS" = "Windows" ]; then
-          cp build/server/freakytd.exe $FOLDER_NAME
+          cp build/freakytd.exe $FOLDER_NAME
         else
-          cp build/server/freakytd $FOLDER_NAME
+          cp build/freakytd $FOLDER_NAME
         fi
       env:
         INPUTS_BUILD_TYPE: ${{ inputs.build-type }}

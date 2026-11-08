@@ -1,0 +1,16 @@
+[
+    {
+        "paths": [],
+
+        "entities": {
+            "spawn_rate": 1,
+            "types": [
+                "shooter"
+            ]
+        },
+
+        "player": {
+            "health_points": 100
+        }
+    }
+]
