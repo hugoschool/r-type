@@ -201,7 +201,7 @@ void rtype::client::Client::loop() {
                         auto value = std::any_cast<fengine::ecs::ControllableComponent>(control.value());
                         if (_startedPlaying == true && key == value.up)
                             _inputs.addElement(event::Event::UP);
-                        else if (key == value.down)
+                        else if (_startedPlaying == true && key == value.down)
                             _inputs.addElement(event::Event::DOWN);
                         else if (key == value.left) {
                             if (_startedPlaying == true) {
